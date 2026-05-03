@@ -106,8 +106,7 @@ src/features/awesome-feature/
 ### Styling
 
 - **Tailwind CSS** is the primary styling solution
-- **Headless UI components** using Radix UI primitives
-- **ShadCN/UI pattern** - Components are copied into codebase, not installed as packages
+- **Shadcn** using Radix UI primitives
 
 ## State Management Strategy
 
