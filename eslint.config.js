@@ -81,9 +81,16 @@ export default defineConfig([
               target: './src/features',
               from: './src/app',
             },
+            {
+              target: sharedDirectories.map(
+                (directory) => `./src/${directory}`,
+              ),
+              from: './src/app',
+              except: ['./providers'],
+            },
             ...sharedDirectories.map((directory) => ({
               target: `./src/${directory}`,
-              from: ['./src/features', './src/app'],
+              from: './src/features',
             })),
           ],
         },
