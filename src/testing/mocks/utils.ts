@@ -54,8 +54,7 @@ export function authenticate({
     return { user: sanitizedUser, jwt: encodedToken }
   }
 
-  const error = new Error('Invalid username or password')
-  throw error
+  throw new Error('Invalid email or password')
 }
 
 export const AUTH_COOKIE = `token`

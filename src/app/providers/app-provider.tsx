@@ -1,5 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 
+import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import ModalProvider from '@app/providers/modal-provider'
 import UserProvider from '@app/providers/user-provider'
@@ -14,7 +15,10 @@ function AppProvider({ children }: AppProviderProps) {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <UserProvider>
-          <ModalProvider>{children}</ModalProvider>
+          <ModalProvider>
+            {children}
+            <Toaster richColors position="top-center" />
+          </ModalProvider>
         </UserProvider>
       </TooltipProvider>
     </QueryClientProvider>
