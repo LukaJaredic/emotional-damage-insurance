@@ -4,6 +4,8 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Spinner from '@/components/spinner'
 import { paths } from '@/config/paths'
 
+import AppShell from './app-shell'
+
 const HomePage = lazy(() => import('@app/routes/home-page'))
 const LoginPage = lazy(() => import('@app/routes/login-page'))
 const NotFoundPage = lazy(() => import('@app/routes/not-found-page'))
@@ -22,10 +24,14 @@ function withSuspense(page: React.ReactNode) {
   )
 }
 
+function protectedRoute(page: React.ReactNode) {
+  return withSuspense(<AppShell>{page}</AppShell>)
+}
+
 const router = createBrowserRouter([
   {
     path: paths.root.path,
-    element: withSuspense(<HomePage />),
+    element: protectedRoute(<HomePage />),
   },
   {
     path: paths.auth.login.path,

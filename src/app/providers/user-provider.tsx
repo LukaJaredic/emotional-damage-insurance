@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 import { paths } from '@/config/paths'
-import { api } from '@/lib/api'
-import type { User } from '@/types/user'
+import { useLogout, useMe } from '@/utils/auth-api'
 import { UserContext } from '@app/providers/user-context'
 
 type UserProviderProps = {
@@ -10,32 +9,31 @@ type UserProviderProps = {
 }
 
 function UserProvider({ children }: UserProviderProps) {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: user, isPending } = useMe()
+
+  const logoutMutation = useLogout()
 
   useEffect(() => {
-    async function initUserAndRedirect() {
-      const currentPath = window.location.pathname
-      const isLoginPage = currentPath === paths.auth.login.path
+    const isAuthPage = window.location.pathname.startsWith('/auth')
 
-      try {
-        const { data } = await api.get<User>('/auth/me')
-        setUser(data)
-
-        if (isLoginPage) window.location.href = paths.root.getHref()
-      } catch {
-        window.location.href = paths.auth.login.getHref(currentPath)
-      } finally {
-        setIsLoading(false)
-      }
+    if (!user && !isPending && !isAuthPage) {
+      window.location.href = paths.auth.login.getHref(window.location.pathname)
     }
 
-    initUserAndRedirect()
-  }, [])
+    if (user && isAuthPage) {
+      window.location.href = paths.root.getHref()
+    }
+  }, [user, isPending])
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
-      {isLoading ? (
+    <UserContext.Provider
+      value={{
+        user: user ?? null,
+        isLoading: isPending,
+        logout: logoutMutation,
+      }}
+    >
+      {isPending ? (
         <div className="flex h-dvh w-full items-center justify-center">
           Loading user data...
         </div>
