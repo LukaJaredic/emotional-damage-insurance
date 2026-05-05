@@ -25,11 +25,7 @@ type LoginFormProps = {
 function LoginForm({ redirectTo }: LoginFormProps) {
   const loginMutation = useLogin(redirectTo)
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormData>({
+  const { control, handleSubmit } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: 'admin@example.com',
@@ -58,25 +54,26 @@ function LoginForm({ redirectTo }: LoginFormProps) {
         <form
           id="login-form"
           onSubmit={handleSubmit((data) => loginMutation.mutate(data))}
+          noValidate
         >
           <FieldGroup>
             <InputField
+              control={control}
               id="email"
+              name="email"
               type="email"
               label="Email"
               autoComplete="email"
               placeholder="admin@example.com"
-              error={errors.email}
-              {...register('email')}
             />
             <InputField
+              control={control}
               id="password"
+              name="password"
               type="password"
               label="Password"
               autoComplete="current-password"
               placeholder="Enter your password"
-              error={errors.password}
-              {...register('password')}
             />
           </FieldGroup>
         </form>

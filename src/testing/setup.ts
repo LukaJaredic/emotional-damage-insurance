@@ -1,11 +1,9 @@
-import * as matchers from '@testing-library/jest-dom/matchers'
+import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
-import { afterAll, afterEach, beforeAll, expect } from 'vitest'
+import { afterAll, afterEach, beforeAll } from 'vitest'
 
 import { initializeDb, resetDb } from './mocks/db'
 import { server } from './mocks/server'
-
-expect.extend(matchers)
 
 beforeAll(async () => {
   resetDb()

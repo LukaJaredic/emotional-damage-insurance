@@ -19,7 +19,7 @@ function CommonTooltip({
   return (
     <Tooltip
       trigger={
-        <Button aria-label={title} size="icon-sm" className="rounded-full">
+        <Button aria-label={title} size="icon-xs" className="rounded-full">
           <QuestionMarkIcon />
         </Button>
       }

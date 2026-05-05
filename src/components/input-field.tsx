@@ -1,6 +1,7 @@
 import { EyeClosedIcon, EyeIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
-import type { FieldError as FieldErrorType } from 'react-hook-form'
+import { Controller } from 'react-hook-form'
+import type { Control, FieldPath, FieldValues } from 'react-hook-form'
 
 import {
   Field,
@@ -18,53 +19,81 @@ import {
 
 type InputFieldType = 'email' | 'text' | 'number' | 'password'
 
-type InputFieldProps = Omit<React.ComponentProps<typeof Input>, 'type'> & {
+type InputFieldProps<TFieldValues extends FieldValues> = Omit<
+  React.ComponentProps<typeof Input>,
+  'type' | 'name' | 'value' | 'defaultValue' | 'onChange' | 'onBlur'
+> & {
+  control: Control<TFieldValues>
+  name: FieldPath<TFieldValues>
   label: string
   type: InputFieldType
   description?: string
-  error: FieldErrorType | undefined
 }
 
-function InputField({
+function InputField<TFieldValues extends FieldValues>({
+  control,
+  name,
   label,
   description,
-  error,
   id,
   type,
   ...props
-}: InputFieldProps) {
+}: InputFieldProps<TFieldValues>) {
   const [showPassword, setShowPassword] = useState(false)
   const inputType =
     type === 'password' ? (showPassword ? 'text' : 'password') : type
 
   return (
-    <Field data-invalid={!!error}>
-      <FieldLabel htmlFor={id}>{label}</FieldLabel>
-      {type === 'password' ? (
-        <InputGroup>
-          <InputGroupInput
-            id={id}
-            type={inputType}
-            aria-invalid={!!error}
-            {...props}
-          />
-          <InputGroupAddon align="inline-end">
-            <InputGroupButton
-              type="button"
-              size="icon-sm"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-              onClick={() => setShowPassword((current) => !current)}
-            >
-              {showPassword ? <EyeClosedIcon /> : <EyeIcon />}
-            </InputGroupButton>
-          </InputGroupAddon>
-        </InputGroup>
-      ) : (
-        <Input id={id} type={inputType} aria-invalid={!!error} {...props} />
-      )}
-      {description ? <FieldDescription>{description}</FieldDescription> : null}
-      {error ? <FieldError errors={[error]} /> : null}
-    </Field>
+    <Controller
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => {
+        const error = fieldState.error
+
+        return (
+          <Field data-invalid={!!error}>
+            <FieldLabel htmlFor={id}>{label}</FieldLabel>
+            {type === 'password' ? (
+              <InputGroup>
+                <InputGroupInput
+                  {...props}
+                  {...field}
+                  id={id}
+                  type={inputType}
+                  value={field.value ?? ''}
+                  aria-invalid={!!error}
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupButton
+                    type="button"
+                    size="icon-sm"
+                    aria-label={
+                      showPassword ? 'Hide password' : 'Show password'
+                    }
+                    onClick={() => setShowPassword((current) => !current)}
+                  >
+                    {showPassword ? <EyeClosedIcon /> : <EyeIcon />}
+                  </InputGroupButton>
+                </InputGroupAddon>
+              </InputGroup>
+            ) : (
+              <Input
+                {...props}
+                {...field}
+                id={id}
+                type={inputType}
+                value={field.value ?? ''}
+                aria-invalid={!!error}
+              />
+            )}
+            {description ? (
+              <FieldDescription>{description}</FieldDescription>
+            ) : null}
+            {error ? <FieldError errors={[error]} /> : null}
+          </Field>
+        )
+      }}
+    />
   )
 }
 
