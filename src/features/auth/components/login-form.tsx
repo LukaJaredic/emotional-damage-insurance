@@ -82,7 +82,7 @@ function LoginForm({ redirectTo }: LoginFormProps) {
         <Button
           form="login-form"
           type="submit"
-          className="mt-4 w-100"
+          className="mt-4 w-full"
           disabled={loginMutation.isPending}
         >
           {loginMutation.isPending ? <Spinner /> : 'Login'}
