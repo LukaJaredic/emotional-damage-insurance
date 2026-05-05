@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import type { ReactNode } from 'react'
 
 import {
   Dialog,
@@ -11,18 +10,18 @@ import { ModalContext } from '@app/providers/modal-context'
 
 type ModalState = {
   title: string
-  content: ReactNode
+  content: React.ReactNode
 }
 
 type ModalProviderProps = {
-  children: ReactNode
+  children: React.ReactNode
 }
 
-export function ModalProvider({ children }: ModalProviderProps) {
+function ModalProvider({ children }: ModalProviderProps) {
   const [modal, setModal] = useState<ModalState | null>(null)
   const [isOpen, setIsOpen] = useState(false)
 
-  const openModal = (title: string, content: ReactNode) => {
+  const openModal = (title: string, content: React.ReactNode) => {
     setModal({ title, content })
     setIsOpen(true)
   }
@@ -45,3 +44,5 @@ export function ModalProvider({ children }: ModalProviderProps) {
     </ModalContext.Provider>
   )
 }
+
+export default ModalProvider

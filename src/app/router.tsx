@@ -1,13 +1,22 @@
-import { Suspense, lazy, type ReactNode } from 'react'
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { Suspense, lazy } from 'react'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
+import Spinner from '@/components/spinner'
 import { paths } from '@/config/paths'
 
+const HomePage = lazy(() => import('@app/routes/home-page'))
 const LoginPage = lazy(() => import('@app/routes/login-page'))
+const NotFoundPage = lazy(() => import('@app/routes/not-found-page'))
 
-function withSuspense(page: ReactNode) {
+function withSuspense(page: React.ReactNode) {
   return (
-    <Suspense fallback={<main className="p-6">Loading...</main>}>
+    <Suspense
+      fallback={
+        <main className="w-full min-h-dvh flex items-center justify-center">
+          <Spinner className="size-8" />
+        </main>
+      }
+    >
       {page}
     </Suspense>
   )
@@ -16,14 +25,24 @@ function withSuspense(page: ReactNode) {
 const router = createBrowserRouter([
   {
     path: paths.root,
-    element: <Navigate to={paths.auth.login.path} replace />,
+    element: withSuspense(<HomePage />),
   },
   {
     path: paths.auth.login.path,
     element: withSuspense(<LoginPage />),
   },
+  {
+    path: paths.notFound,
+    element: withSuspense(<NotFoundPage />),
+  },
+  {
+    path: '*',
+    element: withSuspense(<NotFoundPage />),
+  },
 ])
 
-export function AppRouter() {
+function AppRouter() {
   return <RouterProvider router={router} />
 }
+
+export default AppRouter

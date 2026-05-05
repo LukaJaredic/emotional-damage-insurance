@@ -1,8 +1,7 @@
 import { createContext } from 'react'
-import type { ReactNode } from 'react'
 
 export type ModalContextValue = {
-  openModal: (title: string, content: ReactNode) => void
+  openModal: (title: string, content: React.ReactNode) => void
   closeModal: () => void
 }
 

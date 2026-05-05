@@ -1,5 +1,6 @@
 export const paths = {
   root: '/',
+  notFound: '/404',
   auth: {
     login: {
       path: '/auth/login',
