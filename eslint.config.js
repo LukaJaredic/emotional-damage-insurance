@@ -23,7 +23,6 @@ export default defineConfig([
     'dist',
     'node_modules',
     'coverage',
-    'public/mockServiceWorker.js',
     'generators/*',
   ]),
   {
