@@ -25,9 +25,8 @@ export const hash = (str: string) => {
   let hash = 5381,
     i = str.length
 
-  while (i) {
-    hash = (hash * 33) ^ str.charCodeAt(--i)
-  }
+  while (i) hash = (hash * 33) ^ str.charCodeAt(--i)
+
   return String(hash >>> 0)
 }
 
@@ -40,11 +39,7 @@ export const networkDelay = () => {
 
 const omit = <T extends object>(obj: T, keys: string[]): T => {
   const result = {} as T
-  for (const key in obj) {
-    if (!keys.includes(key)) {
-      result[key] = obj[key]
-    }
-  }
+  for (const key in obj) if (!keys.includes(key)) result[key] = obj[key]
 
   return result
 }
@@ -82,9 +77,8 @@ export const AUTH_COOKIE = `token`
 export function requireAuth(cookies: Record<string, string>) {
   try {
     const encodedToken = cookies[AUTH_COOKIE] || Cookies.get(AUTH_COOKIE)
-    if (!encodedToken) {
-      return { error: 'Unauthorized', user: null }
-    }
+    if (!encodedToken) return { error: 'Unauthorized', user: null }
+
     const decodedToken = decode(encodedToken) as { id: string }
 
     const user = db.user.findFirst({
@@ -95,9 +89,7 @@ export function requireAuth(cookies: Record<string, string>) {
       },
     })
 
-    if (!user) {
-      return { error: 'Unauthorized', user: null }
-    }
+    if (!user) return { error: 'Unauthorized', user: null }
 
     return { user: sanitizeUser(user) }
   } catch {
@@ -106,7 +98,5 @@ export function requireAuth(cookies: Record<string, string>) {
 }
 
 export function requireAdmin(user: any) {
-  if (user.role !== 'ADMIN') {
-    throw Error('Unauthorized')
-  }
+  if (user.role !== 'ADMIN') throw Error('Unauthorized')
 }

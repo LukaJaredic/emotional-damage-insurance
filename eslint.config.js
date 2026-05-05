@@ -65,6 +65,7 @@ export default defineConfig([
       },
     },
     rules: {
+      curly: ['error', 'multi'],
       'linebreak-style': ['error', 'unix'],
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',

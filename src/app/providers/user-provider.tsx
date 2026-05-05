@@ -16,13 +16,10 @@ function UserProvider({ children }: UserProviderProps) {
   useEffect(() => {
     const isAuthPage = window.location.pathname.startsWith('/auth')
 
-    if (!user && !isPending && !isAuthPage) {
+    if (!user && !isPending && !isAuthPage)
       window.location.href = paths.auth.login.getHref(window.location.pathname)
-    }
 
-    if (user && isAuthPage) {
-      window.location.href = paths.root.getHref()
-    }
+    if (user && isAuthPage) window.location.href = paths.root.getHref()
   }, [user, isPending])
 
   return (

@@ -48,14 +48,14 @@ export const storeDb = async (data: string) => {
   if (typeof window === 'undefined') {
     const { writeFile } = await import('fs/promises')
     await writeFile(dbFilePath, data)
-  } else {
+  } else
     // If we are running in a browser environment
     window.localStorage.setItem('msw-db', data)
-  }
 }
 
 export const persistDb = async (model: Model) => {
   if (process.env.NODE_ENV === 'test') return
+
   const data = await loadDb()
   data[model] = db[model].getAll()
   await storeDb(JSON.stringify(data))
@@ -65,11 +65,10 @@ export const initializeDb = async () => {
   const database = await loadDb()
   Object.entries(db).forEach(([key, model]) => {
     const dataEntres = database[key]
-    if (dataEntres) {
+    if (dataEntres)
       dataEntres?.forEach((entry: Record<string, any>) => {
         model.create(entry)
       })
-    }
   })
 
   if (db.user.getAll().length === 0) {

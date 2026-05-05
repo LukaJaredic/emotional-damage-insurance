@@ -6,12 +6,11 @@ export function requiredString(minLength?: number, maxLength?: number) {
     .trim()
     .min(minLength ?? 1, `Field must be at least ${minLength} characters long`)
 
-  if (maxLength !== undefined) {
+  if (maxLength !== undefined)
     schema = schema.max(
       maxLength,
       `Field must be at most ${maxLength} characters long`,
     )
-  }
 
   return schema
 }
