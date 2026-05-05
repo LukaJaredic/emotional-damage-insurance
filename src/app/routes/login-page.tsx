@@ -5,7 +5,7 @@ import LoginForm from '@/features/auth/components/login-form'
 
 function LoginPage() {
   const [searchParams] = useSearchParams()
-  const redirectTo = searchParams.get('redirectTo') ?? paths.root
+  const redirectTo = searchParams.get('redirectTo') ?? paths.root.getHref()
 
   return (
     <main className="container mx-auto flex min-h-dvh items-center justify-center">

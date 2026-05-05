@@ -12,7 +12,7 @@ function withSuspense(page: React.ReactNode) {
   return (
     <Suspense
       fallback={
-        <main className="w-full min-h-dvh flex items-center justify-center">
+        <main className="flex min-h-dvh w-full items-center justify-center">
           <Spinner className="size-8" />
         </main>
       }
@@ -24,7 +24,7 @@ function withSuspense(page: React.ReactNode) {
 
 const router = createBrowserRouter([
   {
-    path: paths.root,
+    path: paths.root.path,
     element: withSuspense(<HomePage />),
   },
   {
@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     element: withSuspense(<LoginPage />),
   },
   {
-    path: paths.notFound,
+    path: paths.notFound.path,
     element: withSuspense(<NotFoundPage />),
   },
   {

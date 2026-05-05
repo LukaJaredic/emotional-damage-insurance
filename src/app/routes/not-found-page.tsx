@@ -7,8 +7,8 @@ function NotFoundPage() {
   const navigate = useNavigate()
 
   return (
-    <main className="flex min-h-dvh items-center justify-center px-6 text-center flex-col gap-4">
-      <h1 className="font-heading text-8xl font-bold text-foreground">404</h1>
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">
+      <h1 className="font-heading text-foreground text-8xl font-bold">404</h1>
       <p className="text-muted-foreground">
         We couldn&apos;t find what you are looking for
       </p>

@@ -1,6 +1,12 @@
 export const paths = {
-  root: '/',
-  notFound: '/404',
+  root: {
+    path: '/',
+    getHref: () => '/',
+  },
+  notFound: {
+    path: '/404',
+    getHref: () => '/404',
+  },
   auth: {
     login: {
       path: '/auth/login',

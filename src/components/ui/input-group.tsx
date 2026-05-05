@@ -8,7 +8,7 @@ function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="input-group"
       className={cn(
-        'group/input-group flex min-w-0 items-center rounded-md border border-input bg-transparent shadow-xs transition-[color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 dark:bg-input/30 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40',
+        'group/input-group border-input focus-within:border-ring focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-destructive/20 dark:bg-input/30 dark:has-aria-invalid:border-destructive/50 dark:has-aria-invalid:ring-destructive/40 flex min-w-0 items-center rounded-md border bg-transparent shadow-xs transition-[color,box-shadow] focus-within:ring-3 has-aria-invalid:ring-3',
         className,
       )}
       {...props}
@@ -26,7 +26,7 @@ function InputGroupInput({
       type={type}
       data-slot="input-group-control"
       className={cn(
-        'h-9 min-w-0 flex-1 bg-transparent px-2.5 py-1 text-base outline-none placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+        'placeholder:text-muted-foreground h-9 min-w-0 flex-1 bg-transparent px-2.5 py-1 text-base outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
         className,
       )}
       {...props}

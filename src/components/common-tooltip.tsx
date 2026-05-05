@@ -26,7 +26,7 @@ function CommonTooltip({
       {...props}
     >
       <div className="flex flex-col gap-1">
-        <p className="font-medium text-center border-b">{title}</p>
+        <p className="border-b text-center font-medium">{title}</p>
         {children}
       </div>
     </Tooltip>
