@@ -16,7 +16,8 @@ import {
 import { FieldGroup } from '@/components/ui/field'
 
 import { useLogin } from '../api/login'
-import { loginSchema, type LoginFormData } from '../utils/login'
+import type { LoginFormData } from '../types/login'
+import { loginSchema } from '../utils/login'
 
 type LoginFormProps = {
   redirectTo: string

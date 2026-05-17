@@ -35,4 +35,4 @@ dist-ssr
 /e2e/.auth/
 
 # Misc
-mocked-db.json
+mocked-db*json

@@ -23,9 +23,9 @@ app.use(createMiddleware(...handlers))
 initializeDb()
   .then(() => {
     console.log('Mock DB initialized')
-    app.listen(env.APP_MOCK_API_PORT, () => {
+    app.listen(env.MOCK_API_PORT, () => {
       console.log(
-        `Mock API server started at http://localhost:${env.APP_MOCK_API_PORT}`,
+        `Mock API server started at http://localhost:${env.MOCK_API_PORT}`,
       )
     })
   })
