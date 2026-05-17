@@ -5,6 +5,7 @@ import {
   type QueryOptions,
 } from '@tanstack/react-query'
 
+import { queryKeys } from '@/config/query-keys'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
 
@@ -19,7 +20,7 @@ async function logout() {
 
 export function useMe(queryOptions?: QueryOptions<User>) {
   return useQuery({
-    queryKey: ['me'],
+    queryKey: queryKeys.auth.me(),
     staleTime: Infinity,
     queryFn: getMe,
     retry: false,
@@ -33,7 +34,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      // Should trigger a redirect to the login page in <AuthGuard />
+      // Triggers a redirect to the login page in <AuthGuard />
       qk.clear()
     },
   })

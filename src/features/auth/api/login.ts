@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
+import { queryKeys } from '@/config/query-keys'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
 
@@ -18,7 +19,7 @@ export const useLogin = (redirectTo: string) => {
   return useMutation({
     mutationFn: (data: LoginFormData) => login(data),
     onSuccess: (user) => {
-      queryClient.setQueryData(['me'], user)
+      queryClient.setQueryData(queryKeys.auth.me(), user)
       navigate(redirectTo)
     },
   })

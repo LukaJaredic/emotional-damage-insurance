@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "sh -c 'vite-node mock-server.ts | pino-pretty -c & vite'",
+    "dev": "sh -c 'npm run mock-server | pino-pretty -c & vite'",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -14,7 +14,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "e2e": "npx playwright test",
-    "e2e:headed": "PWDEBUG=1 npx playwright test --headed"
+    "e2e:headed": "PWDEBUG=1 npx playwright test --headed",
+    "mock-server": "vite-node mock-server.ts"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.2.8",

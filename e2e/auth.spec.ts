@@ -20,6 +20,6 @@ test('authenticate', async ({ page }) => {
   await page.getByRole('button', { name: 'Login', exact: true }).click()
   await page.waitForURL('/')
   // Log out:
-  await page.getByRole('button', { name: 'Logout' }).click()
+  await page.getByRole('button', { name: 'Log out' }).click()
   await page.waitForURL('/auth/login?redirectTo=%2F')
 })
