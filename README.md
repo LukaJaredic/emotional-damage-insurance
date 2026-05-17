@@ -161,6 +161,7 @@ Form and API contracts follow a consistent naming pattern:
 
 - Form types use `[Entity]FormValues`, for example `LoginFormValues` or `ClientFormValues`
 - Action payloads use `[Entity][Action]Action`, for example `LoginAction` or `ClientCreateAction`
+- Query params for `axios.get` use `[Entity]Query`, for example `UsersQuery` or `PoliciesQuery`
 
 Feature `utils/` contains feature-local business logic and helper functions that do not belong in UI, hooks, or API files. Builders and mapping logic are one common use of this folder:
 

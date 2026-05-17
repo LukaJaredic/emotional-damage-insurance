@@ -4,10 +4,10 @@ import { z } from 'zod'
 import { queryKeys } from '@/config/query-keys'
 import { queryClient } from '@/lib/react-query'
 import type { User } from '@/types/user'
-import { requiredString } from '@/utils/zod-schemas'
+import { email, requiredString } from '@/utils/zod-schemas'
 
 export const loginSchema = z.object({
-  email: z.email({ message: 'Invalid email address' }),
+  email: email(),
   password: requiredString(6),
 })
 
