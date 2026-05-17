@@ -67,7 +67,7 @@ describe('Login Page', () => {
     expect(queryClient.getQueryData(queryKeys.auth.me())).toMatchObject({
       id: user.id,
       email: user.email,
-      role: user.role,
+      roles: user.roles,
     })
   })
 

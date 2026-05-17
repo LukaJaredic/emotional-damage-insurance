@@ -16,7 +16,7 @@ const defaultUser: BackendUser = {
   firstName: 'John',
   lastName: 'Doe',
   email: 'john@doe.com',
-  role: 'admin',
+  roles: ['admin'],
   password: hash('admin123'),
 }
 

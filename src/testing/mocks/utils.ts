@@ -92,9 +92,3 @@ export function requireAuth(cookies: Record<string, string>) {
     return { error: 'Unauthorized', user: null }
   }
 }
-
-export function requireAdmin(user: any) {
-  if (user.role !== 'ADMIN') {
-    throw Error('Unauthorized')
-  }
-}

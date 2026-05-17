@@ -5,7 +5,7 @@ const user = {
   password: 'admin123',
   firstName: 'Admin',
   lastName: 'User',
-  role: 'admin',
+  roles: ['admin'],
 }
 
 test('authenticate', async ({ page }) => {

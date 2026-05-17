@@ -8,7 +8,7 @@ const models = {
     lastName: String,
     email: String,
     password: String,
-    role: String,
+    roles: Array,
     createdAt: Date.now,
   },
 }
@@ -28,7 +28,7 @@ function getDefaultData() {
         lastName: 'User',
         email: 'admin@example.com',
         password: '2951957434',
-        role: 'admin',
+        roles: ['admin'],
       },
     ],
   }

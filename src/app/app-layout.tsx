@@ -31,7 +31,7 @@ function AppLayout({ children }: AppLayoutProps) {
     <SidebarProvider>
       <div className="bg-background flex min-h-dvh w-full">
         <Sidebar collapsible="icon" className="whitespace-nowrap">
-          <SidebarContent />
+          <SidebarContent>something here</SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
