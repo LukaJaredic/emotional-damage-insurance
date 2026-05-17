@@ -1,22 +1,20 @@
 import { QueryClientProvider } from '@tanstack/react-query'
+import { Outlet } from 'react-router-dom'
 
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import ModalProvider from '@app/providers/modal-provider'
-import UserProvider from '@app/providers/user-provider'
 import { queryClient } from '@lib/react-query'
 
-type AppProviderProps = {
-  children: React.ReactNode
-}
+import UserProvider from './user-provider'
 
-function AppProvider({ children }: AppProviderProps) {
+function AppProvider() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <UserProvider>
           <ModalProvider>
-            {children}
+            <Outlet />
             <Toaster richColors position="top-center" />
           </ModalProvider>
         </UserProvider>

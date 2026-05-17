@@ -6,9 +6,10 @@ import { paths } from '@/config/paths'
 
 import AppLayout from './app-layout'
 import AuthGuard from './auth-guard'
+import AppProvider from './providers/app-provider'
 
-const HomePage = lazy(() => import('@app/routes/home-page'))
-const LoginPage = lazy(() => import('@app/routes/login-page'))
+const HomePage = lazy(() => import('@app/routes/home/home-page'))
+const LoginPage = lazy(() => import('@app/routes/auth/login-page'))
 const NotFoundPage = lazy(() => import('@app/routes/not-found-page'))
 
 function withSuspense(page: React.ReactNode) {
@@ -33,22 +34,31 @@ function protectedRoute(page: React.ReactNode) {
   )
 }
 
+function unprotectedRoute(page: React.ReactNode) {
+  return withSuspense(<AuthGuard shouldHaveUser={false}>{page}</AuthGuard>)
+}
+
 const router = createBrowserRouter([
   {
-    path: paths.root.path,
-    element: protectedRoute(<HomePage />),
-  },
-  {
-    path: paths.auth.login.path,
-    element: withSuspense(<LoginPage />),
-  },
-  {
-    path: paths.notFound.path,
-    element: withSuspense(<NotFoundPage />),
-  },
-  {
-    path: '*',
-    element: withSuspense(<NotFoundPage />),
+    element: <AppProvider />,
+    children: [
+      {
+        path: paths.auth.login.path,
+        element: unprotectedRoute(<LoginPage />),
+      },
+      {
+        path: paths.notFound.path,
+        element: withSuspense(<NotFoundPage />),
+      },
+      {
+        path: paths.root.path,
+        element: protectedRoute(<HomePage />),
+      },
+      {
+        path: '*',
+        element: withSuspense(<NotFoundPage />),
+      },
+    ],
   },
 ])
 

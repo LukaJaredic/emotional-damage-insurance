@@ -8,7 +8,9 @@ type SpinnerProps = {
 
 function Spinner({ className, ...props }: SpinnerProps) {
   return (
-    <SpinnerBallIcon className={cn('animate-spin', className)} {...props} />
+    <span title="Loading...">
+      <SpinnerBallIcon className={cn('animate-spin', className)} {...props} />
+    </span>
   )
 }
 

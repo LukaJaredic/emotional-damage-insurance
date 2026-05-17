@@ -5,13 +5,17 @@ import { useUser } from '@/hooks/use-user'
 
 type AuthGuardProps = {
   children: React.ReactNode
+  shouldHaveUser?: boolean
 }
 
-function AuthGuard({ children }: AuthGuardProps) {
+function AuthGuard({ children, shouldHaveUser = true }: AuthGuardProps) {
   const { user, isLoading } = useUser()
 
-  if (!user && !isLoading)
+  if (shouldHaveUser && !user && !isLoading)
     return <Navigate to={paths.auth.login.getHref(window.location.pathname)} />
+
+  if (!shouldHaveUser && user && !isLoading)
+    return <Navigate to={paths.root.getHref()} replace />
 
   return children
 }
