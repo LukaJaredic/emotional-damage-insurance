@@ -2,8 +2,8 @@ import { z, ZodError } from 'zod'
 
 const EnvSchema = z.object({
   API_URL: z.string(),
-  APP_URL: z.string().optional().default('http://localhost:5173'),
-  APP_MOCK_API_PORT: z.string().optional().default('8080'),
+  APP_URL: z.string(),
+  MOCK_API_PORT: z.string(),
 })
 
 function mapEnvToClient(env: Record<string, string>): Record<string, string> {
@@ -19,7 +19,7 @@ class EnvError extends Error {
   constructor(validationError: ZodError) {
     super(
       `Invalid env provided.\n${validationError.issues
-        .map((issue) => `${issue.path.join('.')} - ${issue.message}`)
+        .map((issue) => `VITE_APP_${issue.path.join('.')} - ${issue.message}`)
         .join('\n')}`,
     )
     this.name = 'EnvError'
