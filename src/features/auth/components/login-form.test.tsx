@@ -38,55 +38,89 @@ function passwordInput() {
   return screen.getByLabelText('Password') as HTMLInputElement
 }
 
-describe('LoginForm', () => {
-  it('renders the default credentials', () => {
-    mockUseLogin()
+function submitButton() {
+  return screen.getByTitle('Log in', { exact: true }) as HTMLButtonElement
+}
 
+async function clearAndType(email: string, password: string) {
+  // Clearing because we have set defaults for convenience
+  await userEvent.clear(emailInput())
+  await userEvent.type(emailInput(), email)
+
+  await userEvent.clear(passwordInput())
+  await userEvent.type(passwordInput(), password)
+}
+
+describe('LoginForm', () => {
+  let mutate!: ReturnType<typeof useLogin>['mutate']
+
+  beforeEach(() => {
+    const result = mockUseLogin()
+    mutate = result.mutate
+  })
+
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders the default credentials', () => {
     renderWithProviders(<LoginForm redirectTo="/" />)
 
     expect(emailInput()).toHaveValue('admin@example.com')
     expect(passwordInput()).toHaveValue('admin123')
   })
 
-  it('shows validation errors and does not submit invalid data', async () => {
-    const { mutate } = mockUseLogin()
+  describe('invalid form submission', () => {
+    it('should handle invalid email', async () => {
+      renderWithProviders(<LoginForm redirectTo="/" />)
 
-    renderWithProviders(<LoginForm redirectTo="/" />)
+      await clearAndType('invalid-email', 'valid-password')
+      await userEvent.click(submitButton())
 
-    await userEvent.clear(emailInput())
-    await userEvent.clear(passwordInput())
+      await waitFor(() => {
+        expect(screen.getByText('Invalid email address')).toBeInTheDocument()
+      })
 
-    await userEvent.type(emailInput(), 'invalid-email')
-    await userEvent.type(passwordInput(), '123')
-
-    await userEvent.click(screen.getByRole('button', { name: 'Login' }))
-
-    await waitFor(() => {
-      expect(screen.getByText('Invalid email address')).toBeInTheDocument()
-      expect(
-        screen.getByText('Field must be at least 6 characters long'),
-      ).toBeInTheDocument()
+      expect(mutate).not.toHaveBeenCalled()
     })
 
-    expect(mutate).not.toHaveBeenCalled()
+    it('should handle invalid password', async () => {
+      renderWithProviders(<LoginForm redirectTo="/" />)
+
+      await clearAndType('user@example.com', 'short')
+      await userEvent.click(submitButton())
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('Field must be at least 6 characters long'),
+        ).toBeInTheDocument()
+      })
+
+      expect(mutate).not.toHaveBeenCalled()
+    })
   })
 
-  it('submits valid form data', async () => {
-    const { mutate } = mockUseLogin()
+  describe('valid form submission', () => {
+    it('submits valid form data', async () => {
+      renderWithProviders(<LoginForm redirectTo="/dashboard" />)
 
-    renderWithProviders(<LoginForm redirectTo="/dashboard" />)
+      await clearAndType('user@example.com', 'password123')
 
-    await userEvent.clear(emailInput())
-    await userEvent.clear(passwordInput())
+      await userEvent.click(submitButton())
 
-    await userEvent.type(emailInput(), 'user@example.com')
-    await userEvent.type(passwordInput(), 'password123')
+      expect(mutate).toHaveBeenCalledExactlyOnceWith({
+        email: 'user@example.com',
+        password: 'password123',
+      })
+    })
 
-    await userEvent.click(screen.getByRole('button', { name: 'Login' }))
+    it('should disable the submit button while login is pending', async () => {
+      mockUseLogin({ isPending: true })
 
-    expect(mutate).toHaveBeenCalledExactlyOnceWith({
-      email: 'user@example.com',
-      password: 'password123',
+      renderWithProviders(<LoginForm redirectTo="/" />)
+
+      expect(submitButton()).toBeDisabled()
+      expect(submitButton().querySelector('svg')).toBeInTheDocument()
     })
   })
 })

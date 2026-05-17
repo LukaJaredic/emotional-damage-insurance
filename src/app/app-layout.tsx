@@ -16,11 +16,11 @@ import {
 import { paths } from '@/config/paths'
 import { useUser } from '@/hooks/use-user'
 
-type AppShellProps = {
+type AppLayoutProps = {
   children: React.ReactNode
 }
 
-function AppShell({ children }: AppShellProps) {
+function AppLayout({ children }: AppLayoutProps) {
   const { user, isLoading, logout } = useUser()
 
   if (!user && !isLoading)
@@ -29,19 +29,19 @@ function AppShell({ children }: AppShellProps) {
   return (
     <SidebarProvider>
       <div className="bg-background flex min-h-dvh w-full">
-        <Sidebar collapsible="icon">
+        <Sidebar collapsible="icon" className="whitespace-nowrap">
           <SidebarContent />
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   type="button"
-                  title="Logout"
+                  title="Log out"
                   disabled={logout.isPending}
                   onClick={() => void logout.mutate()}
                 >
                   {logout.isPending ? <Spinner /> : <SignOutIcon />}
-                  <span>Logout</span>
+                  <span>Log out</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -58,4 +58,4 @@ function AppShell({ children }: AppShellProps) {
   )
 }
 
-export default AppShell
+export default AppLayout

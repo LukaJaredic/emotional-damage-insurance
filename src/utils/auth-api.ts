@@ -33,6 +33,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      // Should trigger a redirect to the login page in <AuthGuard />
       qk.clear()
     },
   })

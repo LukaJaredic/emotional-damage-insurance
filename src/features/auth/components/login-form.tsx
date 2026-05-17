@@ -27,6 +27,7 @@ function LoginForm({ redirectTo }: LoginFormProps) {
 
   const { control, handleSubmit } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+    // RISK: Default credentials are included for convenience, but make sure to change/remove them in production!
     defaultValues: {
       email: 'admin@example.com',
       password: 'admin123',
@@ -37,7 +38,7 @@ function LoginForm({ redirectTo }: LoginFormProps) {
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <CommonTooltip title="Login help">
+          <CommonTooltip title="Log in help">
             <p>The app comes with a predefined user:</p>
             <p>Email: admin@example.com</p>
             <p>Password: admin123</p>
@@ -84,6 +85,7 @@ function LoginForm({ redirectTo }: LoginFormProps) {
           type="submit"
           className="mt-4 w-full"
           disabled={loginMutation.isPending}
+          title="Log in"
         >
           {loginMutation.isPending ? <Spinner /> : 'Login'}
         </Button>
