@@ -51,8 +51,9 @@ export const authHandlers = [
     try {
       const { user } = requireAuth(cookies)
 
-      if (!user)
+      if (!user) {
         return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+      }
 
       return HttpResponse.json({ data: user })
     } catch (error: any) {

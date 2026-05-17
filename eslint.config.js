@@ -19,12 +19,7 @@ export default defineConfig([
       'check-file': checkFile,
     },
   },
-  globalIgnores([
-    'dist',
-    'node_modules',
-    'coverage',
-    'generators/*',
-  ]),
+  globalIgnores(['dist', 'node_modules', 'coverage', 'generators/*']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -64,7 +59,7 @@ export default defineConfig([
       },
     },
     rules: {
-      curly: ['error', 'multi'],
+      curly: ['error', 'all'],
       'linebreak-style': ['error', 'unix'],
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',

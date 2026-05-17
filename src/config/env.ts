@@ -30,7 +30,9 @@ const createEnv = () => {
   const envVars = mapEnvToClient(import.meta.env)
   const parsedEnv = EnvSchema.safeParse(envVars)
 
-  if (!parsedEnv.success) throw new EnvError(parsedEnv.error)
+  if (!parsedEnv.success) {
+    throw new EnvError(parsedEnv.error)
+  }
 
   return parsedEnv.data
 }

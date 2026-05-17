@@ -23,8 +23,9 @@ type AppLayoutProps = {
 function AppLayout({ children }: AppLayoutProps) {
   const { user, isLoading, logout } = useUser()
 
-  if (!user && !isLoading)
+  if (!user && !isLoading) {
     return <Navigate to={paths.auth.login.getHref(window.location.pathname)} />
+  }
 
   return (
     <SidebarProvider>

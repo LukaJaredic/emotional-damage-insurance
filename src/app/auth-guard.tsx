@@ -11,11 +11,13 @@ type AuthGuardProps = {
 function AuthGuard({ children, shouldHaveUser = true }: AuthGuardProps) {
   const { user, isLoading } = useUser()
 
-  if (shouldHaveUser && !user && !isLoading)
+  if (shouldHaveUser && !user && !isLoading) {
     return <Navigate to={paths.auth.login.getHref(window.location.pathname)} />
+  }
 
-  if (!shouldHaveUser && user && !isLoading)
+  if (!shouldHaveUser && user && !isLoading) {
     return <Navigate to={paths.root.getHref()} replace />
+  }
 
   return children
 }

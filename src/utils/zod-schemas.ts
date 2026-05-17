@@ -9,11 +9,12 @@ export function requiredString(minLength?: number, maxLength?: number) {
       `Field must be at least ${minLength ?? 1} characters long`,
     )
 
-  if (maxLength)
+  if (maxLength) {
     schema = schema.max(
       maxLength,
       `Field must be at most ${maxLength} characters long`,
     )
+  }
 
   return schema
 }

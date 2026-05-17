@@ -53,8 +53,11 @@ const initializeUser = (user: any) => {
   if (typeof user === 'undefined') {
     const newUser = createUser()
     return loginAsUser(newUser)
-  } else if (user) return loginAsUser(user)
-  else return null
+  } else if (user) {
+    return loginAsUser(user)
+  } else {
+    return null
+  }
 }
 
 type RenderOptionsProps = {

@@ -35,7 +35,9 @@ function getDefaultData() {
 }
 
 export const loadDb = async () => {
-  if (process.env.NODE_ENV === 'test') return getDefaultData()
+  if (process.env.NODE_ENV === 'test') {
+    return getDefaultData()
+  }
 
   const { readFile, writeFile } = await import('fs/promises')
 
@@ -55,14 +57,18 @@ export const loadDb = async () => {
 }
 
 export const storeDb = async (data: string) => {
-  if (process.env.NODE_ENV === 'test') return
+  if (process.env.NODE_ENV === 'test') {
+    return
+  }
 
   const { writeFile } = await import('fs/promises')
   await writeFile(dbFilePath, data)
 }
 
 export const persistDb = async (model: Model) => {
-  if (process.env.NODE_ENV === 'test') return
+  if (process.env.NODE_ENV === 'test') {
+    return
+  }
 
   const data = await loadDb()
   data[model] = db[model].getAll()
@@ -75,16 +81,19 @@ export const initializeDb = async () => {
   Object.entries(db).forEach(([key, model]) => {
     const dataEntries = database[key] as Array<Record<string, any>> | undefined
 
-    if (dataEntries)
+    if (dataEntries) {
       dataEntries.forEach((entry) => {
         model.create(entry)
       })
+    }
   })
 
   if (db.user.getAll().length === 0) {
     const defaultUser = getDefaultData().user[0]
 
-    if (!defaultUser) return
+    if (!defaultUser) {
+      return
+    }
 
     db.user.create(defaultUser)
     persistDb('user')
