@@ -33,6 +33,16 @@ The current codebase includes authentication, protected routing, shared UI primi
 - Node.js (v24 recommended)
 - npm
 
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```bash
+VITE_APP_API_URL=http://localhost:8080/api
+VITE_APP_APP_URL=http://localhost:5173
+VITE_APP_MOCK_API_PORT=8080
+```
+
 ```bash
 # Check dependencies before installing
 npm audit
