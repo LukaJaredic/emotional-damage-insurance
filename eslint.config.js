@@ -19,13 +19,7 @@ export default defineConfig([
       'check-file': checkFile,
     },
   },
-  globalIgnores([
-    'dist',
-    'node_modules',
-    'coverage',
-    'public/mockServiceWorker.js',
-    'generators/*',
-  ]),
+  globalIgnores(['dist', 'node_modules', 'coverage', 'generators/*']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -65,6 +59,7 @@ export default defineConfig([
       },
     },
     rules: {
+      curly: ['error', 'all'],
       'linebreak-style': ['error', 'unix'],
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
@@ -81,9 +76,16 @@ export default defineConfig([
               target: './src/features',
               from: './src/app',
             },
+            {
+              target: sharedDirectories.map(
+                (directory) => `./src/${directory}`,
+              ),
+              from: './src/app',
+              except: ['./providers'],
+            },
             ...sharedDirectories.map((directory) => ({
               target: `./src/${directory}`,
-              from: ['./src/features', './src/app'],
+              from: './src/features',
             })),
           ],
         },

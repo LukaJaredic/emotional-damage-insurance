@@ -68,7 +68,6 @@ src/features/awesome-feature/
 ├── api/         # API calls and hooks for this feature
 ├── components/  # Feature-specific components
 ├── hooks/       # Feature-specific hooks
-├── stores/      # Feature-specific state
 ├── types/       # Feature-specific types
 └── utils/       # Feature-specific utilities
 ```
@@ -187,7 +186,6 @@ export const useDiscussions = (params: GetDiscussionsParams) => {
 ### Authentication
 
 - **JWT tokens** stored in HttpOnly cookies (preferred) or localStorage
-- **React Query Auth** for user state management
 - Automatic token refresh handling
 
 ### Authorization
@@ -288,7 +286,7 @@ export const useDiscussions = (params: GetDiscussionsParams) => {
 ### Data & State
 
 - **TanStack Query** for server state
-- **Context API** for client state
+- **Context API** for shared client state
 - **React Hook Form + Zod** for forms
 
 ### Testing & Development
@@ -296,7 +294,6 @@ export const useDiscussions = (params: GetDiscussionsParams) => {
 - **Vitest** for unit/integration tests
 - **Playwright** for E2E tests
 - **MSW** for API mocking
-- **Storybook** for component development
 
 ## Common Patterns
 

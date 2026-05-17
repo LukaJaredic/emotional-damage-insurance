@@ -1,23 +1,8 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
-    "paths": {
-      "@/*": ["src/*"],
-      "@app/*": ["src/app/*"],
-      "@components/*": ["src/components/*"],
-      "@config/*": ["src/config/*"],
-      "@features/*": ["src/features/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@lib/*": ["src/lib/*"],
-      "@testing/*": ["src/testing/*"],
-      "@types/*": ["src/types/*"],
-      "@utils/*": ["src/utils/*"]
-    }
-  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.test.json" }
   ]
 }

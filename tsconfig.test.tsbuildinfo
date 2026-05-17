@@ -1,0 +1,1 @@
+{"root":["./src/features/auth/components/login-form.test.tsx","./src/testing/setup.ts","./src/testing/mocks/db.ts","./src/testing/mocks/server.ts","./src/testing/mocks/utils.ts","./src/testing/mocks/handlers/auth.ts","./src/testing/mocks/handlers/index.ts"],"version":"6.0.3"}

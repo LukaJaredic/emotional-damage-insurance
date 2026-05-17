@@ -1,24 +1,13 @@
-import Cookies from 'js-cookie'
 import { delay } from 'msw'
 
 import { db } from './db'
 
 export const encode = (obj: any) => {
-  const btoa =
-    typeof window === 'undefined'
-      ? (str: string) => Buffer.from(str, 'binary').toString('base64')
-      : window.btoa
-
-  return btoa(JSON.stringify(obj))
+  return Buffer.from(JSON.stringify(obj), 'binary').toString('base64')
 }
 
 export const decode = (str: string) => {
-  const atob =
-    typeof window === 'undefined'
-      ? (str: string) => Buffer.from(str, 'base64').toString('binary')
-      : window.atob
-
-  return JSON.parse(atob(str))
+  return JSON.parse(Buffer.from(str, 'base64').toString('binary'))
 }
 
 export const hash = (str: string) => {
@@ -28,14 +17,12 @@ export const hash = (str: string) => {
   while (i) {
     hash = (hash * 33) ^ str.charCodeAt(--i)
   }
+
   return String(hash >>> 0)
 }
 
 export const networkDelay = () => {
-  const delayTime = import.meta.env.TEST
-    ? 200
-    : Math.floor(Math.random() * 700) + 300
-  return delay(delayTime)
+  return delay(200)
 }
 
 const omit = <T extends object>(obj: T, keys: string[]): T => {
@@ -73,18 +60,19 @@ export function authenticate({
     return { user: sanitizedUser, jwt: encodedToken }
   }
 
-  const error = new Error('Invalid username or password')
-  throw error
+  throw new Error('Invalid email or password')
 }
 
 export const AUTH_COOKIE = `token`
 
 export function requireAuth(cookies: Record<string, string>) {
   try {
-    const encodedToken = cookies[AUTH_COOKIE] || Cookies.get(AUTH_COOKIE)
+    const encodedToken = cookies[AUTH_COOKIE]
+
     if (!encodedToken) {
       return { error: 'Unauthorized', user: null }
     }
+
     const decodedToken = decode(encodedToken) as { id: string }
 
     const user = db.user.findFirst({

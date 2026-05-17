@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
@@ -20,6 +20,15 @@ export default defineConfig({
       '@testing': fileURLToPath(new URL('./src/testing', import.meta.url)),
       '@types': fileURLToPath(new URL('./src/types', import.meta.url)),
       '@utils': fileURLToPath(new URL('./src/utils', import.meta.url)),
+    },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/testing/setup.ts',
+    exclude: ['**/node_modules/**', '**/e2e/**'],
+    coverage: {
+      include: ['src/**'],
     },
   },
 })

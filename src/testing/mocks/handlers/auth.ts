@@ -17,7 +17,7 @@ export const authHandlers = [
       const credentials = (await request.json()) as LoginBody
       const result = authenticate(credentials)
 
-      return HttpResponse.json(result, {
+      return HttpResponse.json(result.user, {
         headers: {
           'Set-Cookie': `${AUTH_COOKIE}=${result.jwt}; Path=/;`,
         },
@@ -25,7 +25,9 @@ export const authHandlers = [
     } catch (error: any) {
       return HttpResponse.json(
         { message: error?.message || 'Server Error' },
-        { status: 500 },
+        {
+          status: error?.message === 'Invalid email or password' ? 401 : 500,
+        },
       )
     }
   }),
@@ -48,6 +50,11 @@ export const authHandlers = [
 
     try {
       const { user } = requireAuth(cookies)
+
+      if (!user) {
+        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+      }
+
       return HttpResponse.json({ data: user })
     } catch (error: any) {
       return HttpResponse.json(
