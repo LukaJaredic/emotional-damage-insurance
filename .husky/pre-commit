@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+. "$(dirname "$0")/lib/helpers.sh"
+
+log_info "Running pre-commit hooks..."
+
+run_step "Lint staged files" "npm run lint"
+
+run_step "Format code" "npm run format"
+
