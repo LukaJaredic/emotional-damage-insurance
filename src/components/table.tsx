@@ -27,6 +27,7 @@ type TableProps<T> = {
   rows: T[]
   columns: TableColumn<T>[]
   className?: string
+  onEndReached?: (lastIndex: number) => void
 }
 
 const DEFAULT_COLUMN_WIDTH = 100
@@ -119,7 +120,7 @@ function FixedHeader<T>({
             onClick={() => toggleExpandedColumn(index)}
             className={cn(
               'cursor-pointer transition-all duration-300 ease-in-out',
-              expanded && 'bg-primary text-foreground whitespace-normal',
+              expanded && 'bg-primary text-foreground',
             )}
             style={{ width, minWidth: width, maxWidth: width }}
           >
@@ -163,10 +164,7 @@ function RowItems<T>({ row, columns, isColumnExpanded }: RowItemsProps<T>) {
     return (
       <UITableCell
         key={String(column.dataIndex)}
-        className={cn(
-          'transition-all duration-300 ease-in-out',
-          expanded && 'whitespace-normal',
-        )}
+        className={'transition-all duration-300 ease-in-out'}
         style={{ width, minWidth: width, maxWidth: width }}
       >
         <div className={cn(expanded ? 'whitespace-normal' : 'truncate')}>
@@ -183,6 +181,7 @@ function Table<T extends Record<string, unknown>>({
   rows,
   columns,
   className,
+  onEndReached = (lastIndex) => void lastIndex,
 }: TableProps<T>) {
   const [expandedColumns, setExpandedColumns] = useState<Set<number>>(new Set())
 
@@ -212,6 +211,7 @@ function Table<T extends Record<string, unknown>>({
       <TableVirtuoso
         data={rows}
         style={{ height: '100%' }}
+        endReached={onEndReached}
         components={virtuosoTableComponents}
         fixedHeaderContent={() => (
           <FixedHeader
