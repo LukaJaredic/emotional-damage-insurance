@@ -36,3 +36,6 @@ dist-ssr
 
 # Misc
 mocked-db*json
+
+# File for testing and local development
+scrap.tsx

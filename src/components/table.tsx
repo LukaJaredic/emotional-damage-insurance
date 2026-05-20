@@ -8,9 +8,11 @@ import { TableVirtuoso, type TableComponents } from 'react-virtuoso'
 
 import { cn } from '@/lib/utils'
 
+import Spinner from './spinner'
 import {
   Table as UITable,
   TableBody as UITableBody,
+  TableCaption as UITableCaption,
   TableCell as UITableCell,
   TableHead as UITableHead,
   TableHeader as UITableHeader,
@@ -24,10 +26,18 @@ type TableColumn<T> = {
 }
 
 type TableProps<T> = {
+  caption: string
   rows: T[]
   columns: TableColumn<T>[]
+  isLoading?: boolean
   className?: string
   onEndReached?: (lastIndex: number) => void
+}
+
+type TableContext = {
+  caption: string
+  isLoading: boolean
+  rowCount: number
 }
 
 const DEFAULT_COLUMN_WIDTH = 100
@@ -59,39 +69,58 @@ function getColumnWidth(isExpanded: boolean) {
 
 const VirtuosoTableHead = React.forwardRef<
   HTMLTableSectionElement,
-  React.ComponentProps<'thead'>
->(({ children, style }, ref) => (
-  <UITableHeader ref={ref} style={style}>
-    {children}
-  </UITableHeader>
-))
+  React.ComponentProps<'thead'> & { context?: TableContext }
+>(({ children, style, context }, ref) => {
+  void context
+
+  return (
+    <UITableHeader ref={ref} style={style}>
+      {children}
+    </UITableHeader>
+  )
+})
 
 VirtuosoTableHead.displayName = 'VirtuosoTableHead'
 
 const VirtuosoTableBody = React.forwardRef<
   HTMLTableSectionElement,
-  React.ComponentProps<'tbody'>
->(({ children, className, style, ...props }, ref) => (
-  <UITableBody ref={ref} className={className} style={style} {...props}>
-    {children}
-  </UITableBody>
-))
+  React.ComponentProps<'tbody'> & { context?: TableContext }
+>(({ children, className, style, context, ...props }, ref) => {
+  void context
+
+  return (
+    <UITableBody ref={ref} className={className} style={style} {...props}>
+      {children}
+    </UITableBody>
+  )
+})
 
 VirtuosoTableBody.displayName = 'VirtuosoTableBody'
 
-const virtuosoTableComponents: TableComponents<unknown> = {
-  Table: ({ children, style }) => (
-    <UITable className="w-max min-w-full" style={style}>
+const virtuosoTableComponents: TableComponents<unknown, TableContext> = {
+  Table: ({ children, style, context }) => (
+    <UITable
+      aria-busy={context.isLoading}
+      aria-rowcount={context.rowCount}
+      className="w-max min-w-full"
+      style={style}
+    >
+      <UITableCaption className="sr-only">{context.caption}</UITableCaption>
       {children}
     </UITable>
   ),
   TableHead: VirtuosoTableHead,
   TableBody: VirtuosoTableBody,
-  TableRow: ({ children, item, ...props }) => {
+  TableRow: ({ children, item, context, ...props }) => {
     // don't spread it over the row
     void item
+    void context
 
-    return <UITableRow {...props}>{children}</UITableRow>
+    return (
+      <UITableRow aria-rowindex={props['data-index'] + 1} {...props}>
+        {children}
+      </UITableRow>
+    )
   },
 }
 
@@ -113,18 +142,26 @@ function FixedHeader<T>({
       {columns.map((column, index) => {
         const expanded = isColumnExpanded(index)
         const width = getColumnWidth(expanded)
+        const expandCollapseLabel = `Expand/Collapse ${column.title} column`
 
+        // All <th> can expand/collapse, and will control their respective column.
         return (
           <UITableHead
             key={String(column.dataIndex)}
-            onClick={() => toggleExpandedColumn(index)}
             className={cn(
-              'cursor-pointer transition-all duration-300 ease-in-out',
+              'p-0 transition-all duration-300 ease-in-out',
               expanded && 'bg-primary text-foreground',
             )}
             style={{ width, minWidth: width, maxWidth: width }}
           >
-            <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-expanded={expanded}
+              aria-label={expandCollapseLabel}
+              title={expandCollapseLabel}
+              onClick={() => toggleExpandedColumn(index)}
+              className="focus-visible:ring-ring flex h-full w-full cursor-pointer items-center gap-2 px-4 py-2 text-left outline-none focus-visible:ring-2"
+            >
               <span
                 className={cn(
                   'flex-1',
@@ -135,11 +172,11 @@ function FixedHeader<T>({
               </span>
 
               {expanded ? (
-                <ArrowsInLineHorizontalIcon />
+                <ArrowsInLineHorizontalIcon aria-hidden="true" />
               ) : (
-                <ArrowsOutLineHorizontalIcon />
+                <ArrowsOutLineHorizontalIcon aria-hidden="true" />
               )}
-            </div>
+            </button>
           </UITableHead>
         )
       })}
@@ -178,8 +215,10 @@ function RowItems<T>({ row, columns, isColumnExpanded }: RowItemsProps<T>) {
 // Main component
 
 function Table<T extends Record<string, unknown>>({
+  caption,
   rows,
   columns,
+  isLoading = false,
   className,
   onEndReached = (lastIndex) => void lastIndex,
 }: TableProps<T>) {
@@ -209,10 +248,34 @@ function Table<T extends Record<string, unknown>>({
       )}
     >
       <TableVirtuoso
+        context={{ caption, isLoading, rowCount: rows.length }}
         data={rows}
+        totalCount={rows.length}
         style={{ height: '100%' }}
         endReached={onEndReached}
         components={virtuosoTableComponents}
+        fixedFooterContent={() => {
+          if (!isLoading) {
+            return null
+          }
+
+          return (
+            <UITableRow>
+              <UITableCell colSpan={columns.length} className="p-4 text-center">
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className="flex items-center justify-center"
+                >
+                  <span aria-hidden="true">
+                    <Spinner />
+                  </span>
+                  <span className="sr-only">Loading more rows</span>
+                </div>
+              </UITableCell>
+            </UITableRow>
+          )
+        }}
         fixedHeaderContent={() => (
           <FixedHeader
             columns={columns}

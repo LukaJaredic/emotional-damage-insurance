@@ -31,10 +31,15 @@ const columns: TableColumn<DemoRow>[] = [
   },
 ]
 
-function renderTable() {
+function renderTable(props = { isLoading: false }) {
   return render(
     <div className="h-96">
-      <Table rows={rows} columns={columns} />
+      <Table
+        caption="Clients table"
+        rows={rows}
+        columns={columns}
+        isLoading={props.isLoading}
+      />
     </div>,
     {
       wrapper: ({ children }) => (
@@ -56,6 +61,18 @@ function getHeaderCell(dataIndex: keyof DemoRow) {
   }
 
   return screen.getByRole('columnheader', { name: column.title })
+}
+
+function getHeaderToggle(dataIndex: keyof DemoRow) {
+  const column = columns.find((col) => col.dataIndex === dataIndex)
+
+  if (!column) {
+    throw new Error(`Column with dataIndex "${dataIndex}" not found`)
+  }
+
+  return screen.getByRole('button', {
+    name: `Expand/Collapse ${column.title} column`,
+  })
 }
 
 function getTableCell(dataIndex: keyof DemoRow, index = 0) {
@@ -120,7 +137,7 @@ describe('Table', () => {
   it('should expand a column', async () => {
     renderTable()
 
-    await userEvent.click(getHeaderCell('email'))
+    await userEvent.click(getHeaderToggle('email'))
 
     expectCellsToHaveStyle('email', {
       width: '300px',
@@ -134,8 +151,8 @@ describe('Table', () => {
   it('should collapse a column', async () => {
     renderTable()
 
-    await userEvent.click(getHeaderCell('email'))
-    await userEvent.click(getHeaderCell('email'))
+    await userEvent.click(getHeaderToggle('email'))
+    await userEvent.click(getHeaderToggle('email'))
 
     expectCellsToHaveStyle('email', {
       width: '100px',
@@ -144,5 +161,35 @@ describe('Table', () => {
     })
 
     expectCellsContentToHaveClass('email', 'truncate')
+  })
+
+  describe('accessibility', () => {
+    it('should expose accessible expand/collapse metadata on header toggle', () => {
+      renderTable()
+
+      const toggle = getHeaderToggle('email')
+
+      expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      expect(toggle).toHaveAttribute('title', 'Expand/Collapse Email column')
+    })
+
+    it('should expose caption and row count on the table', () => {
+      renderTable()
+
+      const table = screen.getByRole('table', { name: 'Clients table' })
+
+      expect(table).toHaveAttribute('aria-rowcount', '1')
+      expect(screen.getByText('Clients table')).toHaveClass('sr-only')
+    })
+
+    it('should expose loading state and loading footer', () => {
+      renderTable({ isLoading: true })
+
+      expect(
+        screen.getByRole('table', { name: 'Clients table' }),
+      ).toHaveAttribute('aria-busy', 'true')
+      expect(screen.getByRole('status')).toHaveTextContent('Loading more rows')
+      expect(screen.getByTitle('Loading...')).toBeInTheDocument()
+    })
   })
 })

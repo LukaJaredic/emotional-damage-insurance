@@ -1,5 +1,7 @@
+import Scrap from '@/components/scrap'
+
 function HomePage() {
-  return 'HOME PAGE PLACEHOLDER'
+  return <Scrap />
 }
 
 export default HomePage
