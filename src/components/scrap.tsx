@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import List from './list/list'
-import Table from './table/table'
+import DataView from './data-view/data-view'
 import type { TableColumn } from './table/table.types'
 import Button from './ui/button'
 
@@ -52,7 +51,6 @@ function onEndReached(lastIndex: number) {
 }
 
 function Scrap() {
-  const [view, setView] = useState<'table' | 'list'>('table')
   const [isLoading, setIsLoading] = useState(false)
   const [virtualized, setVirtualized] = useState(false)
 
@@ -63,28 +61,12 @@ function Scrap() {
           Virtualized Data Views
         </h1>
         <p className="text-muted-foreground max-w-2xl text-sm">
-          Demo of the generic list and table components rendering 20 claim rows
-          with a custom status cell.
+          Demo of the responsive data view component rendering 20 claim rows as
+          a table on desktop and a list on smaller screens.
         </p>
       </div>
 
       <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          aria-pressed={view === 'table'}
-          onClick={() => setView('table')}
-        >
-          Table
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          aria-pressed={view === 'list'}
-          onClick={() => setView('list')}
-        >
-          List
-        </Button>
         <Button
           type="button"
           variant="outline"
@@ -104,36 +86,27 @@ function Scrap() {
       </div>
 
       <div className="h-128 overflow-hidden">
-        {view === 'table' ? (
-          <Table
-            rows={demoRows}
-            columns={demoColumns}
-            caption="Claims overview table"
-            isLoading={isLoading}
-            virtualized={virtualized}
-            onEndReached={onEndReached}
-          />
-        ) : (
-          <List
-            items={demoRows}
-            virtualized={virtualized}
-            isLoading={isLoading}
-            onEndReached={onEndReached}
-            itemContent={(_, row) => (
-              <article className="rounded-xl border p-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="space-y-1">
-                    <h2 className="font-medium">{row.claim}</h2>
-                    <p className="text-muted-foreground text-sm">
-                      {row.policyholder}
-                    </p>
-                  </div>
-                  {renderStatus(row.status)}
+        <DataView
+          items={demoRows}
+          tableColumns={demoColumns}
+          tableCaption="Claims overview table"
+          virtualized={virtualized}
+          isLoading={isLoading}
+          onEndReached={onEndReached}
+          listItemContent={(_, row) => (
+            <article className="rounded-xl border p-4">
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <h2 className="font-medium">{row.claim}</h2>
+                  <p className="text-muted-foreground text-sm">
+                    {row.policyholder}
+                  </p>
                 </div>
-              </article>
-            )}
-          />
-        )}
+                {renderStatus(row.status)}
+              </div>
+            </article>
+          )}
+        />
       </div>
     </section>
   )
