@@ -4,7 +4,7 @@ import { queryKeys } from '@/config/query-keys'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
 
-import type { CreateUserAction } from '../types/users'
+import type { CreateUserAction } from '../types/users.types'
 
 export async function createUser(data: CreateUserAction): Promise<User> {
   const response = await api.post<User>('/users', data)

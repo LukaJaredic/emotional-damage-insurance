@@ -16,7 +16,7 @@ import {
 import { FieldGroup } from '@/components/ui/field'
 
 import { useLogin } from '../api/login'
-import type { LoginFormData } from '../types/login'
+import type { LoginFormData } from '../types/login.types'
 import { loginSchema } from '../utils/login'
 
 type LoginFormProps = {

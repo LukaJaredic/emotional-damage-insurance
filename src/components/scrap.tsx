@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import List from './list'
-import type { TableColumn } from './table'
-import Table from './table'
+import List from './list/list'
+import Table from './table/table'
+import type { TableColumn } from './table/table.types'
 import Button from './ui/button'
 
 type DemoRow = {
@@ -45,6 +45,10 @@ function renderStatus(status: string) {
       {status}
     </Link>
   )
+}
+
+function onEndReached(lastIndex: number) {
+  alert('end reached ' + lastIndex)
 }
 
 function Scrap() {
@@ -106,12 +110,15 @@ function Scrap() {
             columns={demoColumns}
             caption="Claims overview table"
             isLoading={isLoading}
+            virtualized={virtualized}
+            onEndReached={onEndReached}
           />
         ) : (
           <List
-            virtualized={virtualized}
             items={demoRows}
+            virtualized={virtualized}
             isLoading={isLoading}
+            onEndReached={onEndReached}
             itemContent={(_, row) => (
               <article className="rounded-xl border p-4">
                 <div className="flex items-start justify-between gap-4">

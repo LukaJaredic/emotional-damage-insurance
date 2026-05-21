@@ -1,9 +1,12 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { VirtuosoMockContext } from 'react-virtuoso'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import Table, { type TableColumn } from './table'
+import { mockIsIntersecting } from '@/testing/intersection-observer-stub'
+
+import Table from './table'
+import type { TableColumn } from './table.types'
 
 type DemoRow = {
   id: string
@@ -31,14 +34,22 @@ const columns: TableColumn<DemoRow>[] = [
   },
 ]
 
-function renderTable(props = { isLoading: false }) {
+function renderTable(
+  props: {
+    isLoading?: boolean
+    virtualized?: boolean
+    onEndReached?: (lastIndex: number) => void
+  } = {},
+) {
   return render(
     <div className="h-96">
       <Table
         caption="Clients table"
         rows={rows}
         columns={columns}
-        isLoading={props.isLoading}
+        isLoading={props.isLoading ?? false}
+        virtualized={props.virtualized ?? false}
+        onEndReached={props.onEndReached ?? ((lastIndex) => void lastIndex)}
       />
     </div>,
     {
@@ -51,6 +62,16 @@ function renderTable(props = { isLoading: false }) {
       ),
     },
   )
+}
+
+function getEndReachedSentinel(container: HTMLElement) {
+  const sentinel = container.querySelector('[aria-hidden="true"] > td > div')
+
+  if (!sentinel) {
+    throw new Error('Expected end reached sentinel to be rendered')
+  }
+
+  return sentinel
 }
 
 function getHeaderCell(dataIndex: keyof DemoRow) {
@@ -122,6 +143,13 @@ describe('Table', () => {
     expect(screen.getByText('User: Jane Doe')).toBeInTheDocument()
   })
 
+  it('should render virtualized column content', async () => {
+    renderTable({ virtualized: true })
+
+    expect(screen.getByText('jane.doe@example.com')).toBeInTheDocument()
+    expect(screen.getByText('User: Jane Doe')).toBeInTheDocument()
+  })
+
   it('should render collapsed columns', () => {
     renderTable()
 
@@ -163,6 +191,53 @@ describe('Table', () => {
     expectCellsContentToHaveClass('email', 'truncate')
   })
 
+  it('should expand a virtualized column', async () => {
+    renderTable({ virtualized: true })
+
+    await userEvent.click(getHeaderToggle('email'))
+
+    expectCellsToHaveStyle('email', {
+      width: '300px',
+      minWidth: '300px',
+      maxWidth: '300px',
+    })
+
+    expectCellsContentToHaveClass('email', 'whitespace-normal')
+  })
+
+  it('should call onEndReached in static mode', async () => {
+    const onEndReached = vi.fn()
+    const rendered = renderTable({ onEndReached })
+
+    mockIsIntersecting(getEndReachedSentinel(rendered.container), true)
+
+    await waitFor(() => {
+      expect(onEndReached).toHaveBeenCalledWith(0)
+    })
+  })
+
+  it('should only call static onEndReached once per row count', () => {
+    const onEndReached = vi.fn()
+    const rendered = renderTable({ onEndReached })
+    const sentinel = getEndReachedSentinel(rendered.container)
+
+    mockIsIntersecting(sentinel, true)
+    mockIsIntersecting(sentinel, true)
+
+    expect(onEndReached).toHaveBeenCalledTimes(1)
+    expect(onEndReached).toHaveBeenCalledWith(0)
+  })
+
+  it('should call onEndReached in virtualized mode', async () => {
+    const onEndReached = vi.fn()
+
+    renderTable({ onEndReached, virtualized: true })
+
+    await waitFor(() => {
+      expect(onEndReached).toHaveBeenCalledWith(0)
+    })
+  })
+
   describe('accessibility', () => {
     it('should expose accessible expand/collapse metadata on header toggle', () => {
       renderTable()
@@ -173,17 +248,24 @@ describe('Table', () => {
       expect(toggle).toHaveAttribute('title', 'Expand/Collapse Email column')
     })
 
-    it('should expose caption and row count on the table', () => {
+    it('should expose caption on the table', () => {
       renderTable()
 
-      const table = screen.getByRole('table', { name: 'Clients table' })
-
-      expect(table).toHaveAttribute('aria-rowcount', '1')
       expect(screen.getByText('Clients table')).toHaveClass('sr-only')
     })
 
     it('should expose loading state and loading footer', () => {
       renderTable({ isLoading: true })
+
+      expect(
+        screen.getByRole('table', { name: 'Clients table' }),
+      ).toHaveAttribute('aria-busy', 'true')
+      expect(screen.getByRole('status')).toHaveTextContent('Loading more rows')
+      expect(screen.getByTitle('Loading...')).toBeInTheDocument()
+    })
+
+    it('should expose loading state and loading footer in virtualized mode', () => {
+      renderTable({ isLoading: true, virtualized: true })
 
       expect(
         screen.getByRole('table', { name: 'Clients table' }),

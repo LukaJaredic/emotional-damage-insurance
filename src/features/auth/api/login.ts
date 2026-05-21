@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
 
-import type { LoginAction } from '../types/login'
+import type { LoginAction } from '../types/login.types'
 import { onSuccessfulLogin } from '../utils/login'
 
 async function login(data: LoginAction): Promise<User> {

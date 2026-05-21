@@ -4,7 +4,7 @@ import { queryKeys } from '@/config/query-keys'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
 
-import type { GetUserQuery } from '../types/users'
+import type { GetUserQuery } from '../types/users.types'
 
 export async function getUser({ userId }: GetUserQuery): Promise<User> {
   const response = await api.get<User>(`/users/${userId}`)

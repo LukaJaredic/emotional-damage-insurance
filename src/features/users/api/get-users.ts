@@ -4,7 +4,7 @@ import { queryKeys } from '@/config/query-keys'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
 
-import type { GetUsersQuery } from '../types/users'
+import type { GetUsersQuery } from '../types/users.types'
 
 export async function getUsers(params: GetUsersQuery): Promise<User[]> {
   const response = await api.get<User[]>('/users', { params })

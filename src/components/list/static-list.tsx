@@ -1,9 +1,8 @@
-import * as React from 'react'
-
+import useEndReachedObserver from '@/hooks/use-end-reached-observer'
 import { cn } from '@/lib/utils'
+import Spinner from '@components/spinner'
 
 import type { BaseListProps, ListItemWithOptionalId } from './list.types'
-import Spinner from './spinner'
 
 function StaticList<T>({
   items,
@@ -12,34 +11,10 @@ function StaticList<T>({
   className,
   onEndReached = (lastIndex) => void lastIndex,
 }: BaseListProps<T>) {
-  const endReachedRef = React.useRef<HTMLDivElement>(null)
-  const lastEmittedIndexRef = React.useRef<number | null>(null)
-
-  React.useEffect(() => {
-    const element = endReachedRef.current
-    const lastIndex = items.length - 1
-
-    if (!element || lastIndex < 0) {
-      return
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      if (!entries[0]?.isIntersecting) {
-        return
-      }
-
-      if (lastEmittedIndexRef.current === lastIndex) {
-        return
-      }
-
-      lastEmittedIndexRef.current = lastIndex
-      onEndReached(lastIndex)
-    })
-
-    observer.observe(element)
-
-    return () => observer.disconnect()
-  }, [items.length, onEndReached])
+  const endReachedRef = useEndReachedObserver({
+    itemCount: items.length,
+    onEndReached,
+  })
 
   return (
     <ul

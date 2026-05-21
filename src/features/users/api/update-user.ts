@@ -4,7 +4,7 @@ import { queryKeys } from '@/config/query-keys'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
 
-import type { UpdateUserAction } from '../types/users'
+import type { UpdateUserAction } from '../types/users.types'
 
 export async function updateUser({
   userId,

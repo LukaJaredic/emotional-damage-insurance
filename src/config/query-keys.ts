@@ -1,4 +1,4 @@
-import type { GetUsersQuery } from '@/features/users/types/users'
+import type { GetUsersQuery } from '@/features/users/types/users.types'
 
 export const queryKeys = {
   auth: {

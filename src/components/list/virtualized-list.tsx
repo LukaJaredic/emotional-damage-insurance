@@ -6,8 +6,9 @@ import {
   type ListProps as VirtuosoListProps,
 } from 'react-virtuoso'
 
+import Spinner from '@components/spinner'
+
 import type { BaseListProps } from './list.types'
-import Spinner from './spinner'
 
 type ListContext = {
   isLoading: boolean
