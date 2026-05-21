@@ -52,7 +52,9 @@ function onEndReached(lastIndex: number) {
 
 function Scrap() {
   const [isLoading, setIsLoading] = useState(false)
+  const [showEmptyState, setShowEmptyState] = useState(false)
   const [virtualized, setVirtualized] = useState(false)
+  const visibleRows = showEmptyState ? [] : demoRows
 
   return (
     <section className="space-y-6">
@@ -83,15 +85,25 @@ function Scrap() {
         >
           {virtualized ? 'Disable virtualization' : 'Enable virtualization'}
         </Button>
+        <Button
+          type="button"
+          variant="outline"
+          aria-pressed={showEmptyState}
+          onClick={() => setShowEmptyState((current) => !current)}
+        >
+          {showEmptyState ? 'Show demo rows' : 'Show empty state'}
+        </Button>
       </div>
 
       <div className="h-128 overflow-hidden">
         <DataView
-          items={demoRows}
+          items={visibleRows}
           tableColumns={demoColumns}
           tableCaption="Claims overview table"
           virtualized={virtualized}
           isLoading={isLoading}
+          loadingContent="Loading claims..."
+          emptyContent="No claims found"
           onEndReached={onEndReached}
           listItemContent={(_, row) => (
             <article className="rounded-xl border p-4">

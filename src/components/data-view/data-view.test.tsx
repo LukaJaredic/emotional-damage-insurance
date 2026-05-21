@@ -53,6 +53,8 @@ function renderDataView(props?: Partial<DataViewProps<DemoItem>>) {
         isLoading={props?.isLoading ?? false}
         className={props?.className ?? ''}
         onEndReached={props?.onEndReached ?? ((lastIndex) => void lastIndex)}
+        emptyContent={props?.emptyContent ?? ''}
+        loadingContent={props?.loadingContent ?? ''}
       />
     </div>,
     {
@@ -85,5 +87,29 @@ describe('DataView', () => {
 
     expect(screen.getByRole('list')).toBeInTheDocument()
     expect(screen.getByText('Jane Doe')).toBeInTheDocument()
+  })
+
+  it('renders loading state', () => {
+    mockedUseMediaQuery.mockReturnValue(true)
+
+    renderDataView({
+      items: [],
+      isLoading: true,
+      loadingContent: 'Loading claims...',
+    })
+
+    expect(screen.getByText('Loading claims...')).toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.queryByRole('list')).not.toBeInTheDocument()
+  })
+
+  it('renders empty state', () => {
+    mockedUseMediaQuery.mockReturnValue(false)
+
+    renderDataView({ items: [], emptyContent: 'No claims found' })
+
+    expect(screen.getByText('No claims found')).toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.queryByRole('list')).not.toBeInTheDocument()
   })
 })

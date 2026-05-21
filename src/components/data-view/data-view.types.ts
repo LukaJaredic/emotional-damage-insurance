@@ -7,6 +7,8 @@ type DataViewProps<T extends Record<string, unknown>> = {
   tableColumns: TableColumn<T>[]
   listItemContent: (index: number, item: T) => ReactNode
   tableCaption: string
+  emptyContent?: ReactNode
+  loadingContent?: ReactNode
   virtualized?: boolean
   isLoading?: boolean
   className?: string
