@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { forwardRef, type ComponentProps } from 'react'
 import { TableVirtuoso, type TableComponents } from 'react-virtuoso'
 
 import { cn } from '@/lib/utils'
@@ -20,9 +20,9 @@ type TableContext = {
   rowCount: number
 }
 
-const VirtuosoTableHead = React.forwardRef<
+const VirtuosoTableHead = forwardRef<
   HTMLTableSectionElement,
-  React.ComponentProps<'thead'> & { context?: TableContext }
+  ComponentProps<'thead'> & { context?: TableContext }
 >(({ children, style, context }, ref) => {
   void context
 
@@ -35,9 +35,9 @@ const VirtuosoTableHead = React.forwardRef<
 
 VirtuosoTableHead.displayName = 'VirtuosoTableHead'
 
-const VirtuosoTableBody = React.forwardRef<
+const VirtuosoTableBody = forwardRef<
   HTMLTableSectionElement,
-  React.ComponentProps<'tbody'> & { context?: TableContext }
+  ComponentProps<'tbody'> & { context?: TableContext }
 >(({ children, className, style, context, ...props }, ref) => {
   void context
 

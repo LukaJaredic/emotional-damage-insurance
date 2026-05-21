@@ -1,13 +1,13 @@
-import * as React from 'react'
+import type { Key, ReactNode } from 'react'
 
 type ListItemWithOptionalId = {
-  id?: React.Key
+  id?: Key
 }
 
 // Virtualized or static list props
 type BaseListProps<T> = {
   items: T[]
-  itemContent: (index: number, item: T) => React.ReactNode
+  itemContent: (index: number, item: T) => ReactNode
   isLoading?: boolean
   className?: string
   onEndReached?: (lastIndex: number) => void

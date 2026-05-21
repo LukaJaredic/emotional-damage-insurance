@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useEffect, useRef } from 'react'
 
 type UseEndReachedObserverParams = {
   itemCount: number
@@ -9,10 +9,10 @@ function useEndReachedObserver({
   itemCount,
   onEndReached,
 }: UseEndReachedObserverParams) {
-  const endReachedRef = React.useRef<HTMLDivElement>(null)
-  const lastEmittedIndexRef = React.useRef<number | null>(null)
+  const endReachedRef = useRef<HTMLDivElement>(null)
+  const lastEmittedIndexRef = useRef<number | null>(null)
 
-  React.useEffect(() => {
+  useEffect(() => {
     const element = endReachedRef.current
     const lastIndex = itemCount - 1
 

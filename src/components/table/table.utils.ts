@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { isValidElement, useState } from 'react'
 
 const DEFAULT_COLUMN_WIDTH = 100
 const EXPANDED_COLUMN_WIDTH = 300
@@ -6,7 +6,7 @@ const EXPANDED_COLUMN_WIDTH = 300
 const sharedTableClassName = 'h-full min-h-0 rounded-xl border'
 
 function renderCellValue(value: unknown) {
-  if (React.isValidElement(value)) {
+  if (isValidElement(value)) {
     return value
   }
 
@@ -26,9 +26,7 @@ function getColumnWidth(isExpanded: boolean) {
 }
 
 function useExpandedColumns() {
-  const [expandedColumns, setExpandedColumns] = React.useState<Set<number>>(
-    new Set(),
-  )
+  const [expandedColumns, setExpandedColumns] = useState<Set<number>>(new Set())
 
   function toggleExpandedColumn(index: number) {
     setExpandedColumns((prev) => {

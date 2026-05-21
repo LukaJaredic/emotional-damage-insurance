@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { forwardRef } from 'react'
 import {
   type Components,
   Virtuoso,
@@ -15,7 +15,7 @@ type ListContext = {
   itemCount: number
 }
 
-const VirtuosoList = React.forwardRef<HTMLDivElement, VirtuosoListProps>(
+const VirtuosoList = forwardRef<HTMLDivElement, VirtuosoListProps>(
   (
     {
       children,

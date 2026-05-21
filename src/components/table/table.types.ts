@@ -1,9 +1,9 @@
-import * as React from 'react'
+import type { ReactNode } from 'react'
 
 type TableColumn<T> = {
   dataIndex: keyof T
   title: string
-  render?: (row: T) => React.ReactNode
+  render?: (row: T) => ReactNode
 }
 
 // Virtualized and static table props
