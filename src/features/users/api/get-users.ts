@@ -4,15 +4,15 @@ import { queryKeys } from '@/config/query-keys'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
 
-import type { GetUsersAction } from '../types/users'
+import type { GetUsersQuery } from '../types/users'
 
-export async function getUsers(params: GetUsersAction): Promise<User[]> {
+export async function getUsers(params: GetUsersQuery): Promise<User[]> {
   const response = await api.get<User[]>('/users', { params })
   return response.data
 }
 
 export function useUsers(
-  params: GetUsersAction,
+  params: GetUsersQuery,
   queryOptions?: QueryOptions<User[]>,
 ) {
   return useQuery({
