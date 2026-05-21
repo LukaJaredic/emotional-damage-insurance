@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { VirtuosoMockContext } from 'react-virtuoso'
 import { describe, expect, it, vi } from 'vitest'
@@ -6,7 +6,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { mockIsIntersecting } from '@/testing/intersection-observer-stub'
 
 import Table from './table'
-import type { TableColumn } from './table.types'
+import type { TableProps, TableColumn } from './table.types'
 
 type DemoRow = {
   id: string
@@ -34,23 +34,19 @@ const columns: TableColumn<DemoRow>[] = [
   },
 ]
 
-function renderTable(
-  props: {
-    isLoading?: boolean
-    virtualized?: boolean
-    onEndReached?: (lastIndex: number) => void
-  } = {},
-) {
+function renderTable(props?: Partial<TableProps<DemoRow>>) {
+  const sharedProps = {
+    caption: props?.caption ?? 'Clients table',
+    rows: props?.rows ?? rows,
+    columns: props?.columns ?? columns,
+    isLoading: props?.isLoading ?? false,
+    virtualized: props?.virtualized ?? false,
+    onEndReached: props?.onEndReached ?? ((lastIndex) => void lastIndex),
+  }
+
   return render(
     <div className="h-96">
-      <Table
-        caption="Clients table"
-        rows={rows}
-        columns={columns}
-        isLoading={props.isLoading ?? false}
-        virtualized={props.virtualized ?? false}
-        onEndReached={props.onEndReached ?? ((lastIndex) => void lastIndex)}
-      />
+      <Table {...sharedProps} />
     </div>,
     {
       wrapper: ({ children }) => (
@@ -64,28 +60,8 @@ function renderTable(
   )
 }
 
-function getEndReachedSentinel(container: HTMLElement) {
-  const sentinel = container.querySelector('[aria-hidden="true"] > td > div')
-
-  if (!sentinel) {
-    throw new Error('Expected end reached sentinel to be rendered')
-  }
-
-  return sentinel
-}
-
-function getHeaderCell(dataIndex: keyof DemoRow) {
-  const column = columns.find((col) => col.dataIndex === dataIndex)
-
-  if (!column) {
-    throw new Error(`Column with dataIndex "${dataIndex}" not found`)
-  }
-
-  return screen.getByRole('columnheader', { name: column.title })
-}
-
 function getHeaderToggle(dataIndex: keyof DemoRow) {
-  const column = columns.find((col) => col.dataIndex === dataIndex)
+  const column = columns.find((item) => item.dataIndex === dataIndex)
 
   if (!column) {
     throw new Error(`Column with dataIndex "${dataIndex}" not found`)
@@ -96,151 +72,146 @@ function getHeaderToggle(dataIndex: keyof DemoRow) {
   })
 }
 
-function getTableCell(dataIndex: keyof DemoRow, index = 0) {
-  const column = columns.find((col) => col.dataIndex === dataIndex)
+function getHeaderCell(dataIndex: keyof DemoRow) {
+  const column = columns.find((item) => item.dataIndex === dataIndex)
 
-  if (!column || index >= rows.length) {
-    throw new Error(
-      `Column with dataIndex "${dataIndex}" not found or index out of bounds`,
-    )
+  if (!column) {
+    throw new Error(`Column with dataIndex "${dataIndex}" not found`)
   }
 
-  return screen.getByText(rows[index]![dataIndex]).closest('td')!
+  return screen.getByRole('columnheader', { name: column.title })
 }
 
-function expectCellsToHaveStyle(
-  dataIndex: keyof DemoRow,
-  style: Record<string, string>,
-) {
+function getTableCell(dataIndex: keyof DemoRow, value: string) {
+  const column = columns.find((item) => item.dataIndex === dataIndex)
+
+  if (!column) {
+    throw new Error(`Column with dataIndex "${dataIndex}" not found`)
+  }
+
+  return screen.getByText(value).closest('td')
+}
+
+function expectCollapsedColumn(dataIndex: keyof DemoRow, value: string) {
   const headerCell = getHeaderCell(dataIndex)
-  const bodyCell = getTableCell(dataIndex)
+  const bodyCell = getTableCell(dataIndex, value)
 
-  expect(headerCell).toHaveStyle(style)
-  expect(bodyCell).toHaveStyle(style)
+  expect(headerCell).toHaveStyle({
+    width: '100px',
+    minWidth: '100px',
+    maxWidth: '100px',
+  })
+  expect(bodyCell).toHaveStyle({
+    width: '100px',
+    minWidth: '100px',
+    maxWidth: '100px',
+  })
+  expect(headerCell.querySelector('span')).toHaveClass('truncate')
+  expect(bodyCell?.querySelector('div')).toHaveClass('truncate')
 }
 
-function expectCellsContentToHaveClass(
-  dataIndex: keyof DemoRow,
-  className: string,
-) {
-  const headerCell = getHeaderCell(dataIndex).querySelector('span')
-  const bodyCell = getTableCell(dataIndex).querySelector('div')
+function expectExpandedColumn(dataIndex: keyof DemoRow, value: string) {
+  const headerCell = getHeaderCell(dataIndex)
+  const bodyCell = getTableCell(dataIndex, value)
 
-  expect(headerCell).toHaveClass(className)
-  expect(bodyCell).toHaveClass(className)
+  expect(headerCell).toHaveStyle({
+    width: '300px',
+    minWidth: '300px',
+    maxWidth: '300px',
+  })
+  expect(bodyCell).toHaveStyle({
+    width: '300px',
+    minWidth: '300px',
+    maxWidth: '300px',
+  })
+  expect(headerCell.querySelector('span')).toHaveClass('whitespace-normal')
+  expect(bodyCell!.querySelector('div')).toHaveClass('whitespace-normal')
 }
 
-describe('Table', () => {
-  it('should render default column content', async () => {
-    renderTable()
+function getEndReachedSentinel(container: HTMLElement) {
+  const sentinel = container.querySelector('[aria-hidden="true"] > td > div')
 
-    expect(screen.getByText('jane.doe@example.com')).toBeInTheDocument()
-  })
+  if (!sentinel) {
+    throw new Error('Expected end reached sentinel to be rendered')
+  }
 
-  it('should render custom column content', async () => {
-    renderTable()
+  return sentinel
+}
 
-    expect(screen.getByText('User: Jane Doe')).toBeInTheDocument()
-  })
+function createTableSuite(virtualized: boolean) {
+  const label = virtualized ? 'Virtualized table' : 'Static table'
 
-  it('should render virtualized column content', async () => {
-    renderTable({ virtualized: true })
+  describe(label, () => {
+    it('should render default content', () => {
+      renderTable({ virtualized })
 
-    expect(screen.getByText('jane.doe@example.com')).toBeInTheDocument()
-    expect(screen.getByText('User: Jane Doe')).toBeInTheDocument()
-  })
-
-  it('should render collapsed columns', () => {
-    renderTable()
-
-    expectCellsToHaveStyle('email', {
-      width: '100px',
-      minWidth: '100px',
-      maxWidth: '100px',
+      expect(screen.getByText('jane.doe@example.com')).toBeInTheDocument()
     })
 
-    expectCellsContentToHaveClass('email', 'truncate')
-  })
+    it('should render custom content', () => {
+      renderTable({ virtualized })
 
-  it('should expand a column', async () => {
-    renderTable()
-
-    await userEvent.click(getHeaderToggle('email'))
-
-    expectCellsToHaveStyle('email', {
-      width: '300px',
-      minWidth: '300px',
-      maxWidth: '300px',
+      expect(screen.getByText('User: Jane Doe')).toBeInTheDocument()
     })
 
-    expectCellsContentToHaveClass('email', 'whitespace-normal')
-  })
+    it('should expand a column', async () => {
+      renderTable({ virtualized })
 
-  it('should collapse a column', async () => {
-    renderTable()
+      await userEvent.click(getHeaderToggle('email'))
 
-    await userEvent.click(getHeaderToggle('email'))
-    await userEvent.click(getHeaderToggle('email'))
-
-    expectCellsToHaveStyle('email', {
-      width: '100px',
-      minWidth: '100px',
-      maxWidth: '100px',
+      expectExpandedColumn('email', 'jane.doe@example.com')
     })
 
-    expectCellsContentToHaveClass('email', 'truncate')
-  })
+    it('should collapse a column', async () => {
+      renderTable({ virtualized })
 
-  it('should expand a virtualized column', async () => {
-    renderTable({ virtualized: true })
+      await userEvent.click(getHeaderToggle('email'))
+      await userEvent.click(getHeaderToggle('email'))
 
-    await userEvent.click(getHeaderToggle('email'))
-
-    expectCellsToHaveStyle('email', {
-      width: '300px',
-      minWidth: '300px',
-      maxWidth: '300px',
+      expectCollapsedColumn('email', 'jane.doe@example.com')
     })
 
-    expectCellsContentToHaveClass('email', 'whitespace-normal')
-  })
+    it('should call #onEndReached() once per row count', async () => {
+      const onEndReached = vi.fn()
+      const nextRows = [
+        ...rows,
+        { id: '2', name: 'John Doe', email: 'john@example.com' },
+      ]
 
-  it('should call onEndReached in static mode', async () => {
-    const onEndReached = vi.fn()
-    const rendered = renderTable({ onEndReached })
+      const rendered = renderTable({ virtualized, onEndReached })
 
-    mockIsIntersecting(getEndReachedSentinel(rendered.container), true)
+      if (!virtualized) {
+        const sentinel = getEndReachedSentinel(rendered.container)
 
-    await waitFor(() => {
+        mockIsIntersecting(sentinel, true)
+        mockIsIntersecting(sentinel, true)
+      }
+
+      expect(onEndReached).toHaveBeenCalledTimes(1)
       expect(onEndReached).toHaveBeenCalledWith(0)
+
+      rendered.rerender(
+        <div className="h-96">
+          <Table
+            caption="Clients table"
+            rows={nextRows}
+            columns={columns}
+            virtualized={virtualized}
+            onEndReached={onEndReached}
+          />
+        </div>,
+      )
+
+      if (!virtualized) {
+        mockIsIntersecting(getEndReachedSentinel(rendered.container), true)
+      }
+
+      expect(onEndReached).toHaveBeenCalledTimes(2)
+      expect(onEndReached).toHaveBeenLastCalledWith(1)
     })
-  })
 
-  it('should only call static onEndReached once per row count', () => {
-    const onEndReached = vi.fn()
-    const rendered = renderTable({ onEndReached })
-    const sentinel = getEndReachedSentinel(rendered.container)
-
-    mockIsIntersecting(sentinel, true)
-    mockIsIntersecting(sentinel, true)
-
-    expect(onEndReached).toHaveBeenCalledTimes(1)
-    expect(onEndReached).toHaveBeenCalledWith(0)
-  })
-
-  it('should call onEndReached in virtualized mode', async () => {
-    const onEndReached = vi.fn()
-
-    renderTable({ onEndReached, virtualized: true })
-
-    await waitFor(() => {
-      expect(onEndReached).toHaveBeenCalledWith(0)
-    })
-  })
-
-  describe('accessibility', () => {
-    it('should expose accessible expand/collapse metadata on header toggle', () => {
-      renderTable()
+    it('should expose expand/collapse metadata on header toggle', () => {
+      renderTable({ virtualized })
 
       const toggle = getHeaderToggle('email')
 
@@ -248,24 +219,14 @@ describe('Table', () => {
       expect(toggle).toHaveAttribute('title', 'Expand/Collapse Email column')
     })
 
-    it('should expose caption on the table', () => {
-      renderTable()
+    it('should expose sr-only caption on the table', () => {
+      renderTable({ virtualized })
 
       expect(screen.getByText('Clients table')).toHaveClass('sr-only')
     })
 
-    it('should expose loading state and loading footer', () => {
-      renderTable({ isLoading: true })
-
-      expect(
-        screen.getByRole('table', { name: 'Clients table' }),
-      ).toHaveAttribute('aria-busy', 'true')
-      expect(screen.getByRole('status')).toHaveTextContent('Loading more rows')
-      expect(screen.getByTitle('Loading...')).toBeInTheDocument()
-    })
-
-    it('should expose loading state and loading footer in virtualized mode', () => {
-      renderTable({ isLoading: true, virtualized: true })
+    it('should expose loading state', () => {
+      renderTable({ virtualized, isLoading: true })
 
       expect(
         screen.getByRole('table', { name: 'Clients table' }),
@@ -274,4 +235,7 @@ describe('Table', () => {
       expect(screen.getByTitle('Loading...')).toBeInTheDocument()
     })
   })
-})
+}
+
+createTableSuite(false)
+createTableSuite(true)

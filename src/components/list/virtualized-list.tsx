@@ -95,6 +95,7 @@ function VirtualizedList<T>({
       <Virtuoso
         context={{ isLoading, itemCount: items.length }}
         data={items}
+        totalCount={items.length}
         style={{ height: '100%' }}
         endReached={onEndReached}
         components={virtuosoListComponents as Components<T, ListContext>}

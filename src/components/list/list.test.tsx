@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { VirtuosoMockContext } from 'react-virtuoso'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -19,29 +19,22 @@ const items: DemoItem[] = [
   },
 ]
 
-function getEndReachedSentinel(container: HTMLElement) {
-  const sentinel = container.querySelector('[aria-hidden="true"] > div')
-
-  if (!sentinel) {
-    throw new Error('Expected end reached sentinel to be rendered')
+function renderList(
+  props?: Partial<ListProps<DemoItem>>,
+): ReturnType<typeof render> {
+  const sharedProps = {
+    items: props?.items ?? items,
+    isLoading: props?.isLoading ?? false,
+    virtualized: props?.virtualized ?? false,
+    onEndReached: props?.onEndReached ?? ((lastIndex) => void lastIndex),
+    itemContent:
+      props?.itemContent ??
+      ((_: number, item: DemoItem) => <span>{item.name}</span>),
   }
 
-  return sentinel
-}
-
-function renderList(props?: Partial<ListProps<DemoItem>>) {
   return render(
     <div className="h-96">
-      <List
-        items={props?.items ?? items}
-        isLoading={props?.isLoading ?? false}
-        virtualized={props?.virtualized ?? false}
-        className={props?.className ?? ''}
-        onEndReached={props?.onEndReached ?? ((lastIndex) => void lastIndex)}
-        itemContent={
-          props?.itemContent ?? ((_, item) => <span>{item.name}</span>)
-        }
-      />
+      <List {...sharedProps} />
     </div>,
     {
       wrapper: ({ children }) => (
@@ -55,101 +48,82 @@ function renderList(props?: Partial<ListProps<DemoItem>>) {
   )
 }
 
-describe('List', () => {
-  it('should render item content', () => {
-    renderList()
+function getEndReachedSentinel(container: HTMLElement): HTMLDivElement {
+  const sentinel = container.querySelector('[aria-hidden="true"] > div')
 
-    expect(screen.getByText('Jane Doe')).toBeInTheDocument()
-  })
+  return sentinel as HTMLDivElement
+}
 
-  it('should render semantic list markup', () => {
-    renderList()
+function createListSuite(virtualized: boolean) {
+  const label = virtualized ? 'Virtualized list' : 'Static list'
 
-    expect(screen.getByRole('list')).toBeInTheDocument()
-    expect(screen.getByRole('listitem')).toBeInTheDocument()
-  })
+  describe(label, () => {
+    it('should render default item content', () => {
+      renderList({ virtualized })
 
-  it('should render semantic virtualized list markup', () => {
-    renderList({ virtualized: true })
-
-    expect(screen.getByRole('list')).toBeInTheDocument()
-    expect(screen.getByRole('listitem')).toBeInTheDocument()
-  })
-
-  it('should render custom item markup', () => {
-    renderList({
-      itemContent: (_, item) => <article>Person: {item.name}</article>,
+      expect(screen.getByText('Jane Doe')).toBeInTheDocument()
     })
 
-    const item = screen.getByText('Person: Jane Doe')
+    it('should render custom item content', () => {
+      renderList({
+        virtualized,
+        itemContent: (_, item) => <article>Person: {item.name}</article>,
+      })
 
-    expect(item.tagName).toBe('ARTICLE')
-  })
+      const item = screen.getByText('Person: Jane Doe')
 
-  it('should call onEndReached', async () => {
-    const onEndReached = vi.fn()
-    const rendered = renderList({ onEndReached })
+      expect(item.tagName).toBe('ARTICLE')
+    })
 
-    mockIsIntersecting(getEndReachedSentinel(rendered.container), true)
+    it('should render semantic list markup', () => {
+      renderList({ virtualized })
 
-    await waitFor(() => {
+      expect(screen.getByRole('list')).toBeInTheDocument()
+      expect(screen.getByRole('listitem')).toBeInTheDocument()
+    })
+
+    it('should only call #onEndReached() once per item count', async () => {
+      const onEndReached = vi.fn()
+      const nextItems = [...items, { id: '2', name: 'John Doe' }]
+      const rendered = renderList({ virtualized, onEndReached })
+
+      if (!virtualized) {
+        const sentinel = getEndReachedSentinel(rendered.container)
+        mockIsIntersecting(sentinel, true)
+        mockIsIntersecting(sentinel, true)
+      }
+
+      expect(onEndReached).toHaveBeenCalledTimes(1)
       expect(onEndReached).toHaveBeenCalledWith(0)
+
+      rendered.rerender(
+        <div className="h-96">
+          <List
+            items={nextItems}
+            virtualized={virtualized}
+            onEndReached={onEndReached}
+            itemContent={(_, item) => <span>{item.name}</span>}
+          />
+        </div>,
+      )
+
+      if (!virtualized) {
+        mockIsIntersecting(getEndReachedSentinel(rendered.container), true)
+      }
+
+      expect(onEndReached).toHaveBeenCalledTimes(2)
+      expect(onEndReached).toHaveBeenLastCalledWith(1)
+    })
+
+    it('should expose loading state', () => {
+      renderList({ virtualized, isLoading: true })
+
+      expect(screen.getByRole('list')).toHaveAttribute('aria-busy', 'true')
+      expect(screen.getByRole('status')).toHaveTextContent('Loading more items')
+      expect(screen.getByTitle('Loading...')).toBeInTheDocument()
     })
   })
+}
 
-  it('should call onEndReached in virtualized mode', async () => {
-    const onEndReached = vi.fn()
-
-    renderList({ onEndReached, virtualized: true })
-
-    await waitFor(() => {
-      expect(onEndReached).toHaveBeenCalledWith(0)
-    })
-  })
-
-  it('should only call non-virtualized onEndReached once per item count', async () => {
-    const onEndReached = vi.fn()
-
-    const rendered = renderList({ onEndReached })
-    const sentinel = getEndReachedSentinel(rendered.container)
-
-    mockIsIntersecting(sentinel, true)
-    mockIsIntersecting(sentinel, true)
-
-    expect(onEndReached).toHaveBeenCalledTimes(1)
-    expect(onEndReached).toHaveBeenCalledWith(0)
-
-    rendered.rerender(
-      <div className="h-96">
-        <List
-          items={[...items, { id: '2', name: 'John Doe' }]}
-          isLoading={false}
-          className=""
-          onEndReached={onEndReached}
-          itemContent={(_, item) => <span>{item.name}</span>}
-        />
-      </div>,
-    )
-
-    mockIsIntersecting(getEndReachedSentinel(rendered.container), true)
-
-    expect(onEndReached).toHaveBeenCalledTimes(2)
-    expect(onEndReached).toHaveBeenLastCalledWith(1)
-  })
-
-  it('should expose loading state and loading footer', () => {
-    renderList({ isLoading: true })
-
-    expect(screen.getByRole('list')).toHaveAttribute('aria-busy', 'true')
-    expect(screen.getByRole('status')).toHaveTextContent('Loading more items')
-    expect(screen.getByTitle('Loading...')).toBeInTheDocument()
-  })
-
-  it('should expose loading state in virtualized mode', () => {
-    renderList({ isLoading: true, virtualized: true })
-
-    expect(screen.getByRole('list')).toHaveAttribute('aria-busy', 'true')
-    expect(screen.getByRole('status')).toHaveTextContent('Loading more items')
-    expect(screen.getByTitle('Loading...')).toBeInTheDocument()
-  })
-})
+createListSuite(false)
+createListSuite(true)
