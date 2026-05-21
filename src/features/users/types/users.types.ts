@@ -24,6 +24,8 @@ export type GetUsersQuery = {
   roles?: UserRole[]
 }
 
+export type UseUsersQuery = Omit<GetUsersQuery, 'page'>
+
 export type DeleteUserAction = {
   userId: string
 }

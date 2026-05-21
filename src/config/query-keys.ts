@@ -1,4 +1,4 @@
-import type { GetUsersQuery } from '@/features/users/types/users.types'
+import type { UseUsersQuery } from '@/features/users/types/users.types'
 
 export const queryKeys = {
   auth: {
@@ -6,11 +6,10 @@ export const queryKeys = {
   },
   users: {
     all: () => ['users'] as const,
-    list: ({ page, perPage, search, roles }: GetUsersQuery) =>
+    list: ({ perPage, search, roles }: UseUsersQuery) =>
       [
         'users',
         'list',
-        page,
         perPage ?? 25,
         search ?? '',
         'roles',
