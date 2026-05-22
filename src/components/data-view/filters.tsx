@@ -6,10 +6,12 @@ import {
   Controller,
   type Path,
   type ControllerRenderProps,
+  useWatch,
 } from 'react-hook-form'
 
 import type { SelectOption } from '../select'
 import Select from '../select'
+import Button from '../ui/button'
 import Input from '../ui/input'
 import Label from '../ui/label'
 
@@ -48,6 +50,7 @@ function Filters<T extends FieldValues>({
   const form = useForm<T>({
     defaultValues,
   })
+  const values = useWatch({ control: form.control })
 
   function handleChange() {
     form.handleSubmit((formValues) => {
@@ -97,6 +100,19 @@ function Filters<T extends FieldValues>({
             }}
           />
         ))}
+
+        <Button
+          type="button"
+          onClick={() => {
+            form.reset(buildEmptyFilters(filters))
+            handleChange()
+          }}
+          variant={'outline'}
+          className="mt-4.5"
+          disabled={areFiltersEmpty(values)}
+        >
+          Clear filters
+        </Button>
       </div>
     </form>
   )
@@ -146,6 +162,37 @@ function SelectFilter<T extends FieldValues>({
       />
     </div>
   )
+}
+
+function buildEmptyFilters<T extends FieldValues>(filters: Filter<T>[]): T {
+  const emptyValues: Partial<T> = {}
+
+  filters.forEach((filter) => {
+    switch (filter.type) {
+      case 'text':
+        emptyValues[filter.name] = '' as T[Path<T>]
+        break
+      case 'select':
+        emptyValues[filter.name] = (filter.isMultiple ? [] : null) as T[Path<T>]
+        break
+    }
+  })
+
+  return emptyValues as T
+}
+
+function areFiltersEmpty<T extends FieldValues>(values: T): boolean {
+  return Object.values(values).every((value) => {
+    if (Array.isArray(value)) {
+      return value.length === 0
+    }
+
+    if (typeof value === 'string') {
+      return value === ''
+    }
+
+    return !value
+  })
 }
 
 export default Filters
