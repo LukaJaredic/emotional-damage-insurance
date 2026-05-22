@@ -8,10 +8,10 @@ import {
   type ControllerRenderProps,
 } from 'react-hook-form'
 
-import type { SelectOption } from './select'
-import Select from './select'
-import Input from './ui/input'
-import Label from './ui/label'
+import type { SelectOption } from '../select'
+import Select from '../select'
+import Input from '../ui/input'
+import Label from '../ui/label'
 
 type BaseFilter<T> = {
   name: Path<T>

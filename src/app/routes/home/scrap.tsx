@@ -2,7 +2,7 @@ import DataViewQueryWithFilters from '@/components/data-view/data-view-query-wit
 import { useUsers } from '@/features/users/api/get-users'
 import type { User } from '@/types/user'
 
-import { type Filter } from '../../../components/filters'
+import { type Filter } from '../../../components/data-view/filters'
 import type { SelectOption } from '../../../components/select'
 import type { TableColumn } from '../../../components/table/table.types'
 

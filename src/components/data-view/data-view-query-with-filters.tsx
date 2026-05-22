@@ -1,7 +1,6 @@
 import type { DefaultValues, FieldValues } from 'react-hook-form'
 import { useSearchParams } from 'react-router-dom'
 
-import Filters, { type Filter } from '@/components/filters'
 import { cn } from '@/lib/utils'
 
 import DataViewQuery from './data-view-query'
@@ -9,6 +8,7 @@ import type {
   DataViewQueryProps,
   DataViewQueryState,
 } from './data-view-query.types'
+import Filters, { type Filter } from './filters'
 
 type DataViewQueryWithFiltersProps<
   TItem extends Record<string, unknown>,
