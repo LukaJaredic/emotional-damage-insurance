@@ -21,7 +21,7 @@ function DataView<T extends Record<string, unknown>>({
 }: DataViewProps<T>) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const stateClassName = cn(
-    'flex h-full w-full items-center justify-center',
+    'flex h-full w-full items-center justify-center border rounded-xl',
     className,
   )
   const sharedProps = {
