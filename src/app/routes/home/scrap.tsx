@@ -65,7 +65,6 @@ function Scrap() {
     <section className="flex h-full flex-col gap-4">
       <DataViewQueryWithFilters
         useQuery={useUsers}
-        virtualized
         tableColumns={userColumns}
         tableCaption="Users table"
         filters={userFilters}
