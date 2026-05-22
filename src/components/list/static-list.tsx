@@ -19,7 +19,10 @@ function StaticList<T>({
   return (
     <ul
       aria-busy={isLoading}
-      className={cn('relative max-h-full space-y-6 overflow-auto', className)}
+      className={cn(
+        'relative max-h-full space-y-6 overflow-auto p-2',
+        className,
+      )}
     >
       {items.map((item, index) => (
         <li key={(item as ListItemWithOptionalId)?.id ?? index}>
@@ -32,7 +35,7 @@ function StaticList<T>({
       </li>
 
       {isLoading ? (
-        <li className="flex justify-center py-4">
+        <li className="bg-primary/50 flex justify-center py-4">
           <div role="status" aria-live="polite" className="flex items-center">
             <span aria-hidden="true">
               <Spinner />

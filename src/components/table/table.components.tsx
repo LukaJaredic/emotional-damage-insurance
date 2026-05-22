@@ -110,7 +110,7 @@ type LoadingRowProps = {
 
 function LoadingRow({ colSpan, label = 'Loading more rows' }: LoadingRowProps) {
   return (
-    <UITableRow className="sticky bottom-0">
+    <UITableRow className="bg-primary/50 sticky bottom-0">
       <UITableCell colSpan={colSpan} className="p-4 text-center">
         <div
           role="status"

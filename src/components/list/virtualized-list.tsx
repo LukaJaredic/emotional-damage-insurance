@@ -32,6 +32,7 @@ const VirtuosoList = forwardRef<HTMLDivElement, VirtuosoListProps>(
         data-slot="list"
         role="list"
         aria-busy={isLoading}
+        className="px-2"
         {...props}
       >
         {children}
@@ -58,7 +59,7 @@ const virtuosoListComponents: Components<unknown, ListContext> = {
         role="listitem"
         aria-posinset={props['data-item-index'] + 1}
         aria-setsize={context.itemCount}
-        className="pb-6"
+        className="pb-6 first:pt-2"
         {...props}
       >
         {children}
@@ -71,7 +72,7 @@ const virtuosoListComponents: Components<unknown, ListContext> = {
     }
 
     return (
-      <div className="flex justify-center py-4">
+      <div className="bg-primary/50 flex justify-center py-4">
         <div role="status" aria-live="polite" className="flex items-center">
           <span aria-hidden="true">
             <Spinner />

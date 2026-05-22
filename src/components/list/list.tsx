@@ -5,7 +5,7 @@ import StaticList from './static-list'
 import VirtualizedList from './virtualized-list'
 
 function List<T>({ virtualized = false, className, ...props }: ListProps<T>) {
-  const sharedClassName = cn('h-full min-h-0 border rounded-xl p-2', className)
+  const sharedClassName = cn('h-full min-h-0 border rounded-xl', className)
 
   if (virtualized) {
     return <VirtualizedList {...props} className={sharedClassName} />
