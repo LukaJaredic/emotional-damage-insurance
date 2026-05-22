@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { VirtuosoMockContext } from 'react-virtuoso'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -142,6 +142,12 @@ function createTableSuite(virtualized: boolean) {
   const label = virtualized ? 'Virtualized table' : 'Static table'
 
   describe(label, () => {
+    let user!: UserEvent
+
+    beforeEach(() => {
+      user = userEvent.setup()
+    })
+
     it('should render default content', () => {
       renderTable({ virtualized })
 
@@ -157,7 +163,7 @@ function createTableSuite(virtualized: boolean) {
     it('should expand a column', async () => {
       renderTable({ virtualized })
 
-      await userEvent.click(getHeaderToggle('email'))
+      await user.click(getHeaderToggle('email'))
 
       expectExpandedColumn('email', 'jane.doe@example.com')
     })
@@ -165,8 +171,8 @@ function createTableSuite(virtualized: boolean) {
     it('should collapse a column', async () => {
       renderTable({ virtualized })
 
-      await userEvent.click(getHeaderToggle('email'))
-      await userEvent.click(getHeaderToggle('email'))
+      await user.click(getHeaderToggle('email'))
+      await user.click(getHeaderToggle('email'))
 
       expectCollapsedColumn('email', 'jane.doe@example.com')
     })

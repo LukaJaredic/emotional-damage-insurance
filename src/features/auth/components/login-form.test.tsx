@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -42,21 +42,23 @@ function submitButton() {
   return screen.getByTitle('Log in', { exact: true }) as HTMLButtonElement
 }
 
-async function clearAndType(email: string, password: string) {
+async function clearAndType(user: UserEvent, email: string, password: string) {
   // Clearing because we have set defaults for convenience
-  await userEvent.clear(emailInput())
-  await userEvent.type(emailInput(), email)
+  await user.clear(emailInput())
+  await user.type(emailInput(), email)
 
-  await userEvent.clear(passwordInput())
-  await userEvent.type(passwordInput(), password)
+  await user.clear(passwordInput())
+  await user.type(passwordInput(), password)
 }
 
 describe('LoginForm', () => {
   let mutate!: ReturnType<typeof useLogin>['mutate']
+  let user!: UserEvent
 
   beforeEach(() => {
     const result = mockUseLogin()
     mutate = result.mutate
+    user = userEvent.setup()
   })
 
   afterEach(() => {
@@ -74,8 +76,8 @@ describe('LoginForm', () => {
     it('should handle invalid email', async () => {
       renderWithProviders(<LoginForm redirectTo="/" />)
 
-      await clearAndType('invalid-email', 'valid-password')
-      await userEvent.click(submitButton())
+      await clearAndType(user, 'invalid-email', 'valid-password')
+      await user.click(submitButton())
 
       await waitFor(() => {
         expect(screen.getByText('Invalid email address')).toBeInTheDocument()
@@ -87,8 +89,8 @@ describe('LoginForm', () => {
     it('should handle invalid password', async () => {
       renderWithProviders(<LoginForm redirectTo="/" />)
 
-      await clearAndType('user@example.com', 'short')
-      await userEvent.click(submitButton())
+      await clearAndType(user, 'user@example.com', 'short')
+      await user.click(submitButton())
 
       await waitFor(() => {
         expect(
@@ -104,9 +106,9 @@ describe('LoginForm', () => {
     it('submits valid form data', async () => {
       renderWithProviders(<LoginForm redirectTo="/dashboard" />)
 
-      await clearAndType('user@example.com', 'password123')
+      await clearAndType(user, 'user@example.com', 'password123')
 
-      await userEvent.click(submitButton())
+      await user.click(submitButton())
 
       expect(mutate).toHaveBeenCalledExactlyOnceWith({
         email: 'user@example.com',

@@ -8,7 +8,8 @@ export const db = factory(models)
 export type Model = keyof typeof models
 
 const dbFilePath = process.env.MOCK_DB_FILE ?? 'mocked-db.json'
-const seedProfile = (process.env.MOCK_DB_SEED_PROFILE ?? 'dev') as SeedProfile
+// undefined for integration/unit tests, otherwise it can be set to 'dev' or 'e2e' for different seeding profiles
+const seedProfile = process.env.MOCK_DB_SEED_PROFILE as SeedProfile | undefined
 
 function getEmptyData() {
   return {
@@ -70,11 +71,12 @@ export const initializeDb = async () => {
     }
   })
 
-  seed(db, seedProfile)
-
-  console.log(
-    `Seeded mock DB with '${seedProfile}' profile and admin user 'admin@example.com'`,
-  )
+  if (seedProfile) {
+    seed(db, seedProfile)
+    console.log(
+      `Seeded mock DB with '${seedProfile}' profile and admin user 'admin@example.com'`,
+    )
+  }
 }
 
 export const resetDb = () => {
