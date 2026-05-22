@@ -1,42 +1,24 @@
-import { drop, factory, primaryKey } from '@mswjs/data'
-import { nanoid } from 'nanoid'
+import { drop, factory } from '@mswjs/data'
 
-const models = {
-  user: {
-    id: primaryKey(nanoid),
-    firstName: String,
-    lastName: String,
-    email: String,
-    password: String,
-    roles: Array,
-    createdAt: Date.now,
-  },
-}
+import { models } from './db.models'
+import { seed, type SeedProfile } from './db.seed'
 
 export const db = factory(models)
 
 export type Model = keyof typeof models
 
 const dbFilePath = process.env.MOCK_DB_FILE ?? 'mocked-db.json'
+const seedProfile = (process.env.MOCK_DB_SEED_PROFILE ?? 'dev') as SeedProfile
 
-function getDefaultData() {
+function getEmptyData() {
   return {
-    user: [
-      {
-        id: nanoid(),
-        firstName: 'Admin',
-        lastName: 'User',
-        email: 'admin@example.com',
-        password: '2951957434',
-        roles: ['admin'],
-      },
-    ],
+    user: [],
   }
 }
 
 export const loadDb = async () => {
   if (process.env.NODE_ENV === 'test') {
-    return getDefaultData()
+    return getEmptyData()
   }
 
   const { readFile, writeFile } = await import('fs/promises')
@@ -46,13 +28,13 @@ export const loadDb = async () => {
     return JSON.parse(data)
   } catch (error: any) {
     if (error?.code === 'ENOENT') {
-      const defaultData = getDefaultData()
-      await writeFile(dbFilePath, JSON.stringify(defaultData, null, 2))
-      return defaultData
+      const emptyData = getEmptyData()
+      await writeFile(dbFilePath, JSON.stringify(emptyData, null, 2))
+      return emptyData
     }
 
     console.error('Error loading mocked DB:', error)
-    return getDefaultData()
+    return getEmptyData()
   }
 }
 
@@ -88,20 +70,11 @@ export const initializeDb = async () => {
     }
   })
 
-  if (db.user.getAll().length === 0) {
-    const defaultUser = getDefaultData().user[0]
+  seed(db, seedProfile)
 
-    if (!defaultUser) {
-      return
-    }
-
-    db.user.create(defaultUser)
-    persistDb('user')
-
-    console.log(
-      "Created default admin user with email: 'admin@example.com' and password: 'admin123'",
-    )
-  }
+  console.log(
+    `Seeded mock DB with '${seedProfile}' profile and admin user 'admin@example.com'`,
+  )
 }
 
 export const resetDb = () => {

@@ -4,9 +4,10 @@ import { env } from '@/config/env'
 import type { UserRole } from '@/types/user'
 
 import { db, persistDb } from '../db'
-import { hash, networkDelay, requireAuth, sanitizeUser } from '../utils'
+import { requireAuth } from '../db.utils'
+import { hash, networkDelay, sanitizeUser } from '../helpers'
 
-type CreateUserBody = {
+type MockCreateUserBody = {
   firstName: string
   lastName: string
   email: string
@@ -14,7 +15,11 @@ type CreateUserBody = {
   roles: UserRole[]
 }
 
-type UpdateUserBody = Partial<CreateUserBody>
+type MockUpdateUserBody = Partial<MockCreateUserBody>
+
+export type MockUser = MockCreateUserBody & {
+  id: string
+}
 
 const DEFAULT_PER_PAGE = 25
 
@@ -163,7 +168,7 @@ export const usersHandlers = [
         return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
       }
 
-      const payload = (await request.json()) as CreateUserBody
+      const payload = (await request.json()) as MockCreateUserBody
 
       if (findUserByEmail(payload.email)) {
         return HttpResponse.json(
@@ -210,7 +215,7 @@ export const usersHandlers = [
           )
         }
 
-        const payload = (await request.json()) as UpdateUserBody
+        const payload = (await request.json()) as MockUpdateUserBody
 
         if (payload.email) {
           const userWithSameEmail = findUserByEmail(payload.email)

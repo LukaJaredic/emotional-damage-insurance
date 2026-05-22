@@ -2,7 +2,7 @@ import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
 
-import { networkDelay } from '../utils'
+import { networkDelay } from '../helpers'
 
 import { authHandlers } from './auth'
 import { usersHandlers } from './users'

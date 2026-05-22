@@ -27,7 +27,8 @@ export default defineConfig({
 
   webServer: [
     {
-      command: 'sh -c "MOCK_DB_FILE=mocked-db.e2e.json npm run mock-server"',
+      command:
+        'sh -c "MOCK_DB_FILE=mocked-db.e2e.json MOCK_DB_SEED_PROFILE=e2e npm run mock-server"',
       timeout: 10 * 1000,
       port: MOCK_API_PORT,
       reuseExistingServer: true,

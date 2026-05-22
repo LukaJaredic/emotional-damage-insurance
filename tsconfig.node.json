@@ -10,7 +10,7 @@
     "playwright.config.ts",
     "mock-server.ts",
     "src/testing/mocks/db.ts",
-    "src/testing/mocks/utils.ts",
+    "src/testing/mocks/db.*.ts",
     "e2e/setup.ts"
   ]
 }

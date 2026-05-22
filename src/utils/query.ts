@@ -15,4 +15,4 @@ const commonQueryOptions = {
   getNextPageParam,
 }
 
-export { getNextPageParam, commonQueryOptions }
+export { commonQueryOptions }

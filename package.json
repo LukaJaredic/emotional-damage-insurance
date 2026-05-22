@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "dev": "sh -c 'npm run mock-server | pino-pretty -c & vite'",
+    "dev": "sh -c 'MOCK_DB_SEED_PROFILE=dev npm run mock-server | pino-pretty -c & vite'",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@faker-js/faker": "^10.4.0",
     "@mswjs/data": "^0.16.2",
     "@mswjs/http-middleware": "^0.10.3",
     "@playwright/test": "^1.59.1",
