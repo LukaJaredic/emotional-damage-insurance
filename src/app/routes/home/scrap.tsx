@@ -4,7 +4,7 @@ import { useUsers } from '@/features/users/api/get-users'
 import type { User } from '@/types/user'
 
 import DataViewQuery from '../../../components/data-view/data-view-query'
-import Select from '../../../components/select'
+import Filters, { type Filter } from '../../../components/filters'
 import type { SelectOption } from '../../../components/select'
 import type { TableColumn } from '../../../components/table/table.types'
 import Button from '../../../components/ui/button'
@@ -42,10 +42,30 @@ const roleOptions: SelectOption[] = [
   },
 ]
 
+type UserFiltersValues = {
+  search: string
+  roles: string[]
+}
+
+const userFilters = [
+  {
+    name: 'search',
+    type: 'text',
+    label: 'Search',
+    placeholder: 'Search users',
+  },
+  {
+    name: 'roles',
+    type: 'select',
+    label: 'Roles',
+    placeholder: 'Choose roles',
+    isMultiple: true,
+    options: roleOptions,
+  },
+] satisfies Filter<UserFiltersValues>[]
+
 function Scrap() {
   const [search, setSearch] = useState('')
-  const [selectedRole, setSelectedRole] = useState('')
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(['admin'])
   const [virtualized, setVirtualized] = useState(false)
   const usersQuery = useUsers({
     perPage: 10,
@@ -92,42 +112,20 @@ function Scrap() {
 
       <div className="flex flex-col gap-4 rounded-xl border p-4">
         <div className="flex flex-col gap-1">
-          <h2 className="font-heading text-lg font-medium">Select Preview</h2>
+          <h2 className="font-heading text-lg font-medium">Filters Preview</h2>
           <p className="text-muted-foreground text-sm">
-            Example of the custom select wrapper in single and multi-select
-            modes.
+            RHF-backed filters component with debounced text updates and an
+            internal reset action.
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium">Single select</p>
-            <Select
-              options={roleOptions}
-              value={selectedRole}
-              onChange={setSelectedRole}
-              placeholder="Choose one role"
-            />
-            <p className="text-muted-foreground text-sm">
-              Value: {selectedRole || 'None'}
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p className="text-sm font-medium">Multi select</p>
-            <Select
-              options={roleOptions}
-              value={selectedRoles}
-              onChange={setSelectedRoles}
-              isMultiple
-              placeholder="Choose multiple roles"
-            />
-            <p className="text-muted-foreground text-sm">
-              Value:{' '}
-              {selectedRoles.length > 0 ? selectedRoles.join(', ') : 'None'}
-            </p>
-          </div>
-        </div>
+        <Filters
+          filters={userFilters}
+          defaultValues={{ search: '', roles: ['admin'] }}
+          onChange={(values) => {
+            console.log('filters changed', values)
+          }}
+        />
       </div>
 
       <div className="h-128 overflow-hidden">

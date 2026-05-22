@@ -111,7 +111,7 @@ function Select({
       classNames={{
         control: ({ isFocused, menuIsOpen, isDisabled }) =>
           cn(
-            'border-input dark:bg-input/30 min-h-9 rounded-md border bg-transparent px-2.5 py-1 text-base shadow-xs transition-[color,box-shadow] md:text-sm',
+            'border-input dark:bg-input/30  min-h-9! py-0.5 rounded-md border bg-transparent px-2.5 text-base shadow-xs transition-[color,box-shadow] md:text-sm',
             isFocused && 'border-ring ring-ring/50 ring-3',
             menuIsOpen && 'border-ring ring-ring/50 ring-3',
             ariaInvalid &&
