@@ -52,7 +52,7 @@ function AppLayout({ children }: AppLayoutProps) {
           <header className="flex h-14 items-center border-b px-4">
             <SidebarTrigger />
           </header>
-          <main className="flex-1 p-6">{children}</main>
+          <main className="min-h-0 flex-1 p-6">{children}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>

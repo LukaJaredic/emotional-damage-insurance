@@ -62,7 +62,7 @@ function Filters<T extends FieldValues>({
   }
 
   return (
-    <form onChange={handleChange}>
+    <form onChange={handleChange} className="relative z-10">
       <div className="flex flex-wrap gap-4">
         {filters.map((filter) => (
           <Controller
