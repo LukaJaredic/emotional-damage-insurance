@@ -4,6 +4,8 @@ import { useUsers } from '@/features/users/api/get-users'
 import type { User } from '@/types/user'
 
 import DataViewQuery from '../../../components/data-view/data-view-query'
+import Select from '../../../components/select'
+import type { SelectOption } from '../../../components/select'
 import type { TableColumn } from '../../../components/table/table.types'
 import Button from '../../../components/ui/button'
 import Input from '../../../components/ui/input'
@@ -25,8 +27,25 @@ const userColumns: TableColumn<User>[] = [
   },
 ]
 
+const roleOptions: SelectOption[] = [
+  {
+    label: 'Admin',
+    value: 'admin',
+  },
+  {
+    label: 'Employee',
+    value: 'employee',
+  },
+  {
+    label: 'Customer',
+    value: 'customer',
+  },
+]
+
 function Scrap() {
   const [search, setSearch] = useState('')
+  const [selectedRole, setSelectedRole] = useState('')
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(['admin'])
   const [virtualized, setVirtualized] = useState(false)
   const usersQuery = useUsers({
     perPage: 10,
@@ -69,6 +88,46 @@ function Scrap() {
         >
           {virtualized ? 'Disable virtualization' : 'Enable virtualization'}
         </Button>
+      </div>
+
+      <div className="flex flex-col gap-4 rounded-xl border p-4">
+        <div className="flex flex-col gap-1">
+          <h2 className="font-heading text-lg font-medium">Select Preview</h2>
+          <p className="text-muted-foreground text-sm">
+            Example of the custom select wrapper in single and multi-select
+            modes.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">Single select</p>
+            <Select
+              options={roleOptions}
+              value={selectedRole}
+              onChange={setSelectedRole}
+              placeholder="Choose one role"
+            />
+            <p className="text-muted-foreground text-sm">
+              Value: {selectedRole || 'None'}
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="text-sm font-medium">Multi select</p>
+            <Select
+              options={roleOptions}
+              value={selectedRoles}
+              onChange={setSelectedRoles}
+              isMultiple
+              placeholder="Choose multiple roles"
+            />
+            <p className="text-muted-foreground text-sm">
+              Value:{' '}
+              {selectedRoles.length > 0 ? selectedRoles.join(', ') : 'None'}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="h-128 overflow-hidden">
