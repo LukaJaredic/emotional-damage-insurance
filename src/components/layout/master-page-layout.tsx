@@ -1,7 +1,7 @@
 type MasterPageLayoutProps = {
   heading: string
   description: string
-  actions?: React.ReactNode
+  actions?: () => React.ReactNode
   children: React.ReactNode
 }
 
@@ -22,7 +22,7 @@ function MasterPageLayout({
         </div>
         {actions ? (
           <div className="flex flex-col gap-1 sm:ml-auto sm:flex-row">
-            {actions}
+            {actions()}
           </div>
         ) : null}
       </header>

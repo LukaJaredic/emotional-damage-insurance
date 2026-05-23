@@ -11,6 +11,9 @@ import AppProvider from './providers/app-provider'
 const HomePage = lazy(() => import('@app/routes/home/home-page'))
 const LoginPage = lazy(() => import('@app/routes/auth/login-page'))
 const NotFoundPage = lazy(() => import('@app/routes/not-found-page'))
+const UsersMasterPage = lazy(
+  () => import('@app/routes/users/users-master-page'),
+)
 
 function withSuspense(page: React.ReactNode) {
   return (
@@ -53,6 +56,10 @@ const router = createBrowserRouter([
       {
         path: paths.root.path,
         element: protectedRoute(<HomePage />),
+      },
+      {
+        path: paths.users.path,
+        element: protectedRoute(<UsersMasterPage />),
       },
       {
         path: '*',

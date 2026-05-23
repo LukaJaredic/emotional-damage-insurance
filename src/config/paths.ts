@@ -3,6 +3,10 @@ export const paths = {
     path: '/',
     getHref: () => '/',
   },
+  users: {
+    path: '/users',
+    getHref: () => '/users',
+  },
   notFound: {
     path: '/404',
     getHref: () => '/404',

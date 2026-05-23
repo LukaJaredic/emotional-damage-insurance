@@ -1,6 +1,7 @@
 import { SignOutIcon } from '@phosphor-icons/react'
-import { Navigate } from 'react-router-dom'
+import { NavLink, Navigate } from 'react-router-dom'
 
+import { sidebarItems } from '@/app/sidebar-items'
 import { Spinner } from '@/components/ui'
 import {
   Sidebar,
@@ -31,7 +32,24 @@ function AppLayout({ children }: AppLayoutProps) {
     <SidebarProvider>
       <div className="bg-background flex min-h-dvh w-full">
         <Sidebar collapsible="icon" className="whitespace-nowrap">
-          <SidebarContent>something here</SidebarContent>
+          <SidebarContent className="pt-14">
+            <SidebarMenu>
+              {sidebarItems.map((item) => {
+                const Icon = item.icon
+
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton className="rounded-none! py-3" asChild>
+                      <NavLink to={item.href}>
+                        <Icon />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarContent>
           <SidebarFooter>
             <SidebarMenu>
               <SidebarMenuItem>
