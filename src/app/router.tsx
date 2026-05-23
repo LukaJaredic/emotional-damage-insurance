@@ -1,8 +1,8 @@
 import { Suspense, lazy } from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
-import Spinner from '@/components/spinner'
-import { paths } from '@/config/paths'
+import { Spinner } from '@/components/ui'
+import { paths } from '@/config'
 
 import AppLayout from './app-layout'
 import AuthGuard from './auth-guard'

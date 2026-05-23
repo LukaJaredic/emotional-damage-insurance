@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios'
 import { toast } from 'sonner'
 
-import { env } from '@/config/env'
+import { env } from '@/config'
 
 const api = axios.create({
   baseURL: env.API_URL,

@@ -1,4 +1,4 @@
-import Scrap from '@/app/routes/home/scrap'
+import Scrap from './scrap'
 
 function HomePage() {
   return <Scrap />

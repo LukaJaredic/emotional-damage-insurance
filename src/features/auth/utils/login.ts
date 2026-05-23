@@ -1,10 +1,10 @@
 import type { NavigateFunction } from 'react-router-dom'
 import { z } from 'zod'
 
-import { queryKeys } from '@/config/query-keys'
-import { queryClient } from '@/lib/react-query'
-import type { User } from '@/types/user'
-import { email, requiredString } from '@/utils/zod-schemas'
+import { queryKeys } from '@/config'
+import { queryClient } from '@/lib'
+import type { User } from '@/types'
+import { email, requiredString } from '@/utils'
 
 export const loginSchema = z.object({
   email: email(),

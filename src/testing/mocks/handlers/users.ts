@@ -2,10 +2,9 @@ import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
 import type { UserRole } from '@/types/user'
-
-import { db, persistDb } from '../db'
-import { requireAuth } from '../db.utils'
-import { hash, networkDelay, sanitizeUser } from '../helpers'
+import { db, persistDb } from '@testing/mocks/db'
+import { requireAuth } from '@testing/mocks/db.utils'
+import { hash, networkDelay, sanitizeUser } from '@testing/mocks/helpers'
 
 type MockCreateUserBody = {
   firstName: string

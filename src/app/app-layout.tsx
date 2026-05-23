@@ -1,7 +1,7 @@
 import { SignOutIcon } from '@phosphor-icons/react'
 import { Navigate } from 'react-router-dom'
 
-import Spinner from '@/components/spinner'
+import { Spinner } from '@/components/ui'
 import {
   Sidebar,
   SidebarContent,
@@ -12,9 +12,9 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui/sidebar'
-import { paths } from '@/config/paths'
-import { useUser } from '@/hooks/use-user'
+} from '@/components/ui/shadcn/sidebar'
+import { paths } from '@/config'
+import { useUser } from '@/hooks'
 
 type AppLayoutProps = {
   children: React.ReactNode

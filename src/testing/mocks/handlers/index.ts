@@ -1,8 +1,7 @@
 import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
-
-import { networkDelay } from '../helpers'
+import { networkDelay } from '@testing/mocks/helpers'
 
 import { authHandlers } from './auth'
 import { usersHandlers } from './users'

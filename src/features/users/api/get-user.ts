@@ -1,10 +1,10 @@
 import { useQuery, type QueryOptions } from '@tanstack/react-query'
 
-import { queryKeys } from '@/config/query-keys'
-import { api } from '@/lib/api'
-import type { User } from '@/types/user'
+import { queryKeys } from '@/config'
+import { api } from '@/lib'
+import type { User } from '@/types'
 
-import type { GetUserQuery } from '../types/users.types'
+import type { GetUserQuery } from '../types/api.types'
 
 export async function getUser({ userId }: GetUserQuery): Promise<User> {
   const response = await api.get<User>(`/users/${userId}`)

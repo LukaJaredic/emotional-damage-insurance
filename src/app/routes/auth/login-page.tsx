@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom'
 
-import { paths } from '@/config/paths'
+import { paths } from '@/config'
 import LoginForm from '@/features/auth/components/login-form'
 
 function LoginPage() {

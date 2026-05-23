@@ -1,7 +1,7 @@
 import { Navigate } from 'react-router-dom'
 
-import { paths } from '@/config/paths'
-import { useUser } from '@/hooks/use-user'
+import { paths } from '@/config'
+import { useUser } from '@/hooks'
 
 type AuthGuardProps = {
   children: React.ReactNode

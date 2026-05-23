@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
 import { nanoid } from 'nanoid'
 
-import type { MockUser } from '../handlers/users'
-import { hash } from '../helpers'
+import type { MockUser } from '@testing/mocks/handlers/users'
+import { hash } from '@testing/mocks/helpers'
 
 function generateUser(): MockUser {
   const firstName = faker.person.firstName()

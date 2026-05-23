@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { queryKeys } from '@/config/query-keys'
-import { api } from '@/lib/api'
-import type { User } from '@/types/user'
+import { queryKeys } from '@/config'
+import { api } from '@/lib'
+import type { User } from '@/types'
 
-import type { CreateUserAction } from '../types/users.types'
+import type { CreateUserAction } from '../types/api.types'
 
 export async function createUser(data: CreateUserAction): Promise<User> {
   const response = await api.post<User>('/users', data)

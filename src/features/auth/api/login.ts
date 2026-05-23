@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 
-import { api } from '@/lib/api'
-import type { User } from '@/types/user'
+import { api } from '@/lib'
+import type { User } from '@/types'
 
 import type { LoginAction } from '../types/login.types'
 import { onSuccessfulLogin } from '../utils/login'

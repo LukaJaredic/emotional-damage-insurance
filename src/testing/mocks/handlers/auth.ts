@@ -1,9 +1,8 @@
 import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
-
-import { authenticate, requireAuth, AUTH_COOKIE } from '../db.utils'
-import { networkDelay } from '../helpers'
+import { authenticate, requireAuth, AUTH_COOKIE } from '@testing/mocks/db.utils'
+import { networkDelay } from '@testing/mocks/helpers'
 
 type LoginBody = {
   email: string

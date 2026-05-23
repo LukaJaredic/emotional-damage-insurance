@@ -1,12 +1,10 @@
-import RemoteDataWithFilters from '@/components/data-view/remote-data-with-filters'
-import MasterPageLayout from '@/components/master-page-layout'
-import Button from '@/components/ui/button'
+import { RemoteDataWithFilters } from '@/components/data/remote-data'
+import type { TableColumn } from '@/components/data/table'
+import type { Filter, SelectOption } from '@/components/form'
+import { MasterPageLayout } from '@/components/layout'
+import Button from '@/components/ui/shadcn/button'
 import { useUsers } from '@/features/users/api/get-users'
-import type { User } from '@/types/user'
-
-import { type Filter } from '../../../components/data-view/filters'
-import type { SelectOption } from '../../../components/select'
-import type { TableColumn } from '../../../components/table/table.types'
+import type { User } from '@/types'
 
 const userColumns: TableColumn<User>[] = [
   {

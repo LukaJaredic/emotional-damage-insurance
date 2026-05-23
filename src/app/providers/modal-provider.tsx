@@ -5,8 +5,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { ModalContext } from '@app/providers/modal-context'
+} from '@/components/ui/shadcn/dialog'
+
+import { ModalContext } from './modal-context'
 
 type ModalState = {
   title: string
