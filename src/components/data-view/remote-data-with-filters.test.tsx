@@ -7,9 +7,9 @@ import useMediaQuery from '@/hooks/use-media-query'
 
 import type { TableColumn } from '../table/table.types'
 
-import DataViewQueryWithFilters from './data-view-query-with-filters'
-import type { DataViewQueryState } from './data-view-query.types'
 import type { Filter } from './filters'
+import RemoteDataWithFilters from './remote-data-with-filters'
+import type { RemoteDataState } from './remote-data.types'
 
 vi.mock('@/hooks/use-media-query', () => ({
   default: vi.fn(),
@@ -64,10 +64,9 @@ const tableColumns: TableColumn<CreativeWork>[] = [
 ]
 
 const mockedUseMediaQuery = vi.mocked(useMediaQuery)
-const mockedUseQuery =
-  vi.fn<(params: Query) => DataViewQueryState<CreativeWork>>()
+const mockedUseQuery = vi.fn<(params: Query) => RemoteDataState<CreativeWork>>()
 
-function buildQueryState(params: Query): DataViewQueryState<CreativeWork> {
+function buildQueryState(params: Query): RemoteDataState<CreativeWork> {
   void params
 
   return {
@@ -78,14 +77,14 @@ function buildQueryState(params: Query): DataViewQueryState<CreativeWork> {
   }
 }
 
-function renderDataViewQueryWithFilters(url = '/') {
+function renderRemoteDataWithFilters(url = '/') {
   const router = createMemoryRouter(
     [
       {
         path: '/',
         element: (
           <div className="h-96">
-            <DataViewQueryWithFilters
+            <RemoteDataWithFilters
               useQuery={mockedUseQuery}
               filters={filters}
               tableColumns={tableColumns}
@@ -118,7 +117,7 @@ function typeSelect() {
   return screen.getByRole('combobox')
 }
 
-describe('DataViewQueryWithFilters', () => {
+describe('RemoteDataWithFilters', () => {
   beforeEach(() => {
     mockedUseMediaQuery.mockReturnValue(false)
     mockedUseQuery.mockImplementation(buildQueryState)
@@ -129,7 +128,7 @@ describe('DataViewQueryWithFilters', () => {
   })
 
   it('should render default filters and data', () => {
-    renderDataViewQueryWithFilters()
+    renderRemoteDataWithFilters()
 
     expect(searchInput()).toHaveValue('')
     expect(screen.getByText('Choose type')).toBeInTheDocument()
@@ -145,7 +144,7 @@ describe('DataViewQueryWithFilters', () => {
   })
 
   it('should pre-fill data using search', () => {
-    renderDataViewQueryWithFilters('/?search=batman&type=movie&foo=bar&page=99')
+    renderRemoteDataWithFilters('/?search=batman&type=movie&foo=bar&page=99')
 
     expect(searchInput()).toHaveValue('batman')
     expect(screen.getByText('Movie')).toBeInTheDocument()
@@ -157,7 +156,7 @@ describe('DataViewQueryWithFilters', () => {
   })
 
   it('should set search params when filters change', async () => {
-    const { router, user } = renderDataViewQueryWithFilters('/?foo=bar')
+    const { router, user } = renderRemoteDataWithFilters('/?foo=bar')
 
     await user.type(searchInput(), 'planet')
     await user.click(typeSelect())
@@ -171,7 +170,7 @@ describe('DataViewQueryWithFilters', () => {
   })
 
   it('should query data using params', async () => {
-    const { user } = renderDataViewQueryWithFilters()
+    const { user } = renderRemoteDataWithFilters()
 
     mockedUseQuery.mockClear()
 

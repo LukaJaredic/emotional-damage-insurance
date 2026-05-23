@@ -3,18 +3,15 @@ import { useSearchParams } from 'react-router-dom'
 
 import { cn } from '@/lib/utils'
 
-import DataViewQuery from './data-view-query'
-import type {
-  DataViewQueryProps,
-  DataViewQueryState,
-} from './data-view-query.types'
 import Filters, { type Filter } from './filters'
+import RemoteData from './remote-data'
+import type { RemoteDataProps, RemoteDataState } from './remote-data.types'
 
-type DataViewQueryWithFiltersProps<
+type RemoteDataWithFiltersProps<
   TItem extends Record<string, unknown>,
   TFilters extends FieldValues,
-> = Omit<DataViewQueryProps<TItem>, 'query'> & {
-  useQuery: (params: TFilters) => DataViewQueryState<TItem>
+> = Omit<RemoteDataProps<TItem>, 'query'> & {
+  useQuery: (params: TFilters) => RemoteDataState<TItem>
   filters: Filter<TFilters>[]
 }
 
@@ -85,7 +82,7 @@ function buildNextSearchParams<T extends FieldValues>(
   return nextSearchParams
 }
 
-function DataViewQueryWithFilters<
+function RemoteDataWithFilters<
   TItem extends Record<string, unknown>,
   TFilters extends FieldValues,
 >({
@@ -93,7 +90,7 @@ function DataViewQueryWithFilters<
   filters,
   className,
   ...props
-}: DataViewQueryWithFiltersProps<TItem, TFilters>) {
+}: RemoteDataWithFiltersProps<TItem, TFilters>) {
   const [searchParams, setSearchParams] = useSearchParams()
   const filterValues = buildFilterValues(searchParams, filters)
 
@@ -114,11 +111,11 @@ function DataViewQueryWithFilters<
       />
 
       <div className="min-h-0 flex-1">
-        <DataViewQuery {...props} query={query} />
+        <RemoteData {...props} query={query} />
       </div>
     </div>
   )
 }
 
-export default DataViewQueryWithFilters
-export { DataViewQueryWithFilters, type DataViewQueryWithFiltersProps }
+export default RemoteDataWithFilters
+export { RemoteDataWithFilters, type RemoteDataWithFiltersProps }

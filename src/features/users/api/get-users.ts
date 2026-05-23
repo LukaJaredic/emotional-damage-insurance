@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 
-import type { DataViewQueryState } from '@/components/data-view/data-view-query.types'
+import type { RemoteDataState } from '@/components/data-view/remote-data.types'
 import { queryKeys } from '@/config/query-keys'
 import { api } from '@/lib/api'
 import type { User } from '@/types/user'
@@ -13,7 +13,7 @@ export async function getUsers(params: GetUsersQuery): Promise<User[]> {
   return response.data
 }
 
-export function useUsers(params: UseUsersQuery): DataViewQueryState<User> {
+export function useUsers(params: UseUsersQuery): RemoteDataState<User> {
   const perPage = 25
 
   const query = useInfiniteQuery({

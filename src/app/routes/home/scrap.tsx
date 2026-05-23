@@ -1,4 +1,4 @@
-import DataViewQueryWithFilters from '@/components/data-view/data-view-query-with-filters'
+import RemoteDataWithFilters from '@/components/data-view/remote-data-with-filters'
 import MasterPageLayout from '@/components/master-page-layout'
 import Button from '@/components/ui/button'
 import { useUsers } from '@/features/users/api/get-users'
@@ -79,7 +79,7 @@ function Scrap() {
         </>
       }
     >
-      <DataViewQueryWithFilters
+      <RemoteDataWithFilters
         useQuery={useUsers}
         tableColumns={userColumns}
         tableCaption="Users table"

@@ -1,6 +1,6 @@
 import type { DataViewProps } from './data-view.types'
 
-type DataViewQueryState<T> = {
+type RemoteDataState<T> = {
   items: T[]
   isInitialLoading: boolean
   isFetchingMore: boolean
@@ -8,11 +8,11 @@ type DataViewQueryState<T> = {
   fetchNextPage?: () => Promise<unknown> | void
 }
 
-type DataViewQueryProps<T extends Record<string, unknown>> = Omit<
+type RemoteDataProps<T extends Record<string, unknown>> = Omit<
   DataViewProps<T>,
   'items' | 'isLoading' | 'onEndReached'
 > & {
-  query: DataViewQueryState<T>
+  query: RemoteDataState<T>
 }
 
-export type { DataViewQueryProps, DataViewQueryState }
+export type { RemoteDataProps, RemoteDataState }

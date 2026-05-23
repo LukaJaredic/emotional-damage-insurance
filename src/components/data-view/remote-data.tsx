@@ -1,10 +1,10 @@
 import DataView from './data-view'
-import type { DataViewQueryProps } from './data-view-query.types'
+import type { RemoteDataProps } from './remote-data.types'
 
-function DataViewQuery<T extends Record<string, unknown>>({
+function RemoteData<T extends Record<string, unknown>>({
   query,
   ...props
-}: DataViewQueryProps<T>) {
+}: RemoteDataProps<T>) {
   const {
     items,
     isInitialLoading,
@@ -31,4 +31,4 @@ function DataViewQuery<T extends Record<string, unknown>>({
   )
 }
 
-export default DataViewQuery
+export default RemoteData
