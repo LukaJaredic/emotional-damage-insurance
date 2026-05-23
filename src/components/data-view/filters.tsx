@@ -108,7 +108,7 @@ function Filters<T extends FieldValues>({
             handleChange()
           }}
           variant={'outline'}
-          className="mt-4.5"
+          className="mt-4.5 basis-full sm:basis-auto"
           disabled={areFiltersEmpty(values)}
         >
           Clear filters
@@ -128,10 +128,12 @@ function TextFilter<T extends FieldValues>({
   placeholder,
   ...props
 }: TextFilterProps<T>) {
+  const inputId = `text-filter-${props.name}`
+
   return (
-    <div className="flex w-50 flex-col space-y-1">
-      <Label>{label}</Label>
-      <Input placeholder={placeholder} {...props} />
+    <div className="flex w-50 flex-1 flex-col space-y-1 sm:flex-none">
+      <Label htmlFor={inputId}>{label}</Label>
+      <Input id={inputId} placeholder={placeholder} {...props} />
     </div>
   )
 }
@@ -150,10 +152,13 @@ function SelectFilter<T extends FieldValues>({
   isMultiple,
   ...props
 }: SelectFilterProps<T>) {
+  const inputId = `select-filter-${props.name}`
+
   return (
-    <div className="flex w-50 flex-col space-y-1">
-      <Label>{label}</Label>
+    <div className="flex w-50 flex-1 flex-col space-y-1 sm:flex-none">
+      <Label htmlFor={inputId}>{label}</Label>
       <Select
+        inputId={inputId}
         placeholder={placeholder}
         options={options}
         isMultiple={!!isMultiple}

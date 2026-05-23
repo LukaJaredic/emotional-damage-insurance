@@ -1,4 +1,6 @@
 import DataViewQueryWithFilters from '@/components/data-view/data-view-query-with-filters'
+import MasterPageLayout from '@/components/master-page-layout'
+import Button from '@/components/ui/button'
 import { useUsers } from '@/features/users/api/get-users'
 import type { User } from '@/types/user'
 
@@ -62,7 +64,21 @@ const userFilters = [
 
 function Scrap() {
   return (
-    <section className="flex h-full flex-col gap-4">
+    <MasterPageLayout
+      heading="Users"
+      description="Browse and filter system users."
+      actions={
+        <>
+          <Button className="btn">Create user</Button>
+          <Button variant="secondary" className="btn">
+            Create user
+          </Button>
+          <Button variant="destructive" className="btn">
+            Create user
+          </Button>
+        </>
+      }
+    >
       <DataViewQueryWithFilters
         useQuery={useUsers}
         tableColumns={userColumns}
@@ -86,7 +102,7 @@ function Scrap() {
           </article>
         )}
       />
-    </section>
+    </MasterPageLayout>
   )
 }
 
