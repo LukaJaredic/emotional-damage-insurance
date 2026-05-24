@@ -10,7 +10,7 @@ type UserCardProps = {
 function UserCard({ user }: UserCardProps) {
   return (
     <Link
-      to={paths.users.getDetailHref(user.id)}
+      to={paths.users.detail.getHref(user.id)}
       className="hover:bg-accent block rounded-xl border p-4"
     >
       <div className="flex items-start justify-between gap-4">

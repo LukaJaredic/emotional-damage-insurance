@@ -4,9 +4,8 @@ import { RemoteDataWithFilters } from '@/components/data/remote-data'
 import { PageLayout } from '@/components/layout'
 import Button from '@/components/ui/shadcn/button'
 import { useUsers } from '@/features/users/api/get-users'
-
-import { userFilters } from '../utils/user-filters'
-import { userColumns } from '../utils/user-table-columns'
+import { userFilters } from '@features/users/utils/user-filters'
+import { userColumns } from '@features/users/utils/user-table-columns'
 
 import UserCard from './user-card'
 

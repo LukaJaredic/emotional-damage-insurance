@@ -6,4 +6,5 @@ export type User = {
   lastName: string
   email: string
   roles: UserRole[]
+  createdAt: number
 }

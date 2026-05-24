@@ -10,7 +10,7 @@ import {
   TableRow as UITableRow,
 } from '@components/ui/shadcn/table'
 
-import { LoadingRow, TableHeaderRow, TableRowCells } from './table.components'
+import { LoadingRow, TableHeaderRow, TableRowCells } from './table-components'
 import type { BaseTableProps } from './table.types'
 import { useExpandedColumns, sharedTableClassName } from './table.utils'
 

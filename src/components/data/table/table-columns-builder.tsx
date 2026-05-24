@@ -1,9 +1,7 @@
 import { Link } from 'react-router-dom'
-import { safeParse } from 'zod'
 
 import type { TableColumn } from '@/components/data/table'
-
-import { email } from './zod-schemas'
+import { Email } from '@/components/ui'
 
 type PrimaryLinkColumnOptions<T> = {
   title: string
@@ -25,7 +23,7 @@ export function tableColumnBuilder<T>(): TableColumnBuilder<T> {
     email: (title: string, dataIndex: keyof T) => ({
       title,
       dataIndex,
-      render: (row) => renderEmailCell(row[dataIndex]),
+      render: (row) => <Email email={row[dataIndex]} />,
     }),
     array: (title: string, dataIndex: keyof T) => ({
       title,
@@ -57,28 +55,4 @@ function renderPrimaryLinkCell(href: string, label: string) {
       {label}
     </Link>
   )
-}
-
-function renderEmailCell(value: unknown) {
-  if (isValidEmail(value)) {
-    return (
-      <a
-        onClick={stopPropagation}
-        className="relative z-10 underline"
-        href={`mailto:${value}`}
-      >
-        {value}
-      </a>
-    )
-  }
-
-  return 'Invalid email value'
-}
-
-function stopPropagation(e: React.MouseEvent) {
-  e.stopPropagation()
-}
-
-function isValidEmail(value: unknown): value is string {
-  return safeParse(email(), value).success
 }

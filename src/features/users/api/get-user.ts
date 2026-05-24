@@ -18,6 +18,7 @@ export function useUserDetail(
   return useQuery({
     queryKey: queryKeys.users.detail(userId),
     queryFn: () => getUser({ userId }),
+    retry: false,
     ...queryOptions,
   })
 }

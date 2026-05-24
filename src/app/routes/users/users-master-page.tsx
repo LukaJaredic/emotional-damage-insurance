@@ -1,4 +1,4 @@
-import UsersMaster from '@/features/users/components/users-master'
+import UsersMaster from '@/features/users/components/master/users-master'
 
 function UsersMasterPage() {
   return <UsersMaster />

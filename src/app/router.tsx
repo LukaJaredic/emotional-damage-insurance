@@ -14,6 +14,7 @@ const NotFoundPage = lazy(() => import('@app/routes/not-found-page'))
 const UsersMasterPage = lazy(
   () => import('@app/routes/users/users-master-page'),
 )
+const UserDetailPage = lazy(() => import('@app/routes/users/user-detail-page'))
 
 function withSuspense(page: React.ReactNode) {
   return (
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: paths.users.path,
         element: protectedRoute(<UsersMasterPage />),
+      },
+      {
+        path: paths.users.detail.path,
+        element: protectedRoute(<UserDetailPage />),
       },
       {
         path: '*',
