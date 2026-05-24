@@ -1,16 +1,16 @@
-type MasterPageLayoutProps = {
+type PageLayoutProps = {
   heading: string
   description: string
   actions?: () => React.ReactNode
   children: React.ReactNode
 }
 
-function MasterPageLayout({
+function PageLayout({
   heading,
   description,
   actions,
   children,
-}: MasterPageLayoutProps) {
+}: PageLayoutProps) {
   return (
     <section className="flex h-full min-h-0 flex-col gap-6">
       <header className="flex flex-col gap-4 sm:flex-row">
@@ -32,4 +32,4 @@ function MasterPageLayout({
   )
 }
 
-export default MasterPageLayout
+export default PageLayout

@@ -1,7 +1,7 @@
 import { PlusIcon } from '@phosphor-icons/react'
 
 import { RemoteDataWithFilters } from '@/components/data/remote-data'
-import { MasterPageLayout } from '@/components/layout'
+import { PageLayout } from '@/components/layout'
 import Button from '@/components/ui/shadcn/button'
 import { useUsers } from '@/features/users/api/get-users'
 
@@ -10,7 +10,7 @@ import { userColumns } from '../utils/user-table-columns'
 
 function UsersMaster() {
   return (
-    <MasterPageLayout
+    <PageLayout
       heading="Application users"
       description="Browse and filter users that have access to the application."
       actions={() => (
@@ -43,7 +43,7 @@ function UsersMaster() {
           </article>
         )}
       />
-    </MasterPageLayout>
+    </PageLayout>
   )
 }
 

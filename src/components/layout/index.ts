@@ -1,1 +1,1 @@
-export { default as MasterPageLayout } from './master-page-layout'
+export { default as PageLayout } from './page-layout'
