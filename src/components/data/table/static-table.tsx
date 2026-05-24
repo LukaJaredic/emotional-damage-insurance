@@ -32,7 +32,7 @@ function StaticTable<T extends Record<string, unknown>>({
     <div className={cn(sharedTableClassName, 'overflow-auto', className)}>
       <UITable aria-busy={isLoading} className="relative w-max min-w-full">
         <UITableCaption className="sr-only">{caption}</UITableCaption>
-        <UITableHeader className="bg-background sticky top-0">
+        <UITableHeader className="bg-background sticky top-0 z-20">
           <TableHeaderRow
             columns={columns}
             isColumnExpanded={isColumnExpanded}

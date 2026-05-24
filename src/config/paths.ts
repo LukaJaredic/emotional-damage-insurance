@@ -6,6 +6,7 @@ export const paths = {
   users: {
     path: '/users',
     getHref: () => '/users',
+    getDetailHref: (userId: string) => `/users/${userId}`,
   },
   notFound: {
     path: '/404',

@@ -27,7 +27,7 @@ const VirtuosoTableHead = forwardRef<
   void context
 
   return (
-    <UITableHeader ref={ref} style={style}>
+    <UITableHeader ref={ref} style={{ ...style, zIndex: 20 }}>
       {children}
     </UITableHeader>
   )
