@@ -8,6 +8,8 @@ import { useUsers } from '@/features/users/api/get-users'
 import { userFilters } from '../utils/user-filters'
 import { userColumns } from '../utils/user-table-columns'
 
+import UserCard from './user-card'
+
 function UsersMaster() {
   return (
     <PageLayout
@@ -27,21 +29,7 @@ function UsersMaster() {
         filters={userFilters}
         loadingContent="Loading users..."
         emptyContent="No users found"
-        listItemContent={(_, user) => (
-          <article className="rounded-xl border p-4">
-            <div className="flex items-start justify-between gap-4">
-              <div className="space-y-1">
-                <h2 className="font-medium">
-                  {user.firstName} {user.lastName}
-                </h2>
-                <p className="text-muted-foreground text-sm">{user.email}</p>
-              </div>
-              <p className="text-muted-foreground text-xs uppercase">
-                {user.roles.join(', ')}
-              </p>
-            </div>
-          </article>
-        )}
+        listItemContent={(_, user) => <UserCard user={user} />}
       />
     </PageLayout>
   )
