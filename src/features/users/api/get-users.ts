@@ -6,7 +6,7 @@ import { api } from '@/lib'
 import type { User } from '@/types'
 import { commonQueryOptions } from '@/utils'
 
-import type { GetUsersQuery, UseUsersQuery } from '../types/api.types'
+import type { GetUsersQuery, UseUsersQuery } from '../types/user-api.types'
 
 export async function getUsers(params: GetUsersQuery): Promise<User[]> {
   const response = await api.get<User[]>('/users', { params })

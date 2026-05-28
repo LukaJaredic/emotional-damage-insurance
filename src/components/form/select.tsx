@@ -17,7 +17,7 @@ type BaseSelectProps = {
   placeholder?: string
   disabled?: boolean
   className?: string
-  inputId?: string
+  inputId: string
   name?: string
   noOptionsMessage?: string
   isClearable?: boolean

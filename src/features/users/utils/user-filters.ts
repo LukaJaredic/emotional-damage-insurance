@@ -1,19 +1,6 @@
-import type { Filter, SelectOption } from '@/components/form'
+import type { Filter } from '@/components/form'
 
-const roleOptions: SelectOption[] = [
-  {
-    label: 'Admin',
-    value: 'admin',
-  },
-  {
-    label: 'Employee',
-    value: 'employee',
-  },
-  {
-    label: 'Customer',
-    value: 'customer',
-  },
-]
+import { roleOptions } from './user-options'
 
 type UserFiltersValues = {
   search: string

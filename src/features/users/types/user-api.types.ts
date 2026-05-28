@@ -1,6 +1,9 @@
 import type { UserRole } from '@/types'
 
-import type { CreateUserFormValues, UpdateUserFormValues } from './form.types'
+import type {
+  CreateUserFormValues,
+  UpdateUserFormValues,
+} from './user-form.types'
 
 export type CreateUserAction = CreateUserFormValues
 

@@ -5,7 +5,9 @@ import { QueryError, QueryLoading } from '@/components/ui'
 import Button from '@/components/ui/shadcn/button'
 import { useUserDetail } from '@/features/users/api/get-user'
 import type { UserRole } from '@/types'
-import { roleLabels } from '@features/users/utils/labels'
+import { roleLabels } from '@features/users/utils/user-labels'
+
+import UserFormDialog from '../form/user-form-dialog'
 
 import { UserActivity } from './user-activity'
 import { UserBaseInfo } from './user-base-info'
@@ -41,9 +43,11 @@ function UserDetail({ userId }: UserDetailProps) {
       heading={`${user.firstName} ${user.lastName}`}
       description={formatRoles(user.roles)}
       actions={() => (
-        <Button>
-          <PencilIcon /> Edit this user
-        </Button>
+        <UserFormDialog user={user}>
+          <Button>
+            <PencilIcon /> Edit this user
+          </Button>
+        </UserFormDialog>
       )}
     >
       <div className="flex min-h-0 w-full flex-col gap-6 *:last:flex-1 xl:flex-row xl:items-start xl:*:first:basis-125">

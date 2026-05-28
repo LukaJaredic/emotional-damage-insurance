@@ -1,7 +1,7 @@
 import { Avatar, Email } from '@/components/ui'
 import type { User } from '@/types'
 import { toAppDateTime } from '@/utils'
-import { roleLabels } from '@features/users/utils/labels'
+import { roleLabels } from '@features/users/utils/user-labels'
 
 type UserBaseInfoProps = {
   user: User

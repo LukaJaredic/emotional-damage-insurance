@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/config'
 import { api } from '@/lib'
 
-import type { DeleteUserAction } from '../types/api.types'
+import type { DeleteUserAction } from '../types/user-api.types'
 
 export async function deleteUser({ userId }: DeleteUserAction) {
   await api.delete(`/users/${userId}`)

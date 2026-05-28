@@ -7,6 +7,8 @@ import { useUsers } from '@/features/users/api/get-users'
 import { userFilters } from '@features/users/utils/user-filters'
 import { userColumns } from '@features/users/utils/user-table-columns'
 
+import UserFormDialog from '../form/user-form-dialog'
+
 import UserCard from './user-card'
 
 function UsersMaster() {
@@ -15,10 +17,12 @@ function UsersMaster() {
       heading="Application users"
       description="Browse and filter users that have access to the application."
       actions={() => (
-        <Button className="btn">
-          <PlusIcon />
-          Create a user
-        </Button>
+        <UserFormDialog>
+          <Button className="btn">
+            <PlusIcon />
+            Create a user
+          </Button>
+        </UserFormDialog>
       )}
     >
       <RemoteDataWithFilters
