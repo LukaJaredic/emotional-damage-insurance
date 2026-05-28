@@ -150,9 +150,11 @@ function Select({
       }}
       styles={{
         // Better handling than with classes
+        // Dialog also disables pointer events on everything thats not inside it, for eg: portals
         menuPortal: (base) => ({
           ...base,
           zIndex: 60,
+          pointerEvents: 'auto',
         }),
       }}
     />
