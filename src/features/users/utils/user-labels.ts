@@ -5,3 +5,7 @@ export const roleLabels: Record<UserRole, string> = {
   employee: 'Employee',
   customer: 'Customer',
 }
+
+export const stringifyRoles = (roles: UserRole[]) => {
+  return roles.map((role) => roleLabels[role]).join(', ')
+}

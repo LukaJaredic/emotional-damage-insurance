@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 
 import { paths } from '@/config'
 import type { User } from '@/types'
+import { stringifyRoles } from '@features/users/utils/user-labels'
 
 type UserCardProps = {
   user: User
@@ -21,7 +22,7 @@ function UserCard({ user }: UserCardProps) {
           <p className="text-muted-foreground text-sm">{user.email}</p>
         </div>
         <p className="text-muted-foreground text-xs uppercase">
-          {user.roles.join(', ')}
+          {stringifyRoles(user.roles)}
         </p>
       </div>
     </Link>

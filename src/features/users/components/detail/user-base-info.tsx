@@ -1,7 +1,7 @@
 import { Avatar, Email } from '@/components/ui'
 import type { User } from '@/types'
 import { toAppDateTime } from '@/utils'
-import { roleLabels } from '@features/users/utils/user-labels'
+import { stringifyRoles } from '@features/users/utils/user-labels'
 
 type UserBaseInfoProps = {
   user: User
@@ -26,7 +26,7 @@ export function UserBaseInfo({ user }: UserBaseInfoProps) {
         <DefinitionListItem term="Last name" description={user.lastName} />
         <DefinitionListItem
           term="Roles"
-          description={user.roles.map((role) => roleLabels[role]).join(', ')}
+          description={stringifyRoles(user.roles)}
         />
         <DefinitionListItem
           term="Email"

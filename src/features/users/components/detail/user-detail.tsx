@@ -1,29 +1,23 @@
 import { PencilIcon, TrashIcon } from '@phosphor-icons/react'
 
 import { PageLayout } from '@/components/layout'
-import { ConfirmDialog, QueryError, QueryLoading } from '@/components/ui'
+import { QueryError, QueryLoading } from '@/components/ui'
 import Button from '@/components/ui/shadcn/button'
 import { useUserDetail } from '@/features/users/api/get-user'
-import type { UserRole } from '@/types'
-import { useDeleteUser } from '@features/users/api/delete-user'
-import { roleLabels } from '@features/users/utils/user-labels'
+import { stringifyRoles } from '@features/users/utils/user-labels'
 
 import UserFormDialog from '../form/user-form-dialog'
 
 import { UserActivity } from './user-activity'
 import { UserBaseInfo } from './user-base-info'
+import UserDeleteDialog from './user-delete-dialog'
 
 type UserDetailProps = {
   userId: string
 }
 
-function formatRoles(roles: UserRole[]) {
-  return roles.map((role) => roleLabels[role]).join(', ')
-}
-
 function UserDetail({ userId }: UserDetailProps) {
   const query = useUserDetail({ userId })
-  const deleteMutation = useDeleteUser()
 
   if (query.isPending) {
     return <QueryLoading label="Loading user details..." />
@@ -43,7 +37,7 @@ function UserDetail({ userId }: UserDetailProps) {
   return (
     <PageLayout
       heading={`${user.firstName} ${user.lastName}`}
-      description={formatRoles(user.roles)}
+      description={stringifyRoles(user.roles)}
       actions={() => (
         <>
           <UserFormDialog user={user}>
@@ -51,26 +45,12 @@ function UserDetail({ userId }: UserDetailProps) {
               <PencilIcon /> Edit this user
             </Button>
           </UserFormDialog>
-          <ConfirmDialog
-            title={
-              <>
-                Delete{' '}
-                <strong className="bg-primary px-1">
-                  {user.firstName} {user.lastName}
-                </strong>
-                ?
-              </>
-            }
-            description="Are you sure you want to delete this user? This action cannot be undone."
-            confirmLabel="Delete"
-            variant="destructive"
-            onConfirm={async () => deleteMutation.mutateAsync({ userId })}
-          >
-            <Button variant="destructive" disabled={!user}>
+          <UserDeleteDialog user={user}>
+            <Button variant="destructive">
               <TrashIcon />
               Delete this user
             </Button>
-          </ConfirmDialog>
+          </UserDeleteDialog>
         </>
       )}
     >
