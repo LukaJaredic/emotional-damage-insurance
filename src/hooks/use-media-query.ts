@@ -1,8 +1,4 @@
-import { useSyncExternalStore } from 'react'
-
-function getSnapshot(query: string) {
-  return window.matchMedia(query).matches
-}
+import { useRef, useSyncExternalStore } from 'react'
 
 function subscribe(callback: () => void, mediaQueryList: MediaQueryList) {
   mediaQueryList.addEventListener('change', callback)
@@ -13,9 +9,10 @@ function subscribe(callback: () => void, mediaQueryList: MediaQueryList) {
 }
 
 function useMediaQuery(query: string) {
+  const mediaQueryRef = useRef(window.matchMedia(query))
   return useSyncExternalStore(
-    (callback) => subscribe(callback, window.matchMedia(query)),
-    () => getSnapshot(query),
+    (callback) => subscribe(callback, mediaQueryRef.current),
+    () => mediaQueryRef.current.matches,
   )
 }
 
