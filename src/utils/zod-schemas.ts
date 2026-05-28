@@ -18,3 +18,19 @@ export function requiredString(minLength?: number, maxLength?: number) {
 
   return schema
 }
+
+export function email() {
+  return z.email({ message: 'Invalid email address' })
+}
+
+export function multipleSelect<T extends string>(
+  options: T[],
+  required = false,
+) {
+  const schema = z.array(z.enum(options))
+
+  if (required) {
+    return schema.min(1, 'Select at least one option')
+  }
+  return schema
+}

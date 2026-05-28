@@ -1,10 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 
-import CommonTooltip from '@/components/common-tooltip'
-import InputField from '@/components/input-field'
-import Spinner from '@/components/spinner'
-import Button from '@/components/ui/button'
+import { InputField } from '@/components/form'
+import { CommonTooltip, Spinner } from '@/components/ui'
+import Button from '@/components/ui/shadcn/button'
 import {
   Card,
   CardContent,
@@ -12,11 +11,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { FieldGroup } from '@/components/ui/field'
+} from '@/components/ui/shadcn/card'
+import { FieldGroup } from '@/components/ui/shadcn/field'
 
 import { useLogin } from '../api/login'
-import type { LoginFormData } from '../types/login'
+import type { LoginFormData } from '../types/login.types'
 import { loginSchema } from '../utils/login'
 
 type LoginFormProps = {

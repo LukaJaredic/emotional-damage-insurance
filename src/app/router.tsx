@@ -1,8 +1,8 @@
 import { Suspense, lazy } from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
-import Spinner from '@/components/spinner'
-import { paths } from '@/config/paths'
+import { Spinner } from '@/components/ui'
+import { paths } from '@/config'
 
 import AppLayout from './app-layout'
 import AuthGuard from './auth-guard'
@@ -11,6 +11,10 @@ import AppProvider from './providers/app-provider'
 const HomePage = lazy(() => import('@app/routes/home/home-page'))
 const LoginPage = lazy(() => import('@app/routes/auth/login-page'))
 const NotFoundPage = lazy(() => import('@app/routes/not-found-page'))
+const UsersMasterPage = lazy(
+  () => import('@app/routes/users/users-master-page'),
+)
+const UserDetailPage = lazy(() => import('@app/routes/users/user-detail-page'))
 
 function withSuspense(page: React.ReactNode) {
   return (
@@ -53,6 +57,14 @@ const router = createBrowserRouter([
       {
         path: paths.root.path,
         element: protectedRoute(<HomePage />),
+      },
+      {
+        path: paths.users.path,
+        element: protectedRoute(<UsersMasterPage />),
+      },
+      {
+        path: paths.users.detail.path,
+        element: protectedRoute(<UserDetailPage />),
       },
       {
         path: '*',

@@ -1,7 +1,7 @@
 import { ArrowLeftIcon } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
 
-import Button from '@/components/ui/button'
+import Button from '@/components/ui/shadcn/button'
 
 function NotFoundPage() {
   const navigate = useNavigate()

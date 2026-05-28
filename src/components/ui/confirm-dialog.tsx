@@ -1,0 +1,86 @@
+import { useState } from 'react'
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/shadcn/alert-dialog'
+
+import Spinner from './spinner'
+
+type ConfirmDialogStatus = 'closed' | 'idle' | 'pending'
+
+type ConfirmDialogProps = {
+  children: React.ReactNode
+  title: React.ReactNode
+  description: React.ReactNode
+  confirmLabel?: string
+  cancelLabel?: string
+  variant?: 'default' | 'destructive'
+  onConfirm: () => Promise<unknown> | unknown
+}
+
+function ConfirmDialog({
+  children,
+  title,
+  description,
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  variant = 'default',
+  onConfirm,
+}: ConfirmDialogProps) {
+  const [status, setStatus] = useState<ConfirmDialogStatus>('closed')
+  const open = status !== 'closed'
+  const isPending = status === 'pending'
+
+  async function handleConfirm() {
+    setStatus('pending')
+
+    try {
+      await onConfirm()
+      setStatus('closed')
+    } catch {
+      setStatus('idle')
+    }
+  }
+
+  function handleOpenChange(nextOpen: boolean) {
+    setStatus(nextOpen ? 'idle' : 'closed')
+  }
+
+  return (
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent size="sm">
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isPending}>
+            {cancelLabel}
+          </AlertDialogCancel>
+          <AlertDialogAction
+            variant={variant}
+            disabled={isPending}
+            onClick={(event) => {
+              event.preventDefault()
+              void handleConfirm()
+            }}
+          >
+            {isPending ? <Spinner /> : null}
+            {confirmLabel}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}
+
+export default ConfirmDialog

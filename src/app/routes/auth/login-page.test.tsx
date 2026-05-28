@@ -1,10 +1,9 @@
 import { screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { paths } from '@/config/paths'
-import { queryKeys } from '@/config/query-keys'
-import { queryClient } from '@/lib/react-query'
+import { paths, queryKeys } from '@/config'
+import { queryClient } from '@/lib'
 import { createUser, renderApp } from '@/testing/test-utils'
 
 import LoginPage from './login-page'
@@ -21,12 +20,16 @@ function submitButton() {
   return screen.getByTitle('Log in', { exact: true })
 }
 
-async function fillForm(email: string, password: string) {
-  await userEvent.clear(emailInput())
-  await userEvent.type(emailInput(), email)
+async function fillForm(
+  userEventInstance: UserEvent,
+  email: string,
+  password: string,
+) {
+  await userEventInstance.clear(emailInput())
+  await userEventInstance.type(emailInput(), email)
 
-  await userEvent.clear(passwordInput())
-  await userEvent.type(passwordInput(), password)
+  await userEventInstance.clear(passwordInput())
+  await userEventInstance.type(passwordInput(), password)
 }
 
 describe('Login Page', () => {
@@ -56,9 +59,11 @@ describe('Login Page', () => {
   })
 
   it('should log in with valid credentials and redirect to the requested route', async () => {
-    await fillForm(user.email, '123admin321')
+    const userEventInstance = userEvent.setup()
 
-    await userEvent.click(submitButton())
+    await fillForm(userEventInstance, user.email, '123admin321')
+
+    await userEventInstance.click(submitButton())
 
     await waitFor(() => {
       expect(screen.getByText('Good Redirect')).toBeInTheDocument()
@@ -67,14 +72,16 @@ describe('Login Page', () => {
     expect(queryClient.getQueryData(queryKeys.auth.me())).toMatchObject({
       id: user.id,
       email: user.email,
-      role: user.role,
+      roles: user.roles,
     })
   })
 
   it('should not log in with invalid credentials and show an error message', async () => {
-    await fillForm('invalid@example.com', 'invalid-password')
+    const userEventInstance = userEvent.setup()
 
-    await userEvent.click(submitButton())
+    await fillForm(userEventInstance, 'invalid@example.com', 'invalid-password')
+
+    await userEventInstance.click(submitButton())
 
     await waitFor(() => {
       expect(screen.getByText(/invalid email or password/i)).toBeInTheDocument()

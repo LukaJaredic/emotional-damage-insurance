@@ -1,5 +1,7 @@
+import Scrap from './scrap'
+
 function HomePage() {
-  return <div>home</div>
+  return <Scrap />
 }
 
 export default HomePage

@@ -4,7 +4,7 @@
 
 log_info "Running pre-commit hooks..."
 
-run_step "Lint staged files" "npm run lint"
+run_step "Lint files" "npm run lint"
 
 run_step "Format code" "npm run format"
 

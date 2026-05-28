@@ -7,7 +7,8 @@ import type { User } from '@/types/user'
 import AppProvider from '@app/providers/app-provider'
 
 import { db } from './mocks/db'
-import { authenticate, hash } from './mocks/utils'
+import { authenticate } from './mocks/db.utils'
+import { hash } from './mocks/helpers'
 
 type BackendUser = User & { password: string }
 
@@ -16,7 +17,7 @@ const defaultUser: BackendUser = {
   firstName: 'John',
   lastName: 'Doe',
   email: 'john@doe.com',
-  role: 'admin',
+  roles: ['admin'],
   password: hash('admin123'),
 }
 

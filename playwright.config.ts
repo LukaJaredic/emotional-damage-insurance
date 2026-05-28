@@ -5,7 +5,8 @@ const MOCK_API_PORT = 8080
 
 export default defineConfig({
   testDir: './e2e',
-  fullyParallel: true,
+  fullyParallel: false,
+  workers: 1,
   retries: 0,
   reporter: 'html',
   globalSetup: './e2e/setup.ts',
@@ -27,16 +28,17 @@ export default defineConfig({
 
   webServer: [
     {
-      command: 'sh -c "MOCK_DB_FILE=mocked-db.e2e.json npm run mock-server"',
+      command:
+        'sh -c "MOCK_DB_FILE=mocked-db.e2e.json MOCK_DB_SEED_PROFILE=e2e npm run mock-server"',
       timeout: 10 * 1000,
       port: MOCK_API_PORT,
-      reuseExistingServer: true,
+      reuseExistingServer: false,
     },
     {
-      command: 'npm run dev',
+      command: 'npm run dev:client',
       timeout: 10 * 1000,
       port: PORT,
-      reuseExistingServer: true,
+      reuseExistingServer: false,
     },
   ],
 })

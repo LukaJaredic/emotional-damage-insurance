@@ -1,7 +1,7 @@
 import type { UseMutationResult } from '@tanstack/react-query'
 import { createContext } from 'react'
 
-import type { User } from '@/types/user'
+import type { User } from '@/types'
 
 export type UserContextValue = {
   user: User | null

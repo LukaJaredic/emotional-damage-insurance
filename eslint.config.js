@@ -68,6 +68,19 @@ export default defineConfig([
       'import/no-named-as-default': 'off',
       'import/no-named-as-default-member': 'off',
       'import/no-unresolved': 'off',
+      'import/no-relative-parent-imports': 'off',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['../../*'],
+              message:
+                'Use an absolute/aliased import instead of a parent-relative import.',
+            },
+          ],
+        },
+      ],
       'import/no-restricted-paths': [
         'error',
         {

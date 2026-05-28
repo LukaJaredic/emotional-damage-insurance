@@ -132,6 +132,11 @@
     @apply font-sans;
   }
 
+  /* Active nav item */
+  [aria-current='page'] {
+    @apply bg-primary! text-primary-foreground!;
+  }
+
   /* tw4 switched to cursor: default for interactive elements */
   @media (hover: hover) {
     a[href],

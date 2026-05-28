@@ -3,6 +3,15 @@ export const paths = {
     path: '/',
     getHref: () => '/',
   },
+  users: {
+    path: '/users',
+    getHref: () => '/users',
+    getDetailHref: (userId: string) => `/users/${userId}`,
+    detail: {
+      path: '/users/:userId',
+      getHref: (userId: string) => `/users/${userId}`,
+    },
+  },
   notFound: {
     path: '/404',
     getHref: () => '/404',
