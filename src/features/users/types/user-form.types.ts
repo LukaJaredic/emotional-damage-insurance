@@ -7,3 +7,5 @@ export type CreateUserFormValues = z.infer<typeof createSchema>
 export type UpdateUserFormValues = z.infer<typeof updateSchema>
 
 export type UserFormValues = CreateUserFormValues | UpdateUserFormValues
+
+export type UserFormStatus = 'idle' | 'pending' | 'success'

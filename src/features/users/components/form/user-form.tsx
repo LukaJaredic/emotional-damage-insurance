@@ -12,6 +12,7 @@ import { useUpdateUser } from '@features/users/api/update-user'
 import type {
   CreateUserFormValues,
   UpdateUserFormValues,
+  UserFormStatus,
   UserFormValues,
 } from '@features/users/types/user-form.types'
 import {
@@ -26,13 +27,13 @@ import { roleOptions } from '@features/users/utils/user-options'
 type UserFormProps = Omit<ComponentProps<'form'>, 'onSubmit'> & {
   user?: User | undefined
   showSubmit?: boolean
-  onSuccess?: () => void
+  onStatusChange?: (status: UserFormStatus) => void | undefined
 }
 
 function UserForm({
   user,
   showSubmit = true,
-  onSuccess,
+  onStatusChange,
   className,
   ...props
 }: UserFormProps) {
@@ -45,26 +46,28 @@ function UserForm({
   })
   const isPending = createMutation.isPending || updateMutation.isPending
 
-  function handleSubmit(data: UserFormValues) {
+  async function handleSubmit(data: UserFormValues) {
     // Submit button can be outside of the form
     if (isPending) {
       return
     }
 
-    const mutationOptions = {
-      onSuccess: typeof onSuccess === 'function' ? onSuccess : () => {},
-    }
+    onStatusChange?.('pending')
 
-    if (isEdit) {
-      updateMutation.mutate(
-        buildUserUpdatePayload(user!.id, data as UpdateUserFormValues),
-        mutationOptions,
-      )
-    } else {
-      createMutation.mutate(
-        buildCreateUserPayload(data as CreateUserFormValues),
-        mutationOptions,
-      )
+    try {
+      if (isEdit) {
+        await updateMutation.mutateAsync(
+          buildUserUpdatePayload(user!.id, data as UpdateUserFormValues),
+        )
+      } else {
+        await createMutation.mutateAsync(
+          buildCreateUserPayload(data as CreateUserFormValues),
+        )
+      }
+
+      onStatusChange?.('success')
+    } catch {
+      onStatusChange?.('idle')
     }
   }
 
