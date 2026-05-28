@@ -32,13 +32,13 @@ export default defineConfig({
         'sh -c "MOCK_DB_FILE=mocked-db.e2e.json MOCK_DB_SEED_PROFILE=e2e npm run mock-server"',
       timeout: 10 * 1000,
       port: MOCK_API_PORT,
-      reuseExistingServer: true,
+      reuseExistingServer: false,
     },
     {
       command: 'npm run dev:client',
       timeout: 10 * 1000,
       port: PORT,
-      reuseExistingServer: true,
+      reuseExistingServer: false,
     },
   ],
 })

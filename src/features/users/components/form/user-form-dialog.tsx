@@ -23,39 +23,28 @@ type UserFormDialogProps = {
   user?: User
 }
 
-type DialogState =
-  | {
-      open: true
-      status: 'idle' | 'pending'
-    }
-  | {
-      open: false
-      status: 'idle' | 'success'
-    }
+type UserFormDialogStatus = Omit<UserFormStatus, 'success'> | 'closed'
 
 function UserFormDialog({ children, user }: UserFormDialogProps) {
-  const [dialog, setDialog] = useState<DialogState>({
-    open: false,
-    status: 'idle',
-  })
+  const [status, setStatus] = useState<UserFormDialogStatus>('closed')
   const formId = useId()
   const isEdit = !!user
-  const isPending = dialog.status === 'pending'
+  const isPending = status === 'pending'
 
   function handleOpenChange(nextOpen: boolean) {
-    setDialog({ open: nextOpen, status: 'idle' })
+    setStatus(nextOpen ? 'idle' : 'closed')
   }
 
   function handleStatusChange(nextStatus: UserFormStatus) {
     if (nextStatus === 'success') {
-      setDialog({ open: false, status: 'success' })
+      setStatus('closed')
     } else {
-      setDialog({ open: true, status: nextStatus })
+      setStatus(nextStatus)
     }
   }
 
   return (
-    <Dialog open={dialog.open} onOpenChange={handleOpenChange}>
+    <Dialog open={status !== 'closed'} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
