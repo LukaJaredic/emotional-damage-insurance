@@ -1,5 +1,7 @@
 import { test } from '@playwright/test'
 
+import { login, logout } from './utils/auth'
+
 const user = {
   email: 'admin@example.com',
   password: 'admin123',
@@ -9,17 +11,6 @@ const user = {
 }
 
 test('authenticate', async ({ page }) => {
-  // Get redirected to the login page:
-  await page.goto('/')
-  await page.waitForURL('/auth/login?redirectTo=%2F')
-  // Log in:
-  await page.getByLabel('Email').click()
-  await page.getByLabel('Email').fill(user.email)
-  await page.getByRole('textbox', { name: 'Password' }).click()
-  await page.getByRole('textbox', { name: 'Password' }).fill(user.password)
-  await page.getByRole('button', { name: 'Login', exact: true }).click()
-  await page.waitForURL('/')
-  // Log out:
-  await page.getByRole('button', { name: 'Log out' }).click()
-  await page.waitForURL('/auth/login?redirectTo=%2F')
+  await login(page, user)
+  await logout(page)
 })
