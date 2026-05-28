@@ -120,6 +120,30 @@
 }
 
 @layer base {
+  html {
+    scrollbar-color: var(--color-primary) transparent;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border: 0.2rem solid transparent;
+    border-radius: 50%;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

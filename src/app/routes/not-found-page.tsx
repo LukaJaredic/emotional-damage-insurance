@@ -1,10 +1,13 @@
-import { ArrowLeftIcon } from '@phosphor-icons/react'
-import { useNavigate } from 'react-router-dom'
+import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react'
+import { Link, useNavigate } from 'react-router-dom'
 
 import Button from '@/components/ui/shadcn/button'
+import { paths } from '@/config'
+import { useUser } from '@/hooks'
 
 function NotFoundPage() {
   const navigate = useNavigate()
+  const { user } = useUser()
 
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">
@@ -12,14 +15,28 @@ function NotFoundPage() {
       <p className="text-muted-foreground">
         We couldn&apos;t find what you are looking for
       </p>
-      <Button
-        type="button"
-        variant="link"
-        onClick={() => navigate(-1)}
-        className="text-xl"
-      >
-        <ArrowLeftIcon className="size-6" /> Back
-      </Button>
+      <div className="group flex flex-col items-center gap-4 sm:flex-row sm:gap-0">
+        <Button
+          type="button"
+          variant="link"
+          onClick={() => navigate(-1)}
+          className="text-4xl"
+        >
+          <ArrowLeftIcon className="size-10" /> Back
+        </Button>
+        {user ? (
+          <>
+            <div className="-mx-4 rotate-90 text-2xl font-bold transition-all duration-200 ease-out group-hover:mx-0 group-hover:rotate-0">
+              OR
+            </div>
+            <Button type="button" variant="link" asChild className="text-4xl">
+              <Link to={paths.root.getHref()}>
+                Home <ArrowRightIcon className="size-10" />
+              </Link>
+            </Button>
+          </>
+        ) : null}
+      </div>
     </main>
   )
 }
