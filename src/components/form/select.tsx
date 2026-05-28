@@ -105,6 +105,9 @@ function Select({
       isMulti={isMultiple}
       isDisabled={disabled}
       isClearable={isClearable}
+      menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
+      menuPosition="fixed"
+      menuShouldScrollIntoView={false}
       unstyled
       noOptionsMessage={() => noOptionsMessage}
       className={cn('w-full', className)}
@@ -144,6 +147,13 @@ function Select({
             isDisabled && 'text-muted-foreground opacity-50',
           ),
         noOptionsMessage: () => 'text-muted-foreground px-2 py-1.5 text-sm',
+      }}
+      styles={{
+        // Better handling than with classes
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 60,
+        }),
       }}
     />
   )

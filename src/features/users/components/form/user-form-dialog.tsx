@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
 
+import { ScrollableDialogContent } from '@/components/layout'
 import Button from '@/components/ui/shadcn/button'
 import {
   Dialog,
@@ -39,14 +40,14 @@ function UserFormDialog({ children, user }: UserFormDialogProps) {
               : 'Fill in the details below to create a new user.'}
           </DialogDescription>
         </DialogHeader>
-        <div className="-mx-6 max-h-[calc(100vh-250px)] overflow-y-auto px-6">
+        <ScrollableDialogContent>
           <UserForm
             id={formId}
             user={user}
             showSubmit={false}
             onSuccess={() => setOpen(false)}
           />
-        </div>
+        </ScrollableDialogContent>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
