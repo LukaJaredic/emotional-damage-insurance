@@ -2,6 +2,11 @@ import { useContext } from 'react'
 
 import { UserContext } from '@app/providers/user-context'
 
+/**
+ * Returns the current user context.
+ *
+ * @returns The current user context value.
+ */
 function useUser() {
   const context = useContext(UserContext)
 

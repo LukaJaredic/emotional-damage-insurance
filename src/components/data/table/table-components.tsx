@@ -20,6 +20,13 @@ type TableHeaderRowProps<T> = {
   toggleExpandedColumn: (index: number) => void
 }
 
+/**
+ * Renders the shared table header row with expandable column controls.
+ *
+ * @param columns Column definitions rendered in the header.
+ * @param isColumnExpanded Callback that reports whether a column is expanded.
+ * @param toggleExpandedColumn Callback that toggles a column's expanded state.
+ */
 function TableHeaderRow<T>({
   columns,
   isColumnExpanded,
@@ -77,6 +84,13 @@ type TableRowCellsProps<T> = {
   isColumnExpanded: (index: number) => boolean
 }
 
+/**
+ * Renders the cells for a single table row.
+ *
+ * @param row Row data rendered in the current table row.
+ * @param columns Column definitions used to render each cell.
+ * @param isColumnExpanded Callback that reports whether a column is expanded.
+ */
 function TableRowCells<T>({
   row,
   columns,
@@ -108,6 +122,12 @@ type LoadingRowProps = {
   label?: string
 }
 
+/**
+ * Renders a shared loading row for table footers.
+ *
+ * @param colSpan Number of columns the loading row should span.
+ * @param label Accessible loading label announced to screen readers.
+ */
 function LoadingRow({ colSpan, label = 'Loading more rows' }: LoadingRowProps) {
   return (
     <UITableRow className="bg-primary/50 sticky bottom-0">

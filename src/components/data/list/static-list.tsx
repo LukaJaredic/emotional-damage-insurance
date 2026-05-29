@@ -4,6 +4,15 @@ import { cn } from '@/lib'
 
 import type { BaseListProps, ListItemWithOptionalId } from './list.types'
 
+/**
+ * Renders a scrollable list with end-reached detection and loading feedback.
+ *
+ * @param items Items rendered in the list.
+ * @param itemContent Render function used for each list item.
+ * @param isLoading Whether some items are currently loading.
+ * @param className Optional class name applied to the list container.
+ * @param onEndReached Callback invoked when the end of the list is reached - called only once per `items.length`.
+ */
 function StaticList<T>({
   items,
   itemContent,

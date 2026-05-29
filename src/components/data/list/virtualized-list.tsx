@@ -84,6 +84,15 @@ const virtuosoListComponents: Components<unknown, ListContext> = {
   },
 }
 
+/**
+ * Renders a virtualized list with end-reached detection and loading feedback.
+ *
+ * @param items Items rendered in the list.
+ * @param itemContent Render function used for each list item.
+ * @param isLoading Whether some items are currently loading.
+ * @param className Optional class name applied to the list container.
+ * @param onEndReached Callback invoked when the end of the list is reached - called only once per `items.length`.
+ */
 function VirtualizedList<T>({
   items,
   itemContent,

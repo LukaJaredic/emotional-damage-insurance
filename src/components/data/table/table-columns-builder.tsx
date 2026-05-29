@@ -17,6 +17,11 @@ type TableColumnBuilder<T> = Readonly<{
   array: (title: string, dataIndex: keyof T) => TableColumn<T>
 }>
 
+/**
+ * Creates a helper for building common table column definitions.
+ *
+ * @returns A builder with shortcuts for common column types.
+ */
 export function tableColumnBuilder<T>(): TableColumnBuilder<T> {
   return {
     text: (title: string, dataIndex: keyof T) => ({ title, dataIndex }),

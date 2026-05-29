@@ -26,6 +26,17 @@ type ConfirmDialogProps = {
   onConfirm: () => Promise<unknown> | unknown
 }
 
+/**
+ * Renders a confirmation dialog around a trigger element.
+ *
+ * @param onConfirm Callback invoked when the confirm action is pressed.
+ * @param children Trigger element that opens the dialog.
+ * @param title Dialog title content.
+ * @param description Dialog description content.
+ * @param confirmLabel Label shown on the confirm action.
+ * @param cancelLabel Label shown on the cancel action.
+ * @param variant Visual style applied to the confirm action (one of: 'default', 'destructive').
+ */
 function ConfirmDialog({
   children,
   title,

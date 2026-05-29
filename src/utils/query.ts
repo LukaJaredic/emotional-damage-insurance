@@ -1,3 +1,7 @@
+/**
+ * `useInfiniteQuery` helper - calculates the next page param based on the length of the last page, you can pass it as-is.
+ * It will allow you to fetch the next page until the last page is empty, at which point it will stop fetching more pages.
+ */
 function getNextPageParam<T>(
   lastPage: T[],
   _allPages: T[][],
@@ -10,6 +14,10 @@ function getNextPageParam<T>(
   return lastPageParam + 1
 }
 
+/**
+ * `useInfiniteQuery` helper - common query options for infinite queries: initial page param and get next page param function.
+ * You can import and use it as-is in your infinite queries.
+ */
 const commonQueryOptions = {
   initialPageParam: 1,
   getNextPageParam,

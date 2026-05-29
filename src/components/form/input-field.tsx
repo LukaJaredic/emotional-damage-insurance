@@ -30,6 +30,17 @@ type InputFieldProps<TFieldValues extends FieldValues> = Omit<
   description?: string
 }
 
+/**
+ * Renders a react-hook-form input field with shared label, description, and error states.
+ *
+ * @param control Form control used by react-hook-form.
+ * @param name Field name registered in the form.
+ * @param label Field label.
+ * @param description Optional helper text shown below the field.
+ * @param id Input id used to associate the label.
+ * @param type Input type to render (options: 'email', 'text', 'number', 'password').
+ * @param props Additional input props passed to the underlying `<Input>` or `<InputGroupInput>`.
+ */
 function InputField<TFieldValues extends FieldValues>({
   control,
   name,

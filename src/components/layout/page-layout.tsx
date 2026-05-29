@@ -5,6 +5,14 @@ type PageLayoutProps = {
   children: React.ReactNode
 }
 
+/**
+ * Renders a standard page layout with a heading, description, and optional actions.
+ *
+ * @param heading Main page heading.
+ * @param description Supporting page description.
+ * @param actions Optional action area rendered beside the heading.
+ * @param children Main page content.
+ */
 function PageLayout({
   heading,
   description,

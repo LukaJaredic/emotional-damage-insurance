@@ -8,6 +8,11 @@ type AvatarProps = {
   user: User
 }
 
+/**
+ * Renders a user avatar using the user's initials.
+ *
+ * @param user User whose initials should be displayed.
+ */
 function Avatar({ user }: AvatarProps) {
   const initials = `${user.firstName[0]}${user.lastName[0]}`
 

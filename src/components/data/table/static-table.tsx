@@ -14,6 +14,16 @@ import { LoadingRow, TableHeaderRow, TableRowCells } from './table-components'
 import type { BaseTableProps } from './table.types'
 import { sharedTableClassName, useExpandedColumns } from './table.utils'
 
+/**
+ * Renders a scrollable table with expandable columns and end-reached detection.
+ *
+ * @param caption Accessible caption for the table.
+ * @param rows Rows rendered in the table body.
+ * @param columns Column definitions used to render each row.
+ * @param isLoading Whether more rows are currently loading.
+ * @param className Optional class name applied to the table wrapper.
+ * @param onEndReached Callback invoked when the end of the table is reached - called only once per `rows.length`.
+ */
 function StaticTable<T extends Record<string, unknown>>({
   caption,
   rows,

@@ -11,6 +11,13 @@ type CommonTooltipProps = Omit<
   children?: React.ReactNode
 }
 
+/**
+ * Renders a standard help tooltip with a question-mark trigger.
+ *
+ * @param title Accessible label and heading shown inside the tooltip.
+ * @param children Tooltip content rendered below the title.
+ * @param props Additional tooltip props passed to the underlying `<Tooltip>`.
+ */
 function CommonTooltip({
   title = 'Help',
   children,
