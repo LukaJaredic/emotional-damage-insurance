@@ -81,7 +81,7 @@ function SidebarItem({ item }: { item: SidebarItem }) {
   }
 
   return (
-    <SidebarMenuItem key={item.href}>
+    <SidebarMenuItem>
       <SidebarMenuButton className="rounded-none! py-3" asChild>
         <NavLink to={item.href} onClick={closeMobileSidebar}>
           <Icon />
