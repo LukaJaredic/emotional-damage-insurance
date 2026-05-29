@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 
 import { InputField, SelectField } from '@/components/form'
 import { Spinner } from '@/components/ui'
-import Button from '@/components/ui/shadcn/button'
+import { Button } from '@/components/ui/shadcn/button'
 import { FieldGroup } from '@/components/ui/shadcn/field'
 import type { User } from '@/types'
 import { useCreateUser } from '@features/users/api/create-user'

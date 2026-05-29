@@ -9,8 +9,8 @@ import {
   useWatch,
 } from 'react-hook-form'
 
-import Button from '../ui/shadcn/button'
-import Input from '../ui/shadcn/input'
+import { Button } from '../ui/shadcn/button'
+import { Input } from '../ui/shadcn/input'
 import Label from '../ui/shadcn/label'
 
 import Select from './select'

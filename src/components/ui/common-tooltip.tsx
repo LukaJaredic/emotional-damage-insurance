@@ -1,6 +1,6 @@
 import { QuestionMarkIcon } from '@phosphor-icons/react'
 
-import Button from '@/components/ui/shadcn/button'
+import { Button } from '@/components/ui/shadcn/button'
 import Tooltip from '@/components/ui/tooltip'
 
 type CommonTooltipProps = Omit<

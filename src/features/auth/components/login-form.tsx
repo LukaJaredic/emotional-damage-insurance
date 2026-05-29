@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 
 import { InputField } from '@/components/form'
 import { CommonTooltip, Spinner } from '@/components/ui'
-import Button from '@/components/ui/shadcn/button'
+import { Button } from '@/components/ui/shadcn/button'
 import {
   Card,
   CardContent,

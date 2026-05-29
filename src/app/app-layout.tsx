@@ -1,7 +1,7 @@
 import { SignOutIcon } from '@phosphor-icons/react'
 import { NavLink, Navigate } from 'react-router-dom'
 
-import { sidebarItems } from '@/app/sidebar-items'
+import { sidebarItems, type SidebarItem } from '@/app/sidebar-items'
 import { Spinner } from '@/components/ui'
 import {
   Sidebar,
@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/shadcn/sidebar'
 import { paths } from '@/config'
 import { useUser } from '@/hooks'
@@ -34,20 +35,9 @@ function AppLayout({ children }: AppLayoutProps) {
         <Sidebar collapsible="icon" className="whitespace-nowrap">
           <SidebarContent className="pt-14">
             <SidebarMenu>
-              {sidebarItems.map((item) => {
-                const Icon = item.icon
-
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton className="rounded-none! py-3" asChild>
-                      <NavLink to={item.href}>
-                        <Icon />
-                        <span>{item.title}</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
+              {sidebarItems.map((item) => (
+                <SidebarItem item={item} key={item.href} />
+              ))}
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
@@ -78,3 +68,26 @@ function AppLayout({ children }: AppLayoutProps) {
 }
 
 export default AppLayout
+
+function SidebarItem({ item }: { item: SidebarItem }) {
+  const { openMobile, setOpenMobile } = useSidebar()
+
+  const Icon = item.icon
+
+  function closeMobileSidebar() {
+    if (openMobile) {
+      setOpenMobile(false)
+    }
+  }
+
+  return (
+    <SidebarMenuItem key={item.href}>
+      <SidebarMenuButton className="rounded-none! py-3" asChild>
+        <NavLink to={item.href} onClick={closeMobileSidebar}>
+          <Icon />
+          <span>{item.title}</span>
+        </NavLink>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}

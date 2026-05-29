@@ -9,7 +9,7 @@ import {
   FieldError,
   FieldLabel,
 } from '@/components/ui/shadcn/field'
-import Input from '@/components/ui/shadcn/input'
+import { Input } from '@/components/ui/shadcn/input'
 import {
   InputGroup,
   InputGroupAddon,

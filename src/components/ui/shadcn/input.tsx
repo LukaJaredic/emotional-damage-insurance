@@ -16,4 +16,4 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   )
 }
 
-export default Input
+export { Input }

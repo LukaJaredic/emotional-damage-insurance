@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { paths } from '@/config'
 
-import Button from './shadcn/button'
+import { Button } from './shadcn/button'
 
 type QueryErrorProps = {
   title?: string
