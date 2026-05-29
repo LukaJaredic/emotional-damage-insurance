@@ -32,9 +32,12 @@ function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
       <div className="bg-background flex min-h-dvh w-full">
-        <Sidebar collapsible="icon" className="whitespace-nowrap">
+        <Sidebar
+          collapsible="icon"
+          className="animate-fade-in-right stagger-self-2 whitespace-nowrap"
+        >
           <SidebarContent className="pt-14">
-            <SidebarMenu>
+            <SidebarMenu className="stagger-items-1">
               {sidebarItems.map((item) => (
                 <SidebarItem item={item} key={item.href} />
               ))}
@@ -57,7 +60,7 @@ function AppLayout({ children }: AppLayoutProps) {
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <header className="flex h-14 items-center border-b px-4">
+          <header className="animate-fade-in-down stagger-self-2 flex h-14 items-center border-b px-4">
             <SidebarTrigger />
           </header>
           <main className="min-h-0 flex-1 overflow-auto p-6">{children}</main>
@@ -81,7 +84,7 @@ function SidebarItem({ item }: { item: SidebarItem }) {
   }
 
   return (
-    <SidebarMenuItem>
+    <SidebarMenuItem className="animate-fade-in-right">
       <SidebarMenuButton className="rounded-none! py-3" asChild>
         <NavLink to={item.href} onClick={closeMobileSidebar}>
           <Icon />

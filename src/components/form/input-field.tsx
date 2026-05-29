@@ -28,6 +28,7 @@ type InputFieldProps<TFieldValues extends FieldValues> = Omit<
   label: string
   type: InputFieldType
   description?: string
+  className?: string
 }
 
 /**
@@ -39,6 +40,7 @@ type InputFieldProps<TFieldValues extends FieldValues> = Omit<
  * @param description Optional helper text shown below the field.
  * @param id Input id used to associate the label.
  * @param type Input type to render (options: 'email', 'text', 'number', 'password').
+ * @param className Optional class name for the field container.
  * @param props Additional input props passed to the underlying `<Input>` or `<InputGroupInput>`.
  */
 function InputField<TFieldValues extends FieldValues>({
@@ -48,6 +50,7 @@ function InputField<TFieldValues extends FieldValues>({
   description,
   id,
   type,
+  className,
   ...props
 }: InputFieldProps<TFieldValues>) {
   const [showPassword, setShowPassword] = useState(false)
@@ -62,7 +65,7 @@ function InputField<TFieldValues extends FieldValues>({
         const error = fieldState.error
 
         return (
-          <Field data-invalid={!!error}>
+          <Field data-invalid={!!error} className={className}>
             <FieldLabel htmlFor={id}>{label}</FieldLabel>
             {type === 'password' ? (
               <InputGroup>

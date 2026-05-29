@@ -36,9 +36,12 @@ function LoginForm({ redirectTo }: LoginFormProps) {
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <CommonTooltip title="Log in help">
+      <CardHeader className="animate-fade-in-up stagger-self-2">
+        <CardTitle className="animate-fade-in-up flex items-center gap-2">
+          <CommonTooltip
+            title="Log in help"
+            className="animate-fade-in-up stagger-self-10"
+          >
             <p>The app comes with a predefined user:</p>
             <p>Email: admin@example.com</p>
             <p>Password: admin123</p>
@@ -46,12 +49,12 @@ function LoginForm({ redirectTo }: LoginFormProps) {
           </CommonTooltip>
           Login
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="animate-fade-in-up">
           Enter your credentials to log in. <br />
           If you don&apos;t have an account, ask your administrator for one.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="animate-fade-in-up">
         <form
           id="login-form"
           onSubmit={handleSubmit((data) => loginMutation.mutate(data))}
@@ -59,6 +62,7 @@ function LoginForm({ redirectTo }: LoginFormProps) {
         >
           <FieldGroup>
             <InputField
+              className="animate-fade-in-up stagger-self-4"
               control={control}
               id="email"
               name="email"
@@ -68,6 +72,7 @@ function LoginForm({ redirectTo }: LoginFormProps) {
               placeholder="admin@example.com"
             />
             <InputField
+              className="animate-fade-in-up stagger-self-6"
               control={control}
               id="password"
               name="password"
@@ -79,7 +84,7 @@ function LoginForm({ redirectTo }: LoginFormProps) {
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="animate-fade-in-up stagger-self-8">
         <Button
           form="login-form"
           type="submit"

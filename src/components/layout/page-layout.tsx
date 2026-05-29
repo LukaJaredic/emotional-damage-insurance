@@ -20,8 +20,8 @@ function PageLayout({
   children,
 }: PageLayoutProps) {
   return (
-    <section className="flex h-full min-h-0 flex-col gap-6">
-      <header className="flex flex-col gap-4 sm:flex-row">
+    <section className="animate-page-in stagger-items-2 flex h-full min-h-0 flex-col gap-6">
+      <header className="animate-fade-in-up stagger-self-1 flex flex-col gap-4 sm:flex-row">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-semibold tracking-tight">{heading}</h1>
           <p className="text-muted-foreground max-w-3xl text-sm">
@@ -29,13 +29,15 @@ function PageLayout({
           </p>
         </div>
         {actions ? (
-          <div className="flex flex-col gap-1 sm:ml-auto sm:flex-row">
+          <div className="animate-fade-in-left stagger-self-5 flex flex-col gap-1 sm:ml-auto sm:flex-row">
             {actions()}
           </div>
         ) : null}
       </header>
 
-      <div className="flex min-h-0 flex-1">{children}</div>
+      <div className="animate-fade-in-up stagger-self-2 flex min-h-0 flex-1">
+        {children}
+      </div>
     </section>
   )
 }
