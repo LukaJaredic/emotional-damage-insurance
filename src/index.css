@@ -124,6 +124,16 @@
   --animate-fade-in-left: fade-in-left 260ms ease-out both;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animate-page-in: none;
+    --animate-fade-in-up: none;
+    --animate-fade-in-right: none;
+    --animate-fade-in-down: none;
+    --animate-fade-in-left: none;
+  }
+}
+
 @keyframes page-in {
   from {
     opacity: 0;

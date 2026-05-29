@@ -31,15 +31,15 @@ function withSuspense(page: React.ReactNode) {
 }
 
 function protectedRoute(page: React.ReactNode) {
-  return withSuspense(
+  return (
     <AuthGuard>
-      <AppLayout>{page}</AppLayout>
-    </AuthGuard>,
+      <AppLayout>{withSuspense(page)}</AppLayout>
+    </AuthGuard>
   )
 }
 
 function unprotectedRoute(page: React.ReactNode) {
-  return withSuspense(<AuthGuard shouldHaveUser={false}>{page}</AuthGuard>)
+  return <AuthGuard shouldHaveUser={false}>{withSuspense(page)}</AuthGuard>
 }
 
 const router = createBrowserRouter([
