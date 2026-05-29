@@ -72,6 +72,4 @@ For users, the builders are:
 - Use inferred types from the Zod schema.
 - Prefer one form component that can handle create and edit when the fields are mostly the same.
 
-Prev: [Lists And Tables](./05_lists_and_tables.md)
-
-Next: [Dialogs And Alerts](./07_dialogs_and_alerts.md)
+[← Lists And Tables](./05_lists_and_tables.md) | [Dialogs And Alerts →](./07_dialogs_and_alerts.md)

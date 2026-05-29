@@ -69,8 +69,4 @@ function UserDetailPage() {
 - Do not import one feature directly into another feature.
 - Move code to shared folders only when it is truly reused.
 
----
-
-Prev: [Shared Components](./02_shared_components.md)
-
-Next: [Server Communication](./04_server_communication.md)
+[← Shared Components](./02_shared_components.md) | [Server Communication →](./04_server_communication.md)
