@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { debounce } from 'lodash'
 import {
   useForm,
   type FieldValues,
@@ -55,21 +55,15 @@ function Filters<T extends FieldValues>({
   onChange,
   debounceTime = 300,
 }: FiltersProps<T>) {
-  const timerRef = useRef<number | null>(null)
   const form = useForm<T>({
     defaultValues,
   })
   const values = useWatch({ control: form.control })
+  const debouncedOnChange = debounce(onChange, debounceTime)
 
   function handleChange() {
     form.handleSubmit((formValues) => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current)
-      }
-
-      timerRef.current = setTimeout(() => {
-        onChange(formValues)
-      }, debounceTime)
+      debouncedOnChange(formValues)
     })()
   }
 
