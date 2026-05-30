@@ -2,11 +2,12 @@ import { SignOutIcon } from '@phosphor-icons/react'
 import { NavLink, Navigate } from 'react-router-dom'
 
 import { sidebarItems, type SidebarItem } from '@/app/sidebar-items'
-import { Spinner } from '@/components/ui'
+import { Logo, Spinner } from '@/components/ui'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarHeader,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
@@ -36,7 +37,12 @@ function AppLayout({ children }: AppLayoutProps) {
           collapsible="icon"
           className="animate-fade-in-right stagger-self-2 whitespace-nowrap"
         >
-          <SidebarContent className="pt-14">
+          <SidebarHeader className="border-b p-0">
+            <SidebarMenu>
+              <SidebarHeaderItem />
+            </SidebarMenu>
+          </SidebarHeader>
+          <SidebarContent className="border-b pt-1">
             <SidebarMenu className="stagger-items-1">
               {sidebarItems.map((item) => (
                 <SidebarItem item={item} key={item.href} />
@@ -89,6 +95,27 @@ function SidebarItem({ item }: { item: SidebarItem }) {
         <NavLink to={item.href} onClick={closeMobileSidebar}>
           <Icon />
           <span>{item.title}</span>
+        </NavLink>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}
+
+function SidebarHeaderItem() {
+  const { openMobile, setOpenMobile } = useSidebar()
+
+  function closeMobileSidebar() {
+    if (openMobile) {
+      setOpenMobile(false)
+    }
+  }
+
+  return (
+    <SidebarMenuItem className="animate-fade-in-right">
+      <SidebarMenuButton className="h-13.75 rounded-none!" asChild>
+        <NavLink to={paths.root.getHref()} onClick={closeMobileSidebar}>
+          <Logo />
+          <span>Emotional Damage Inc</span>
         </NavLink>
       </SidebarMenuButton>
     </SidebarMenuItem>

@@ -1,7 +1,10 @@
-<svg
+function Logo(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
       viewBox="-2.4 -2.4 28.80 28.80"
       fill="#000000"
       stroke="#000000"
+      {...props}
     >
       <path
         transform="translate(-2.4, -2.4), scale(0.8999999999999999)"
@@ -14,3 +17,7 @@
         fill="#0a0a0a"
       />
     </svg>
+  )
+}
+
+export default Logo
