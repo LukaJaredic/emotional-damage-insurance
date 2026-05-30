@@ -2,7 +2,7 @@ import { PlusIcon } from '@phosphor-icons/react'
 
 import { RemoteDataWithFilters } from '@/components/data/remote-data'
 import { PageLayout } from '@/components/layout'
-import Button from '@/components/ui/shadcn/button'
+import { Button } from '@/components/ui/shadcn/button'
 import { useUsers } from '@/features/users/api/get-users'
 import { userFilters } from '@features/users/utils/user-filters'
 import { userColumns } from '@features/users/utils/user-table-columns'

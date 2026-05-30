@@ -9,8 +9,8 @@ import {
   useWatch,
 } from 'react-hook-form'
 
-import Button from '../ui/shadcn/button'
-import Input from '../ui/shadcn/input'
+import { Button } from '../ui/shadcn/button'
+import { Input } from '../ui/shadcn/input'
 import Label from '../ui/shadcn/label'
 
 import Select from './select'
@@ -41,6 +41,14 @@ type FiltersProps<T> = {
   debounceTime?: number
 }
 
+/**
+ * Renders a debounced filter form for text and select-based filters.
+ *
+ * @param filters Filter definitions used to build the form.
+ * @param defaultValues Initial form values.
+ * @param onChange Callback invoked with the current filter values.
+ * @param debounceTime Delay before applying filter changes.
+ */
 function Filters<T extends FieldValues>({
   filters,
   defaultValues,

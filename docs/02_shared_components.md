@@ -60,7 +60,4 @@ import { StatusBadge } from '@/components/ui'
 - Do not import feature code into `src/components`.
 - Export from the local barrel so features can import from one place - reducing the number of import lines - clutter.
 
----
-
-Prev: [Auth](./01_auth.md)
-Next: [Features](./03_features.md)
+[← Auth](./01_auth.md) | [Features →](./03_features.md)

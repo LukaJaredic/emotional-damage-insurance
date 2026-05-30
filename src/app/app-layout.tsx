@@ -1,18 +1,20 @@
 import { SignOutIcon } from '@phosphor-icons/react'
 import { NavLink, Navigate } from 'react-router-dom'
 
-import { sidebarItems } from '@/app/sidebar-items'
-import { Spinner } from '@/components/ui'
+import { sidebarItems, type SidebarItem } from '@/app/sidebar-items'
+import { Logo, Spinner } from '@/components/ui'
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarHeader,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from '@/components/ui/shadcn/sidebar'
 import { paths } from '@/config'
 import { useUser } from '@/hooks'
@@ -31,23 +33,20 @@ function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider>
       <div className="bg-background flex min-h-dvh w-full">
-        <Sidebar collapsible="icon" className="whitespace-nowrap">
-          <SidebarContent className="pt-14">
+        <Sidebar
+          collapsible="icon"
+          className="animate-fade-in-right stagger-self-2 whitespace-nowrap"
+        >
+          <SidebarHeader className="border-b p-0">
             <SidebarMenu>
-              {sidebarItems.map((item) => {
-                const Icon = item.icon
-
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton className="rounded-none! py-3" asChild>
-                      <NavLink to={item.href}>
-                        <Icon />
-                        <span>{item.title}</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                )
-              })}
+              <SidebarHeaderItem />
+            </SidebarMenu>
+          </SidebarHeader>
+          <SidebarContent className="border-b pt-1">
+            <SidebarMenu className="stagger-items-1">
+              {sidebarItems.map((item) => (
+                <SidebarItem item={item} key={item.href} />
+              ))}
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
@@ -67,7 +66,7 @@ function AppLayout({ children }: AppLayoutProps) {
           </SidebarFooter>
         </Sidebar>
         <SidebarInset>
-          <header className="flex h-14 items-center border-b px-4">
+          <header className="animate-fade-in-down stagger-self-2 flex h-14 items-center border-b px-4">
             <SidebarTrigger />
           </header>
           <main className="min-h-0 flex-1 overflow-auto p-6">{children}</main>
@@ -78,3 +77,47 @@ function AppLayout({ children }: AppLayoutProps) {
 }
 
 export default AppLayout
+
+function SidebarItem({ item }: { item: SidebarItem }) {
+  const { openMobile, setOpenMobile } = useSidebar()
+
+  const Icon = item.icon
+
+  function closeMobileSidebar() {
+    if (openMobile) {
+      setOpenMobile(false)
+    }
+  }
+
+  return (
+    <SidebarMenuItem className="animate-fade-in-right">
+      <SidebarMenuButton className="rounded-none! py-3" asChild>
+        <NavLink to={item.href} onClick={closeMobileSidebar}>
+          <Icon />
+          <span>{item.title}</span>
+        </NavLink>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}
+
+function SidebarHeaderItem() {
+  const { openMobile, setOpenMobile } = useSidebar()
+
+  function closeMobileSidebar() {
+    if (openMobile) {
+      setOpenMobile(false)
+    }
+  }
+
+  return (
+    <SidebarMenuItem className="animate-fade-in-right">
+      <SidebarMenuButton className="h-13.75 rounded-none!" asChild>
+        <NavLink to={paths.root.getHref()} onClick={closeMobileSidebar}>
+          <Logo />
+          <span>Emotional Damage Inc</span>
+        </NavLink>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  )
+}

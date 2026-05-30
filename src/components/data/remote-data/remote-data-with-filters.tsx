@@ -74,6 +74,14 @@ function buildNextSearchParams<T extends FieldValues>(
   return nextSearchParams
 }
 
+/**
+ * Renders a filterable remote-data view synchronized with the URL search params.
+ *
+ * @param useQuery Query hook used to fetch filtered remote data.
+ * @param filters Filter definitions rendered above the data view.
+ * @param className Optional class name applied to the outer layout.
+ * @param props Additional remote-data props passed to the underlying `<RemoteData>`.
+ */
 function RemoteDataWithFilters<
   TItem extends Record<string, unknown>,
   TFilters extends FieldValues,

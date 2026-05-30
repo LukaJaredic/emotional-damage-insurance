@@ -85,6 +85,4 @@ Your query object should expose:
 
 That is why the users query returns a `RemoteDataState<User>` instead of returning the raw TanStack Query object.
 
-Prev: [Server Communication](./04_server_communication.md)
-
-Next: [Forms](./06_forms.md)
+[← Server Communication](./04_server_communication.md) | [Forms →](./06_forms.md)

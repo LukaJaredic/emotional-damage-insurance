@@ -9,6 +9,13 @@ type TooltipProps = React.ComponentProps<typeof TooltipPrimitive> & {
   children: React.ReactNode
 }
 
+/**
+ * Renders a tooltip with an explicit trigger element.
+ *
+ * @param trigger Element used to open the tooltip.
+ * @param children Content rendered inside the tooltip panel.
+ * @param props Additional tooltip props passed to the underlying `<TooltipPrimitive>`.
+ */
 function Tooltip({ trigger, children, ...props }: TooltipProps) {
   return (
     <TooltipPrimitive {...props}>

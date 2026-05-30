@@ -55,6 +55,4 @@ function UserMenu() {
 - Use `admin@example.com` and `admin123` when you need to log in manually.
 - The `redirectTo` query param is used to return the user to the page they originally requested, it can be used to intentionally redirect user on login, for eg. links received via email.
 
----
-
-Next: [Shared Components](./02_shared_components.md)
+[Shared Components →](./02_shared_components.md)

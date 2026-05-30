@@ -7,13 +7,19 @@ import { Link, useNavigate } from 'react-router-dom'
 
 import { paths } from '@/config'
 
-import Button from './shadcn/button'
+import { Button } from './shadcn/button'
 
 type QueryErrorProps = {
   title?: string
   description?: string
 }
 
+/**
+ * Renders a shared full-container error state for failed data loading.
+ *
+ * @param title Heading shown in the error state.
+ * @param description Supporting message shown below the heading.
+ */
 function QueryError({
   title = 'Something went wrong',
   description = 'Please try again later.',

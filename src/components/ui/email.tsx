@@ -7,6 +7,12 @@ type EmailProps = {
   className?: string
 }
 
+/**
+ * Renders a mailto link when the provided value is a valid email address - "Invalid email" `span` otherwise.
+ *
+ * @param email Value to validate and render as an email link.
+ * @param className Optional class name applied to the rendered element.
+ */
 function Email({ email, className }: EmailProps) {
   if (!isValidEmail(email)) {
     return <span className={className}>Invalid email</span>

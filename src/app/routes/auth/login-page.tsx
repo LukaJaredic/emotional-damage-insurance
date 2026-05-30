@@ -8,8 +8,10 @@ function LoginPage() {
   const redirectTo = searchParams.get('redirectTo') ?? paths.root.getHref()
 
   return (
-    <main className="container mx-auto flex min-h-dvh items-center justify-center">
-      <LoginForm redirectTo={redirectTo} />
+    <main className="animate-page-in container mx-auto flex min-h-dvh items-center justify-center">
+      <div className="animate-fade-in-up w-full max-w-md">
+        <LoginForm redirectTo={redirectTo} />
+      </div>
     </main>
   )
 }

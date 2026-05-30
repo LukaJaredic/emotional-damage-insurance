@@ -35,6 +35,16 @@ type SelectFieldProps<TFieldValues extends FieldValues> =
   | SingleSelectFieldProps<TFieldValues>
   | MultiSelectFieldProps<TFieldValues>
 
+/**
+ * Renders a react-hook-form select field with shared label, description, and error states.
+ *
+ * @param control Form control used by react-hook-form.
+ * @param name Field name registered in the form.
+ * @param label Field label.
+ * @param description Optional helper text shown below the field.
+ * @param id Select id used to associate the label.
+ * @param props Additional select props passed to the underlying `<Select>`.
+ */
 function SelectField<TFieldValues extends FieldValues>({
   control,
   name,

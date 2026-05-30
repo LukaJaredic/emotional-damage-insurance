@@ -5,6 +5,13 @@ type UseEndReachedObserverParams = {
   onEndReached: (lastIndex: number) => void
 }
 
+/**
+ * Creates a ref that triggers a callback when the end marker enters the viewport.
+ *
+ * @param itemCount Number of items currently rendered in the list/table.
+ * @param onEndReached Callback invoked with the last rendered item index.
+ * @returns A ref to attach to the end-of-list marker element.
+ */
 function useEndReachedObserver({
   itemCount,
   onEndReached,

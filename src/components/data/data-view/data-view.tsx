@@ -7,6 +7,20 @@ import { Table } from '../table'
 
 import type { DataViewProps } from './data-view.types'
 
+/**
+ * Renders a responsive data view that switches between table (md+) and list (sm) layouts.
+ *
+ * @param items Items rendered in the current view.
+ * @param tableColumns Table columns used on desktop layouts.
+ * @param tableCaption Accessible caption for the table layout (only for screen-readers).
+ * @param listItemContent Render function used for list items.
+ * @param emptyContent Content shown when there are no items.
+ * @param loadingContent Content shown while the first page is loading.
+ * @param virtualized Whether the underlying table or list should be virtualized.
+ * @param isLoading Whether the view is currently loading data.
+ * @param className Optional class name applied to the rendered view.
+ * @param onEndReached Callback invoked when the end of the data set is reached - called only once per `items.length`.
+ */
 function DataView<T extends Record<string, unknown>>({
   items,
   tableColumns,

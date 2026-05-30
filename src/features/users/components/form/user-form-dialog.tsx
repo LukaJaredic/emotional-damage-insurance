@@ -2,7 +2,7 @@ import { useId, useState } from 'react'
 
 import { ScrollableDialogContent } from '@/components/layout'
 import { Spinner } from '@/components/ui'
-import Button from '@/components/ui/shadcn/button'
+import { Button } from '@/components/ui/shadcn/button'
 import {
   Dialog,
   DialogClose,

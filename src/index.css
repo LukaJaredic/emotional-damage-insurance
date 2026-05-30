@@ -117,15 +117,178 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-page-in: page-in 220ms ease-out both;
+  --animate-fade-in-up: fade-in-up 260ms ease-out both;
+  --animate-fade-in-right: fade-in-right 260ms ease-out both;
+  --animate-fade-in-down: fade-in-down 260ms ease-out both;
+  --animate-fade-in-left: fade-in-left 260ms ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --animate-page-in: none;
+    --animate-fade-in-up: none;
+    --animate-fade-in-right: none;
+    --animate-fade-in-down: none;
+    --animate-fade-in-left: none;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(0.625rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(-0.625rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-0.625rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(0.625rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@utility stagger-self-* {
+  animation-delay: calc(--value(integer) * 120ms) !important;
+}
+
+@utility stagger-items-* {
+  &
+    > :where(
+      .animate-fade-in-up,
+      .animate-fade-in-right,
+      .animate-fade-in-down,
+      .animate-fade-in-left
+    ):nth-child(5n + 1) {
+    animation-delay: calc(--value(integer) * 120ms * 1);
+  }
+
+  &
+    > :where(
+      .animate-fade-in-up,
+      .animate-fade-in-right,
+      .animate-fade-in-down,
+      .animate-fade-in-left
+    ):nth-child(5n + 2) {
+    animation-delay: calc(--value(integer) * 120ms * 2);
+  }
+
+  &
+    > :where(
+      .animate-fade-in-up,
+      .animate-fade-in-right,
+      .animate-fade-in-down,
+      .animate-fade-in-left
+    ):nth-child(5n + 3) {
+    animation-delay: calc(--value(integer) * 120ms * 3);
+  }
+
+  &
+    > :where(
+      .animate-fade-in-up,
+      .animate-fade-in-right,
+      .animate-fade-in-down,
+      .animate-fade-in-left
+    ):nth-child(5n + 4) {
+    animation-delay: calc(--value(integer) * 120ms * 4);
+  }
+
+  &
+    > :where(
+      .animate-fade-in-up,
+      .animate-fade-in-right,
+      .animate-fade-in-down,
+      .animate-fade-in-left
+    ):nth-child(5n) {
+    animation-delay: calc(--value(integer) * 120ms * 5);
+  }
 }
 
 @layer base {
+  html {
+    scrollbar-color: var(--color-primary) transparent;
+    scrollbar-width: thin;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border: 0.2rem solid transparent;
+    border-radius: 50%;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   html {

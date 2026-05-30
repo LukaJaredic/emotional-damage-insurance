@@ -9,7 +9,7 @@ import {
   FieldError,
   FieldLabel,
 } from '@/components/ui/shadcn/field'
-import Input from '@/components/ui/shadcn/input'
+import { Input } from '@/components/ui/shadcn/input'
 import {
   InputGroup,
   InputGroupAddon,
@@ -28,8 +28,21 @@ type InputFieldProps<TFieldValues extends FieldValues> = Omit<
   label: string
   type: InputFieldType
   description?: string
+  className?: string
 }
 
+/**
+ * Renders a react-hook-form input field with shared label, description, and error states.
+ *
+ * @param control Form control used by react-hook-form.
+ * @param name Field name registered in the form.
+ * @param label Field label.
+ * @param description Optional helper text shown below the field.
+ * @param id Input id used to associate the label.
+ * @param type Input type to render (options: 'email', 'text', 'number', 'password').
+ * @param className Optional class name for the field container.
+ * @param props Additional input props passed to the underlying `<Input>` or `<InputGroupInput>`.
+ */
 function InputField<TFieldValues extends FieldValues>({
   control,
   name,
@@ -37,6 +50,7 @@ function InputField<TFieldValues extends FieldValues>({
   description,
   id,
   type,
+  className,
   ...props
 }: InputFieldProps<TFieldValues>) {
   const [showPassword, setShowPassword] = useState(false)
@@ -51,7 +65,7 @@ function InputField<TFieldValues extends FieldValues>({
         const error = fieldState.error
 
         return (
-          <Field data-invalid={!!error}>
+          <Field data-invalid={!!error} className={className}>
             <FieldLabel htmlFor={id}>{label}</FieldLabel>
             {type === 'password' ? (
               <InputGroup>

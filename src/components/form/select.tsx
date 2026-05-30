@@ -65,6 +65,21 @@ function buildValueString(
   return (value as SelectOption).value
 }
 
+/**
+ * Renders a styled select input built on top of react-select.
+ *
+ * @param options Available select options.
+ * @param value Current selected value or values.
+ * @param onChange Callback invoked when the selected value changes.
+ * @param isMultiple Whether the select supports multiple values.
+ * @param placeholder Optional placeholder shown when no value is selected.
+ * @param disabled Whether the select is disabled.
+ * @param className Optional class name for the select container.
+ * @param inputId Id applied to the underlying input.
+ * @param name Optional input name.
+ * @param noOptionsMessage Message shown when no options are available.
+ * @param isClearable Whether the current value can be cleared.
+ */
 function Select({
   options,
   value,

@@ -79,6 +79,4 @@ export function useCreateUser() {
 - Use invalidation instead of manually syncing many views.
 - Non-GET API errors are already shown through the shared Axios interceptor.
 
-Prev: [Features](./03_features.md)
-
-Next: [Lists And Tables](./05_lists_and_tables.md)
+[← Features](./03_features.md) | [Lists And Tables →](./05_lists_and_tables.md)

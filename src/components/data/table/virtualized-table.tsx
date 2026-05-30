@@ -76,6 +76,16 @@ const virtuosoTableComponents: TableComponents<unknown, TableContext> = {
   },
 }
 
+/**
+ * Renders a virtualized table with expandable columns and loading feedback.
+ *
+ * @param caption Accessible caption for the table.
+ * @param rows Rows rendered in the table body.
+ * @param columns Column definitions used to render each row.
+ * @param isLoading Whether some rows are currently loading.
+ * @param className Optional class name applied to the table wrapper.
+ * @param onEndReached Callback invoked when the end of the table is reached - called only once per `rows.length`.
+ */
 function VirtualizedTable<T extends Record<string, unknown>>({
   caption,
   rows,

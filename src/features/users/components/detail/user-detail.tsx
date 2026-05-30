@@ -2,7 +2,7 @@ import { PencilIcon, TrashIcon } from '@phosphor-icons/react'
 
 import { PageLayout } from '@/components/layout'
 import { QueryError, QueryLoading } from '@/components/ui'
-import Button from '@/components/ui/shadcn/button'
+import { Button } from '@/components/ui/shadcn/button'
 import { useUserDetail } from '@/features/users/api/get-user'
 import { stringifyRoles } from '@features/users/utils/user-labels'
 
