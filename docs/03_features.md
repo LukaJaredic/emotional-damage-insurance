@@ -24,7 +24,7 @@ src/features/users/
 - `api/`: fetchers and TanStack Query hooks
 - `components/`: feature UI
 - `types/`: form values, actions, and query param types
-- `utils/`: schemas, builders, filters, labels, options, and columns
+- `utils/`: schemas, builders, filters, labels, options, columns, and feature query keys
 
 ## Example: users
 
@@ -33,6 +33,7 @@ src/features/users/
 - `components/form/user-form.tsx` owns the create and edit form.
 - `api/get-users.ts` and `api/get-user.ts` fetch server data.
 - `api/create-user.ts`, `api/update-user.ts`, and `api/delete-user.ts` handle mutations.
+- `utils/user-query-keys.ts` owns users query keys through `userQueryKeys`.
 
 ## Keep app routes thin
 

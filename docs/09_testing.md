@@ -85,4 +85,4 @@ Good unit test targets:
 - Use e2e for the main user journeys.
 - Add unit tests for high-value shared logic, not for every small function.
 
-[← Dialogs And Alerts](./07_dialogs_and_alerts.md)
+[← Permissions](./08_permissions.md)

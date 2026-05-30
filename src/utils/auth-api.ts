@@ -5,9 +5,10 @@ import {
   type QueryOptions,
 } from '@tanstack/react-query'
 
-import { queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { User } from '@/types'
+
+import { queryKeys } from './query-keys'
 
 async function getMe() {
   const { data } = await api.get<User>('/auth/me')

@@ -155,7 +155,7 @@ See more here: [03 Features](./docs/03_features.md)
 
 ### Server Communication
 
-Server communication is built around TanStack Query hooks on top of the shared Axios client and shared query keys.
+Server communication is built around TanStack Query hooks on top of the shared Axios client and feature-owned query keys.
 
 See more here: [04 Server Communication](./docs/04_server_communication.md)
 
@@ -177,11 +177,17 @@ Create and edit flows use dialogs. Destructive actions use confirmation alerts.
 
 See more here: [07 Dialogs And Alerts](./docs/07_dialogs_and_alerts.md)
 
+### Permissions
+
+Permissions are built centrally with `allow()` rules and checked in UI with `can()`.
+
+See more here: [08 Permissions](./docs/08_permissions.md)
+
 ## Testing
 
 Most tests should be integration tests. E2E covers common feature flows. Unit tests are reserved for the most critical logic and shared behavior.
 
-See more here: [08 Testing](./docs/08_testing.md)
+See more here: [09 Testing](./docs/09_testing.md)
 
 ## Mock API
 
