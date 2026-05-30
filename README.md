@@ -192,6 +192,9 @@ The local API runs through an Express server wired to MSW handlers and mock data
 - React Compiler is enabled in the Vite build pipeline
 - ESLint and Prettier are configured for code quality and consistency
 - Absolute imports are available through the `@/` alias family
+- Husky runs Git hooks before commits and pushes
+- To skip Git hooks for a one-off commit: `git commit -m "..." --no-verify`
+- To skip Git hooks for a one-off push: `git push --no-verify`
 
 ## Status
 
