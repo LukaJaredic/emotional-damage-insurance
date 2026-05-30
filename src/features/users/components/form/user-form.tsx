@@ -6,6 +6,7 @@ import { InputField, SelectField } from '@/components/form'
 import { Spinner } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { FieldGroup } from '@/components/ui/shadcn/field'
+import { usePermissions } from '@/hooks'
 import type { User } from '@/types'
 import { useCreateUser } from '@features/users/api/create-user'
 import { useUpdateUser } from '@features/users/api/update-user'
@@ -38,6 +39,7 @@ function UserForm({
   ...props
 }: UserFormProps) {
   const isEdit = !!user
+  const { can } = usePermissions()
   const createMutation = useCreateUser()
   const updateMutation = useUpdateUser()
   const form = useForm<UserFormValues>({
@@ -45,6 +47,14 @@ function UserForm({
     defaultValues: buildUserFormValues(user),
   })
   const isPending = createMutation.isPending || updateMutation.isPending
+
+  function isFieldDisabled(fieldName: keyof UserFormValues) {
+    if (!isEdit) {
+      return false
+    }
+
+    return !can('user:update', user, fieldName)
+  }
 
   async function handleSubmit(data: UserFormValues) {
     // Submit button can be outside of the form
@@ -87,6 +97,7 @@ function UserForm({
           type="text"
           autoComplete="given-name"
           placeholder="John"
+          disabled={isFieldDisabled('firstName')}
         />
         <InputField
           control={form.control}
@@ -96,6 +107,7 @@ function UserForm({
           type="text"
           autoComplete="family-name"
           placeholder="Doe"
+          disabled={isFieldDisabled('lastName')}
         />
         <InputField
           control={form.control}
@@ -105,6 +117,7 @@ function UserForm({
           type="email"
           autoComplete="email"
           placeholder="john.doe@example.com"
+          disabled={isFieldDisabled('email')}
         />
         {!isEdit ? (
           <InputField
@@ -125,6 +138,7 @@ function UserForm({
           placeholder="Choose roles"
           options={[...roleOptions]}
           isMultiple
+          disabled={isFieldDisabled('roles')}
         />
       </FieldGroup>
       {showSubmit ? (

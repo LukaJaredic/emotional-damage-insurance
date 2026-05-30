@@ -34,11 +34,10 @@ Then wrap it in a TanStack Query hook.
 ```ts
 export function useUsers(params: UseUsersQuery): RemoteDataState<User> {
   const query = useInfiniteQuery({
-    queryKey: queryKeys.users.list({ ...params, perPage: 25 }),
+    queryKey: queryKeys.users.list(params),
     queryFn: ({ pageParam }) =>
       getUsers({
         ...params,
-        perPage: 25,
         page: pageParam,
       }),
   })

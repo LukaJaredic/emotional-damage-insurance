@@ -14,15 +14,12 @@ export async function getUsers(params: GetUsersQuery): Promise<User[]> {
 }
 
 export function useUsers(params: UseUsersQuery): RemoteDataState<User> {
-  const perPage = 25
-
   const query = useInfiniteQuery({
     ...commonQueryOptions,
-    queryKey: queryKeys.users.list({ ...params, perPage }),
+    queryKey: queryKeys.users.list(params),
     queryFn: ({ pageParam }) =>
       getUsers({
         ...params,
-        perPage,
         page: pageParam,
       }),
   })

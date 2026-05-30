@@ -4,6 +4,7 @@ import { PageLayout } from '@/components/layout'
 import { QueryError, QueryLoading } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { useUserDetail } from '@/features/users/api/get-user'
+import { usePermissions } from '@/hooks'
 import { stringifyRoles } from '@features/users/utils/user-labels'
 
 import UserFormDialog from '../form/user-form-dialog'
@@ -18,6 +19,7 @@ type UserDetailProps = {
 
 function UserDetail({ userId }: UserDetailProps) {
   const query = useUserDetail({ userId })
+  const { can } = usePermissions()
 
   if (query.isPending) {
     return <QueryLoading label="Loading user details..." />
@@ -40,17 +42,21 @@ function UserDetail({ userId }: UserDetailProps) {
       description={stringifyRoles(user.roles)}
       actions={() => (
         <>
-          <UserFormDialog user={user}>
-            <Button>
-              <PencilIcon /> Edit this user
-            </Button>
-          </UserFormDialog>
-          <UserDeleteDialog user={user}>
-            <Button variant="destructive">
-              <TrashIcon />
-              Delete this user
-            </Button>
-          </UserDeleteDialog>
+          {can('user:update', user, '*') ? (
+            <UserFormDialog user={user}>
+              <Button>
+                <PencilIcon /> Edit this user
+              </Button>
+            </UserFormDialog>
+          ) : null}
+          {can('user:delete', user) ? (
+            <UserDeleteDialog user={user}>
+              <Button variant="destructive">
+                <TrashIcon />
+                Delete this user
+              </Button>
+            </UserDeleteDialog>
+          ) : null}
         </>
       )}
     >

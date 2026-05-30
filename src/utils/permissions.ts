@@ -2,18 +2,18 @@ import type { User } from '@/types'
 
 import { PermissionsBuilder } from './permission-builder'
 
-export function buildPermissionsFor(user: User) {
+export function buildPermissionsFor(user: User | null) {
   const builder = new PermissionsBuilder()
 
-  if (user.roles.includes('admin')) {
+  if (user?.roles.includes('admin')) {
     addAdminPermissions(builder)
   }
 
-  if (user.roles.includes('employee')) {
+  if (user?.roles.includes('employee')) {
     addEmployeePermissions(builder, user)
   }
 
-  if (user.roles.includes('customer')) {
+  if (user?.roles.includes('customer')) {
     addCustomerPermissions(builder, user)
   }
 
@@ -31,7 +31,7 @@ function addAdminPermissions(builder: PermissionsBuilder) {
 function addEmployeePermissions(builder: PermissionsBuilder, user: User) {
   builder
     .allow('user:read', { id: user.id })
-    .allow('user:read', { roles: ['customer'] })
+    .allow('user:read')
     .allow('user:update', { id: user.id }, ['firstName', 'lastName', 'email'])
     .allow('user:update', { roles: ['customer'] }, [
       'firstName',

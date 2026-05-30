@@ -1,7 +1,6 @@
 import isEqual from 'lodash/isEqual'
 
-import type { User } from '@/types'
-import type { StringKeyOf } from '@/types/util'
+import type { User, StringKeyOf } from '@/types'
 
 // Just add new resource:domain-types or [R:T], types will cascade
 type ResourceMap = {
@@ -45,6 +44,29 @@ class PermissionsBuilder {
     return this
   }
 
+  /**
+   * @returns `true` if the given user (usually current user) has permission to perform the specified action on the resource instance and field.
+   *
+   * @param resourceAction An action in the format of "resource:action", e.g. "user:create"
+   * @param resourceInstance The instance of the resource we are asking about - `'*'` means "any instance - at least one instance, I don't care which". Leaving this empty means "all instances"
+   * @param field The field which we are asking about - `'*'` means "any field, I don't care which". Leaving this empty means "all fields"
+   *
+   * @example
+   * ```ts
+   * // true if the user has permission to update ALL users (all fields)
+   * can('user:update')
+   * // true if the user has permission to update specific user (all fields)
+   * can('user:update', { id: '123' })
+   * // true if the user has permission to update specific field of specific user
+   * can('user:update', { id: '123' }, 'email')
+   * // true if the user has permission to update specific field of at least one user (we don't care which user, as long as there's at least one)
+   * can('user:update', '*', 'email')
+   * // true if the user has permission to update at least one field of specific user (we don't care which field, as long as there's at least one)
+   * can('user:update', { id: '123' }, '*')
+   * // true if the user has permission to update at least one field of at least one user (we don't care which user and which field, as long as there's at least one)
+   * can('user:update', '*', '*')
+   * ```
+   */
   #can<R extends Resource>(
     resourceAction: ResourceAction<R>,
     resourceInstance?: ResourceMap[R] | '*',

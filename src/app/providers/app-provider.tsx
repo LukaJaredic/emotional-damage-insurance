@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/shadcn/sonner'
 import { TooltipProvider } from '@/components/ui/shadcn/tooltip'
 import { queryClient } from '@/lib'
 
+import PermissionsProvider from './permissions-provider'
 import UserProvider from './user-provider'
 
 function AppProvider() {
@@ -12,8 +13,10 @@ function AppProvider() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <UserProvider>
-          <Outlet />
-          <Toaster richColors position="top-center" />
+          <PermissionsProvider>
+            <Outlet />
+            <Toaster richColors position="top-center" />
+          </PermissionsProvider>
         </UserProvider>
       </TooltipProvider>
     </QueryClientProvider>

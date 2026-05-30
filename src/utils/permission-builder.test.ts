@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import type { User } from '@/types/user'
-import type { StringKeyOf } from '@/types/util'
+import type { User, StringKeyOf } from '@/types'
 
 import {
   PermissionsBuilder,

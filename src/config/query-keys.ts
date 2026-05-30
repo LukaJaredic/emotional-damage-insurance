@@ -1,4 +1,5 @@
-import type { UseUsersQuery } from '@/features/users/types/users.types'
+import type { UseUsersQuery } from '@/features/users/types/user-api.types'
+import { DEFAULT_PAGE_LOAD_SIZE } from '@/lib/react-query'
 
 export const queryKeys = {
   auth: {
@@ -10,7 +11,7 @@ export const queryKeys = {
       [
         'users',
         'list',
-        perPage ?? 25,
+        perPage ?? DEFAULT_PAGE_LOAD_SIZE,
         search ?? '',
         'roles',
         ...[...(roles ?? [])].sort(),
