@@ -10,6 +10,12 @@ type Resource = keyof ResourceMap
 type Action = 'create' | 'read' | 'update' | 'delete'
 type ResourceAction<R extends Resource> = `${R}:${Action}`
 
+type CustomPages = 'home'
+type ResourcePages<R extends Resource> =
+  | `${R}s:master-page`
+  | `${R}s:detail-page`
+type PageAccess<R extends Resource = Resource> = CustomPages | ResourcePages<R>
+
 type PermissionRule<R extends Resource> = {
   // Conditions that must be met on the resource instance for the permission to apply
   // If null, the permission applies to all instances of the resource
@@ -21,10 +27,11 @@ type PermissionRule<R extends Resource> = {
 type PermissionStore = Map<ResourceAction<Resource>, PermissionRule<Resource>[]>
 
 class PermissionsBuilder {
-  #permissions: PermissionStore = new Map()
+  #actionPermissions: PermissionStore = new Map()
+  #pageAccessPermissions = new Set<PageAccess>()
 
   get permissions() {
-    return this.#permissions
+    return this.#actionPermissions
   }
 
   allow<R extends Resource>(
@@ -32,14 +39,20 @@ class PermissionsBuilder {
     conditions?: Partial<ResourceMap[R]>,
     allowedFields?: StringKeyOf<ResourceMap[R]>[],
   ): PermissionsBuilder {
-    if (!this.#permissions.has(resourceAction)) {
-      this.#permissions.set(resourceAction, [])
+    if (!this.#actionPermissions.has(resourceAction)) {
+      this.#actionPermissions.set(resourceAction, [])
     }
 
-    getPermissionsFor(this.#permissions, resourceAction)!.push({
+    getPermissionsFor(this.#actionPermissions, resourceAction)!.push({
       conditions: conditions ?? null,
       allowedFields: allowedFields ?? [],
     })
+
+    return this
+  }
+
+  allowPage(page: PageAccess): PermissionsBuilder {
+    this.#pageAccessPermissions.add(page)
 
     return this
   }
@@ -73,16 +86,21 @@ class PermissionsBuilder {
     field?: StringKeyOf<ResourceMap[R]> | '*',
   ): boolean {
     const resourcePermissions = getPermissionsFor(
-      this.#permissions,
+      this.#actionPermissions,
       resourceAction,
     )
 
     return checkPermissionFor(resourcePermissions, resourceInstance, field)
   }
 
+  #canAccess(page: PageAccess): boolean {
+    return this.#pageAccessPermissions.has(page)
+  }
+
   build() {
     return {
       can: this.#can.bind(this),
+      canAccess: this.#canAccess.bind(this),
     }
   }
 }
@@ -167,6 +185,7 @@ function checkFields<R extends Resource>(
 
 export {
   PermissionsBuilder,
+  type PageAccess,
   getPermissionsFor,
   checkPermissionFor,
   checkConditions,

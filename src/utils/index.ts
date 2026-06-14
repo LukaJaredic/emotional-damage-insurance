@@ -6,4 +6,4 @@ export * from './dates'
 export * from './permissions'
 export * from './query-keys'
 
-export { PermissionsBuilder } from './permission-builder'
+export { PermissionsBuilder, type PageAccess } from './permission-builder'

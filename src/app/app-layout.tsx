@@ -17,7 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/shadcn/sidebar'
 import { paths } from '@/config'
-import { useUser } from '@/hooks'
+import { usePermissions, useUser } from '@/hooks'
 
 type AppLayoutProps = {
   children: React.ReactNode
@@ -25,6 +25,7 @@ type AppLayoutProps = {
 
 function AppLayout({ children }: AppLayoutProps) {
   const { user, isLoading, logout } = useUser()
+  const { canAccess } = usePermissions()
 
   if (!user && !isLoading) {
     return <Navigate to={paths.auth.login.getHref(window.location.pathname)} />
@@ -44,9 +45,11 @@ function AppLayout({ children }: AppLayoutProps) {
           </SidebarHeader>
           <SidebarContent className="border-b pt-1">
             <SidebarMenu className="stagger-items-1">
-              {sidebarItems.map((item) => (
-                <SidebarItem item={item} key={item.href} />
-              ))}
+              {sidebarItems
+                .filter((item) => canAccess(item.access))
+                .map((item) => (
+                  <SidebarItem item={item} key={item.href} />
+                ))}
             </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>

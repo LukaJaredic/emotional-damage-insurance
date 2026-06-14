@@ -207,4 +207,17 @@ describe('PermissionBuilder', () => {
       ).toBe(false)
     })
   })
+
+  describe('#allowPage() and #canAccess()', async () => {
+    it('should return true only for explicitly allowed access permissions', async () => {
+      const { canAccess } = permissionBuilder
+        .allowPage('home')
+        .allowPage('users:detail-page')
+        .build()
+
+      expect(canAccess('home')).toBe(true)
+      expect(canAccess('users:detail-page')).toBe(true)
+      expect(canAccess('users:master-page')).toBe(false)
+    })
+  })
 })

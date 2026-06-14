@@ -155,6 +155,12 @@ export const usersHandlers = [
         return HttpResponse.json({ message: 'User not found' }, { status: 404 })
       }
 
+      const { can } = buildPermissionsFor(user as User)
+
+      if (!can('user:read', foundUser as User)) {
+        return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+      }
+
       return HttpResponse.json(sanitizeUser(foundUser))
     } catch (error: any) {
       return HttpResponse.json(

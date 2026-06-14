@@ -22,16 +22,26 @@ export function buildPermissionsFor(user: User | null) {
 
 function addAdminPermissions(builder: PermissionsBuilder) {
   builder
-    .allow('user:create')
+    .allowPage('home')
+
+    .allowPage('users:master-page')
     .allow('user:read')
+    .allow('user:create')
+
+    .allowPage('users:detail-page')
     .allow('user:update')
     .allow('user:delete')
 }
 
 function addEmployeePermissions(builder: PermissionsBuilder, user: User) {
   builder
-    .allow('user:read', { id: user.id })
+    .allowPage('home')
+
+    .allowPage('users:master-page')
     .allow('user:read')
+
+    .allowPage('users:detail-page')
+    .allow('user:read', { id: user.id })
     .allow('user:update', { id: user.id }, ['firstName', 'lastName', 'email'])
     .allow('user:update', { roles: ['customer'] }, [
       'firstName',
@@ -42,6 +52,9 @@ function addEmployeePermissions(builder: PermissionsBuilder, user: User) {
 
 function addCustomerPermissions(builder: PermissionsBuilder, user: User) {
   builder
+    .allowPage('home')
+
+    .allowPage('users:detail-page')
     .allow('user:read', { id: user.id, roles: ['customer'] })
     .allow('user:update', { id: user.id }, ['firstName', 'lastName', 'email'])
 }

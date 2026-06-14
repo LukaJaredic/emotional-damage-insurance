@@ -3,6 +3,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 import { Spinner } from '@/components/ui'
 import { paths } from '@/config'
+import type { PageAccess } from '@/utils'
 
 import AppLayout from './app-layout'
 import AuthGuard from './auth-guard'
@@ -30,9 +31,9 @@ function withSuspense(page: React.ReactNode) {
   )
 }
 
-function protectedRoute(page: React.ReactNode) {
+function protectedRoute(pageName: PageAccess, page: React.ReactNode) {
   return (
-    <AuthGuard>
+    <AuthGuard page={pageName}>
       <AppLayout>{withSuspense(page)}</AppLayout>
     </AuthGuard>
   )
@@ -56,15 +57,15 @@ const router = createBrowserRouter([
       },
       {
         path: paths.root.path,
-        element: protectedRoute(<HomePage />),
+        element: protectedRoute('home', <HomePage />),
       },
       {
         path: paths.users.path,
-        element: protectedRoute(<UsersMasterPage />),
+        element: protectedRoute('users:master-page', <UsersMasterPage />),
       },
       {
         path: paths.users.detail.path,
-        element: protectedRoute(<UserDetailPage />),
+        element: protectedRoute('users:detail-page', <UserDetailPage />),
       },
       {
         path: '*',
