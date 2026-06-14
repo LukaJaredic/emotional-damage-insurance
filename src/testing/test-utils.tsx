@@ -19,6 +19,7 @@ const defaultUser: BackendUser = {
   email: 'john@doe.com',
   roles: ['admin'],
   password: hash('admin123'),
+  createdAt: Date.now(),
 }
 
 export const createUser = (userProperties?: Partial<BackendUser>) => {

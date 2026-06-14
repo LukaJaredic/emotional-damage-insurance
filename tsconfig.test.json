@@ -11,6 +11,7 @@
     "jsx": "react-jsx"
   },
   "include": [
+    "e2e/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
