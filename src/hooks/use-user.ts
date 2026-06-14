@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import { UserContext } from '@app/providers/user-context'
+import { UserContext } from './user-context'
 
 function useUser() {
   const context = useContext(UserContext)
