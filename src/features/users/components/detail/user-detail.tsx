@@ -4,7 +4,7 @@ import { PageLayout } from '@/components/layout'
 import { QueryError, QueryLoading } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { useUserDetail } from '@/features/users/api/get-user'
-import { usePermissions } from '@/hooks'
+import { usePermissions, useUser } from '@/hooks'
 import { stringifyRoles } from '@features/users/utils/user-labels'
 
 import UserFormDialog from '../form/user-form-dialog'
@@ -18,6 +18,7 @@ type UserDetailProps = {
 }
 
 function UserDetail({ userId }: UserDetailProps) {
+  const { user: me } = useUser()
   const query = useUserDetail({ userId })
   const { can } = usePermissions()
 
@@ -35,6 +36,7 @@ function UserDetail({ userId }: UserDetailProps) {
   }
 
   const user = query.data
+  const isMyProfile = me?.id === user.id
 
   return (
     <PageLayout
@@ -45,7 +47,7 @@ function UserDetail({ userId }: UserDetailProps) {
           {can('user:update', user, '*') ? (
             <UserFormDialog user={user}>
               <Button>
-                <PencilIcon /> Edit this user
+                <PencilIcon /> Edit {isMyProfile ? 'your profile' : 'this user'}
               </Button>
             </UserFormDialog>
           ) : null}
@@ -53,7 +55,7 @@ function UserDetail({ userId }: UserDetailProps) {
             <UserDeleteDialog user={user}>
               <Button variant="destructive">
                 <TrashIcon />
-                Delete this user
+                Delete {isMyProfile ? 'your profile' : 'this user'}
               </Button>
             </UserDeleteDialog>
           ) : null}
