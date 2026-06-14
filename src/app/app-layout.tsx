@@ -2,7 +2,7 @@ import { SignOutIcon } from '@phosphor-icons/react'
 import { NavLink, Navigate } from 'react-router-dom'
 
 import { sidebarItems, type SidebarItem } from '@/app/sidebar-items'
-import { Logo, Spinner } from '@/components/ui'
+import { Avatar, Logo, Spinner } from '@/components/ui'
 import {
   Sidebar,
   SidebarContent,
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/shadcn/sidebar'
 import { paths } from '@/config'
 import { usePermissions, useUser } from '@/hooks'
+import type { User } from '@/types'
 
 type AppLayoutProps = {
   children: React.ReactNode
@@ -71,6 +72,7 @@ function AppLayout({ children }: AppLayoutProps) {
         <SidebarInset>
           <header className="animate-fade-in-down stagger-self-2 flex h-14 items-center border-b px-4">
             <SidebarTrigger />
+            {user ? <ProfileLink user={user} /> : null}
           </header>
           <main className="min-h-0 flex-1 overflow-auto p-6">{children}</main>
         </SidebarInset>
@@ -122,5 +124,21 @@ function SidebarHeaderItem() {
         </NavLink>
       </SidebarMenuButton>
     </SidebarMenuItem>
+  )
+}
+
+function ProfileLink({ user }: { user: User }) {
+  return (
+    <NavLink
+      to={paths.users.detail.getHref(user.id)}
+      aria-label="Open profile"
+      title="Open profile"
+      className="hover:bg-muted ml-auto flex items-center gap-2 rounded-full px-1 py-1 text-sm transition-colors sm:px-2"
+    >
+      <span className="sr-only font-medium sm:not-sr-only">
+        {user.firstName} {user.lastName}
+      </span>
+      <Avatar user={user} size="sm" />
+    </NavLink>
   )
 }
