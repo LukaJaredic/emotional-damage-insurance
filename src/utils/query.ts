@@ -22,6 +22,7 @@ function getNextPageParam<T>(
  * You can import and use it as-is in your infinite queries.
  */
 const commonQueryOptions = {
+  retry: false,
   initialPageParam: 1,
   getNextPageParam,
 }

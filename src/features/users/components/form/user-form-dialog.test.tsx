@@ -65,7 +65,7 @@ describe('UserFormDialog', () => {
   })
 
   describe('renders', () => {
-    it('should render the title, description amd buttons when creating', async () => {
+    it('should render the title, description and buttons when creating', async () => {
       await openDialog()
 
       expect(

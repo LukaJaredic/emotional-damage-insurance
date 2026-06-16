@@ -1,15 +1,16 @@
 import { cleanup, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { HttpResponse, http } from 'msw'
+import { describe, expect, it, vi } from 'vitest'
 
-import type { RemoteDataState } from '@/components/data/remote-data'
 import { paths } from '@/config'
+import { env } from '@/config/env'
 import { stringifyRoles } from '@/features/users/utils/user-labels'
 import useMediaQuery from '@/hooks/use-media-query'
+import { server } from '@/testing/mocks/server'
 import { renderApp, testUsers } from '@/testing/test-utils'
 import type { User, UserRole } from '@/types'
 import AuthGuard from '@app/auth-guard'
-import { useUsers } from '@features/users/api/get-users'
 
 import UsersMasterPage from './users-master-page'
 
@@ -17,37 +18,47 @@ vi.mock('@/hooks/use-media-query', () => ({
   default: vi.fn(),
 }))
 
-vi.mock('@features/users/api/get-users', () => ({
-  useUsers: vi.fn(),
-}))
-
 const mockedUseMediaQuery = vi.mocked(useMediaQuery)
-const mockedUseUsers = vi.mocked(useUsers)
 
 const returnedUsers = Object.values(testUsers)
 
-function buildUsersState(
-  users: User[],
-  overrides: Partial<RemoteDataState<User>> = {},
-): RemoteDataState<User> {
-  return {
-    items: users,
-    isInitialLoading: false,
-    isFetchingMore: false,
-    hasNextPage: false,
-    isError: false,
-    ...overrides,
-  }
+function mockUsersResponse({
+  users = returnedUsers,
+  status = 200,
+  onRequest,
+}: {
+  users?: User[]
+  status?: number
+  onRequest?: ((searchParams: URLSearchParams) => void) | undefined
+} = {}) {
+  server.use(
+    http.get(`${env.API_URL}/users`, ({ request }) => {
+      onRequest?.(new URL(request.url).searchParams)
+
+      if (status >= 400) {
+        return HttpResponse.json({ message: 'Server Error' }, { status })
+      }
+
+      return HttpResponse.json(users, { status })
+    }),
+  )
 }
 
 async function renderUsersMaster({
   isDesktop = true,
   role = 'admin',
+  users = returnedUsers,
+  status = 200,
+  onUsersRequest,
 }: {
   isDesktop?: boolean
   role?: UserRole
+  users?: User[]
+  status?: number
+  onUsersRequest?: (searchParams: URLSearchParams) => void
 } = {}) {
   mockedUseMediaQuery.mockReturnValue(isDesktop)
+  mockUsersResponse({ users, status, onRequest: onUsersRequest })
 
   await renderApp(
     <AuthGuard shouldHaveUser page="users:master-page">
@@ -81,10 +92,6 @@ function rolesSelect() {
  * We don't go into create form details here, since it has its own tests.
  */
 describe('UsersMaster', () => {
-  beforeEach(() => {
-    mockedUseUsers.mockReturnValue(buildUsersState(returnedUsers))
-  })
-
   it('should redirect customer to 404', async () => {
     await renderUsersMaster({ role: 'customer' })
 
@@ -106,7 +113,7 @@ describe('UsersMaster', () => {
         await renderUsersMaster({ role })
 
         expect(
-          screen.getByRole('table', { name: 'Users table' }),
+          await screen.findByRole('table', { name: 'Users table' }),
         ).toBeInTheDocument()
       }
     })
@@ -115,13 +122,13 @@ describe('UsersMaster', () => {
       await renderUsersMaster()
 
       expect(
-        screen.getByRole('columnheader', { name: /name/i }),
+        await screen.findByRole('columnheader', { name: /name/i }),
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('columnheader', { name: /email/i }),
+        await screen.findByRole('columnheader', { name: /email/i }),
       ).toBeInTheDocument()
       expect(
-        screen.getByRole('columnheader', { name: /roles/i }),
+        await screen.findByRole('columnheader', { name: /roles/i }),
       ).toBeInTheDocument()
     })
 
@@ -129,7 +136,7 @@ describe('UsersMaster', () => {
       await renderUsersMaster()
 
       for (const user of returnedUsers) {
-        const link = screen.getByRole('link', {
+        const link = await screen.findByRole('link', {
           name: `${user.firstName} ${user.lastName}`,
         })
 
@@ -150,7 +157,7 @@ describe('UsersMaster', () => {
     it('should render user cards on small screens', async () => {
       await renderUsersMaster({ isDesktop: false })
 
-      expect(screen.getByRole('list')).toBeInTheDocument()
+      expect(await screen.findByRole('list')).toBeInTheDocument()
       expect(screen.queryByRole('table')).not.toBeInTheDocument()
 
       for (const user of returnedUsers) {
@@ -173,18 +180,16 @@ describe('UsersMaster', () => {
 
   describe('fetch states', () => {
     it('should handle empty', async () => {
-      mockedUseUsers.mockReturnValue(buildUsersState([]))
-      await renderUsersMaster()
+      await renderUsersMaster({ users: [] })
 
-      expect(screen.getByText('No users found.')).toBeInTheDocument()
+      expect(await screen.findByText('No users found.')).toBeInTheDocument()
     })
 
     it('should handle error', async () => {
-      mockedUseUsers.mockReturnValue(buildUsersState([], { isError: true }))
-      await renderUsersMaster()
+      await renderUsersMaster({ status: 500 })
 
       expect(
-        screen.getByText(
+        await screen.findByText(
           'An error occurred while loading users. Please try again.',
         ),
       ).toBeInTheDocument()
@@ -192,20 +197,21 @@ describe('UsersMaster', () => {
   })
 
   describe('actions', () => {
-    it('should pass correct filter values to #useUsers()', async () => {
-      const { user } = await renderUsersMaster()
-
-      mockedUseUsers.mockClear()
+    it('should request users with selected filters', async () => {
+      const requests: URLSearchParams[] = []
+      const { user } = await renderUsersMaster({
+        onUsersRequest: (searchParams) => {
+          requests.push(new URLSearchParams(searchParams))
+        },
+      })
 
       await user.type(searchInput(), 'Mike')
       await user.click(rolesSelect())
       await user.click(await screen.findByRole('option', { name: 'Customer' }))
 
       await waitFor(() => {
-        expect(mockedUseUsers).toHaveBeenLastCalledWith({
-          search: 'Mike',
-          roles: ['customer'],
-        })
+        expect(requests.at(-1)?.get('search')).toBe('Mike')
+        expect(requests.at(-1)?.get('roles[]')).toBe('customer')
       })
     })
 

@@ -168,3 +168,21 @@ export async function selectOptions(select: HTMLElement, options: string[]) {
     await userEvent.click(await screen.findByRole('option', { name: option }))
   }
 }
+
+export async function deselectOptions(options: string[]) {
+  for (const option of options) {
+    await userEvent.click(
+      await screen.findByRole('button', { name: `Remove ${option}` }),
+    )
+  }
+}
+
+export async function clearSelects() {
+  screen
+    .queryAllByRole('button', {
+      name: /remove/i,
+    })
+    .forEach((button) => {
+      userEvent.click(button)
+    })
+}

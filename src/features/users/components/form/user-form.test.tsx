@@ -1,55 +1,56 @@
 import { screen } from '@testing-library/dom'
-import { cleanup } from '@testing-library/react'
+import { cleanup, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { HttpResponse, http } from 'msw'
 
+import { env } from '@/config/env'
+import { server } from '@/testing/mocks/server'
 import {
   buildUser,
+  clearSelects,
   renderApp,
   selectOptions,
   testUsers,
 } from '@/testing/test-utils'
 import type { User } from '@/types'
-import { useCreateUser } from '@features/users/api/create-user'
-import { useUpdateUser } from '@features/users/api/update-user'
 import type { UserFormStatus } from '@features/users/types/user-form.types'
 import { roleLabels } from '@features/users/utils/user-labels'
 
-import UserForm, { type UserFormProps } from './user-form'
+import UserForm from './user-form'
+import type { UserFormProps } from './user-form'
 
-vi.mock('@features/users/api/create-user', () => ({
-  useCreateUser: vi.fn(),
-}))
+function mockCreateAndUpdateUserResponses({
+  status = 201,
+  onRequest,
+}: {
+  status?: number
+  onRequest?: ((body: unknown) => void) | undefined
+} = {}) {
+  server.use(
+    http.post(`${env.API_URL}/users`, async ({ request }) => {
+      const body = (await request.json()) as Record<string, unknown>
+      onRequest?.(body)
 
-vi.mock('@features/users/api/update-user', () => ({
-  useUpdateUser: vi.fn(),
-}))
+      if (status >= 400) {
+        return HttpResponse.json({ message: 'Server Error' }, { status })
+      }
 
-function mockUseCreateUser(
-  overrides?: Partial<ReturnType<typeof useCreateUser>>,
-) {
-  const mutateAsync = vi.fn()
+      return HttpResponse.json({ id: 'created-user-id', ...body }, { status })
+    }),
+  )
 
-  vi.mocked(useCreateUser).mockReturnValue({
-    mutateAsync,
-    isPending: false,
-    ...overrides,
-  } as ReturnType<typeof useCreateUser>)
+  server.use(
+    http.patch(`${env.API_URL}/users/:id`, async ({ request, params }) => {
+      const body = (await request.json()) as Record<string, unknown>
+      onRequest?.({ body, id: params.id })
 
-  return { mutateAsync }
-}
+      if (status >= 400) {
+        return HttpResponse.json({ message: 'Server Error' }, { status })
+      }
 
-function mockUseUpdateUser(
-  overrides?: Partial<ReturnType<typeof useUpdateUser>>,
-) {
-  const mutateAsync = vi.fn()
-
-  vi.mocked(useUpdateUser).mockReturnValue({
-    mutateAsync,
-    isPending: false,
-    ...overrides,
-  } as ReturnType<typeof useUpdateUser>)
-
-  return { mutateAsync }
+      return HttpResponse.json({ ...body }, { status })
+    }),
+  )
 }
 
 function renderForm(
@@ -74,17 +75,17 @@ async function fillFormFields(user: User, password?: string) {
   const firstNameInput = screen.getByLabelText('First name') as HTMLInputElement
   const lastNameInput = screen.getByLabelText('Last name') as HTMLInputElement
   const emailInput = screen.getByLabelText('Email') as HTMLInputElement
-  const passwordInput = screen.getByLabelText('Password') as HTMLInputElement
+  const passwordInput = screen.queryByLabelText('Password') as HTMLInputElement
   const rolesSelect = screen.getByRole('combobox', {
     name: 'Roles',
-  })
+  }) as HTMLSelectElement
 
   await Promise.all([
     userEvent.clear(firstNameInput),
     userEvent.clear(lastNameInput),
     userEvent.clear(emailInput),
     passwordInput && userEvent.clear(passwordInput),
-    userEvent.selectOptions(rolesSelect, []),
+    clearSelects(),
   ])
 
   await userEvent.type(firstNameInput, user.firstName)
@@ -100,11 +101,6 @@ async function fillFormFields(user: User, password?: string) {
 }
 
 describe('UserForm', () => {
-  beforeEach(() => {
-    mockUseCreateUser()
-    mockUseUpdateUser()
-  })
-
   describe('renders', () => {
     it('renders create fields', async () => {
       await renderForm(testUsers.admin)
@@ -142,7 +138,12 @@ describe('UserForm', () => {
 
   describe('validation', () => {
     it('should prevent submit when invalid', async () => {
-      const mockedMutation = mockUseCreateUser()
+      const requests: unknown[] = []
+      mockCreateAndUpdateUserResponses({
+        onRequest: (body) => {
+          requests.push(body)
+        },
+      })
       await renderForm(testUsers.admin)
       const submitButton = screen.getByRole('button', { name: 'Create user' })
 
@@ -152,11 +153,19 @@ describe('UserForm', () => {
       )
       await userEvent.click(submitButton!)
 
-      expect(mockedMutation.mutateAsync).not.toHaveBeenCalled()
+      expect(
+        await screen.findByText('Invalid email address'),
+      ).toBeInTheDocument()
+      expect(requests).toHaveLength(0)
     })
 
-    it('should submit when valid', async () => {
-      const mockedMutation = mockUseCreateUser()
+    it('should create when valid', async () => {
+      const requests: unknown[] = []
+      mockCreateAndUpdateUserResponses({
+        onRequest: (body) => {
+          requests.push(body)
+        },
+      })
       await renderForm(testUsers.admin)
       const submitButton = screen.getByRole('button', { name: 'Create user' })
 
@@ -168,9 +177,36 @@ describe('UserForm', () => {
       delete expectedFormData.id
       delete expectedFormData.createdAt
 
-      expect(mockedMutation.mutateAsync).toHaveBeenCalledExactlyOnceWith(
-        expectedFormData,
+      await waitFor(() => {
+        expect(requests).toEqual([expectedFormData])
+      })
+    })
+
+    it('should update when valid', async () => {
+      const requests: unknown[] = []
+      mockCreateAndUpdateUserResponses({
+        onRequest: (data) => {
+          requests.push(data)
+        },
+      })
+      await renderForm(testUsers.admin, testUsers.customer)
+      const submitButton = screen.getByRole('button', { name: 'Save user' })
+
+      await fillFormFields(
+        buildUser(testUsers.customer, { firstName: 'Updated' }),
       )
+      await userEvent.click(submitButton!)
+
+      const expectedFormData = { ...testUsers.customer } as any
+      delete expectedFormData.id
+      delete expectedFormData.createdAt
+      expectedFormData.firstName = 'Updated'
+
+      await waitFor(() => {
+        expect(requests).toEqual([
+          { id: 'customer-id', body: expectedFormData },
+        ])
+      })
     })
   })
 
@@ -197,12 +233,10 @@ describe('UserForm', () => {
 
   describe('status changes', () => {
     let handleStatusChange!: ReturnType<typeof vi.fn>
-    let mockedMutation!: ReturnType<typeof mockUseCreateUser>
     let submitButton!: HTMLElement
 
     beforeEach(async () => {
       handleStatusChange = vi.fn()
-      mockedMutation = mockUseCreateUser()
       await renderForm(
         testUsers.admin,
         undefined,
@@ -212,23 +246,26 @@ describe('UserForm', () => {
     })
 
     it('should call #onStatusChange() with "pending" and "success" when submitted successfully', async () => {
+      mockCreateAndUpdateUserResponses()
       await fillFormFields(buildUser(testUsers.customer), 'new-password')
       await userEvent.click(submitButton!)
 
       expect(handleStatusChange).toHaveBeenCalledWith('pending')
-      expect(handleStatusChange).toHaveBeenCalledWith('success')
+      await waitFor(() => {
+        expect(handleStatusChange).toHaveBeenCalledWith('success')
+      })
     })
 
     it('should call #onStatusChange() with "pending" and "idle" when submitted unsuccessfully', async () => {
-      mockedMutation.mutateAsync.mockRejectedValueOnce(
-        new Error('Failed to create user'),
-      )
+      mockCreateAndUpdateUserResponses({ status: 500 })
 
       await fillFormFields(buildUser(testUsers.customer), 'new-password')
       await userEvent.click(submitButton!)
 
       expect(handleStatusChange).toHaveBeenCalledWith('pending')
-      expect(handleStatusChange).toHaveBeenCalledWith('idle')
+      await waitFor(() => {
+        expect(handleStatusChange).toHaveBeenCalledWith('idle')
+      })
     })
   })
 })

@@ -1,43 +1,26 @@
-import type { UseQueryResult } from '@tanstack/react-query'
 import { screen, within } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
+import { HttpResponse, http } from 'msw'
 
 import AuthGuard from '@/app/auth-guard'
 import { paths } from '@/config'
+import { env } from '@/config/env'
 import { stringifyRoles } from '@/features/users/utils/user-labels'
+import { server } from '@/testing/mocks/server'
 import { buildUser, renderApp, testUsers } from '@/testing/test-utils'
 import type { User } from '@/types'
-import { useUserDetail } from '@features/users/api/get-user'
 
 import UserDetailPage from './user-detail-page'
 
-vi.mock('@features/users/api/get-user', () => ({
-  useUserDetail: vi.fn(),
-}))
-
-const mockedUseUserDetail = vi.mocked(useUserDetail)
-
-type QueryResult = Partial<UseQueryResult<User, Error>>
-
-function buildUserDetailState(
-  user: User,
-  ...overrides: QueryResult[]
-): QueryResult {
-  return {
-    data: user,
-    isPending: false,
-    isError: false,
-    ...overrides,
-  }
+function mockUserDetailResponse(user: User) {
+  server.use(
+    http.get(`${env.API_URL}/users/:userId`, () => HttpResponse.json(user)),
+  )
 }
 
 async function renderUserDetail(currentUser: User, viewedUser?: User) {
-  mockedUseUserDetail.mockReturnValue(
-    buildUserDetailState(viewedUser ?? currentUser) as UseQueryResult<
-      User,
-      Error
-    >,
-  )
+  const userToView = viewedUser ?? currentUser
+  mockUserDetailResponse(userToView)
 
   await renderApp(
     <AuthGuard shouldHaveUser page="users:detail-page">
@@ -46,9 +29,13 @@ async function renderUserDetail(currentUser: User, viewedUser?: User) {
     {
       user: currentUser,
       path: paths.users.detail.path,
-      url: paths.users.detail.getHref((viewedUser ?? currentUser).id),
+      url: paths.users.detail.getHref(userToView.id),
     },
   )
+
+  await screen.findByRole('heading', {
+    name: `${userToView.firstName} ${userToView.lastName}`,
+  })
 
   return { user: userEvent.setup() }
 }
