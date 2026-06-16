@@ -49,7 +49,7 @@ async function renderUsersMaster({
 } = {}) {
   mockedUseMediaQuery.mockReturnValue(isDesktop)
 
-  const result = await renderApp(
+  await renderApp(
     <AuthGuard shouldHaveUser page="users:master-page">
       <UsersMasterPage />
     </AuthGuard>,
@@ -66,10 +66,7 @@ async function renderUsersMaster({
     },
   )
 
-  return {
-    ...result,
-    userEvent: userEvent.setup(),
-  }
+  return { user: userEvent.setup() }
 }
 
 function searchInput() {
@@ -196,7 +193,7 @@ describe('UsersMaster', () => {
 
   describe('actions', () => {
     it('should pass correct filter values to #useUsers()', async () => {
-      const { userEvent: user } = await renderUsersMaster()
+      const { user } = await renderUsersMaster()
 
       mockedUseUsers.mockClear()
 
@@ -225,7 +222,7 @@ describe('UsersMaster', () => {
     })
 
     it('should open a create form when the create button is clicked', async () => {
-      const { userEvent: user } = await renderUsersMaster()
+      const { user } = await renderUsersMaster()
 
       expect(
         screen.queryByRole('dialog', { name: 'Create a user' }),

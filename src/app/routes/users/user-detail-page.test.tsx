@@ -39,7 +39,7 @@ async function renderUserDetail(currentUser: User, viewedUser?: User) {
     >,
   )
 
-  const result = await renderApp(
+  await renderApp(
     <AuthGuard shouldHaveUser page="users:detail-page">
       <UserDetailPage />
     </AuthGuard>,
@@ -50,10 +50,7 @@ async function renderUserDetail(currentUser: User, viewedUser?: User) {
     },
   )
 
-  return {
-    ...result,
-    userEvent: userEvent.setup(),
-  }
+  return { user: userEvent.setup() }
 }
 
 describe('UserDetailPage', () => {
@@ -63,7 +60,7 @@ describe('UserDetailPage', () => {
       await renderUserDetail(user)
 
       expect(
-        screen.queryAllByRole('heading', {
+        screen.getAllByRole('heading', {
           name: `${user.firstName} ${user.lastName}`,
         }).length,
       ).toBeGreaterThan(0)
@@ -74,13 +71,13 @@ describe('UserDetailPage', () => {
       await renderUserDetail(user)
 
       expect(
-        screen.queryAllByText(stringifyRoles(user.roles)).length,
+        screen.getAllByText(stringifyRoles(user.roles)).length,
       ).toBeGreaterThan(0)
-      expect(screen.queryByText(user.firstName)).toBeInTheDocument()
-      expect(screen.queryByText(user.lastName)).toBeInTheDocument()
+      expect(screen.getByText(user.firstName)).toBeInTheDocument()
+      expect(screen.getByText(user.lastName)).toBeInTheDocument()
 
       expect(
-        screen.queryAllByRole('link', { name: user.email }).length,
+        screen.getAllByRole('link', { name: user.email }).length,
       ).toBeGreaterThan(0)
     })
 
@@ -89,12 +86,12 @@ describe('UserDetailPage', () => {
       await renderUserDetail(user)
 
       expect(
-        screen.queryByRole('heading', {
+        screen.getByRole('heading', {
           name: 'Activity',
         }),
       ).toBeInTheDocument()
       expect(
-        screen.queryByText('Activity feed will appear here.', { exact: false }),
+        screen.getByText('Activity feed will appear here.', { exact: false }),
       ).toBeInTheDocument()
     })
   })
@@ -108,8 +105,8 @@ describe('UserDetailPage', () => {
         }),
       )
 
-      const editButton = screen.queryByRole('button', { name: /edit/i })
-      const deleteButton = screen.queryByRole('button', { name: /delete/i })
+      const editButton = screen.getByRole('button', { name: /edit/i })
+      const deleteButton = screen.getByRole('button', { name: /delete/i })
 
       expect(editButton).toBeInTheDocument()
       expect(deleteButton).toBeInTheDocument()
@@ -118,7 +115,7 @@ describe('UserDetailPage', () => {
     it('should let employee edit a customer', async () => {
       await renderUserDetail(testUsers.employee, testUsers.customer)
 
-      const editButton = screen.queryByRole('button', { name: /edit/i })
+      const editButton = screen.getByRole('button', { name: /edit/i })
       const deleteButton = screen.queryByRole('button', { name: /delete/i })
 
       expect(editButton).toBeInTheDocument()
@@ -155,24 +152,22 @@ describe('UserDetailPage', () => {
 
   describe('actions', () => {
     it('should open edit dialog when edit button is clicked', async () => {
-      const { userEvent } = await renderUserDetail(testUsers.admin)
+      const { user } = await renderUserDetail(testUsers.admin)
 
-      await userEvent.click(screen.getByRole('button', { name: /edit/i }))
+      await user.click(screen.getByRole('button', { name: /edit/i }))
 
-      expect(screen.queryByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
     })
 
     it('should open a delete alert when delete button is clicked', async () => {
-      const { userEvent } = await renderUserDetail(testUsers.admin)
+      const { user } = await renderUserDetail(testUsers.admin)
 
-      await userEvent.click(screen.getByRole('button', { name: /delete/i }))
+      await user.click(screen.getByRole('button', { name: /delete/i }))
 
-      const alertDialog = screen.queryByRole('alertdialog')
+      const alertDialog = screen.getByRole('alertdialog')
 
       expect(alertDialog).toBeInTheDocument()
-      expect(
-        within(alertDialog!).getByText(/are you sure/i),
-      ).toBeInTheDocument()
+      expect(within(alertDialog).getByText(/are you sure/i)).toBeInTheDocument()
     })
   })
 })

@@ -103,11 +103,9 @@ function renderRemoteDataWithFilters(url = '/') {
     },
   )
 
-  return {
-    user: userEvent.setup(),
-    router,
-    ...render(<RouterProvider router={router} />),
-  }
+  render(<RouterProvider router={router} />)
+
+  return { user: userEvent.setup(), router }
 }
 
 function searchInput() {

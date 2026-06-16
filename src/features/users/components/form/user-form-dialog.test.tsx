@@ -20,24 +20,23 @@ vi.mock('./user-form', () => ({
 }))
 
 async function renderDialog(user?: User) {
-  return {
-    ...(await renderApp(
-      <UserFormDialog user={user}>
-        <button id="test-trigger">Trigger</button>
-      </UserFormDialog>,
-      {
-        user: testUsers.admin,
-      },
-    )),
-    user: userEvent.setup(),
-  }
+  await renderApp(
+    <UserFormDialog user={user}>
+      <button id="test-trigger">Trigger</button>
+    </UserFormDialog>,
+    {
+      user: testUsers.admin,
+    },
+  )
+
+  return { user: userEvent.setup() }
 }
 
 async function openDialog(user?: User) {
-  const { user: userEvent } = await renderDialog(user)
-  await userEvent.click(screen.getByText('Trigger'))
+  const { user: testUser } = await renderDialog(user)
+  await testUser.click(screen.getByText('Trigger'))
 
-  return userEvent
+  return testUser
 }
 
 describe('UserFormDialog', () => {
