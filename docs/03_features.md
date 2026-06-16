@@ -56,18 +56,31 @@ function UserDetailPage() {
 }
 ```
 
+Route access belongs in the app router, not inside the feature component.
+
+```tsx
+{
+  path: paths.users.path,
+  element: protectedRoute('users:master-page', <UsersMasterPage />),
+}
+```
+
+The feature component can still use `can()` for record-level UI, like buttons and form fields.
+
 ## Simple build order
 
 1. Define the feature types - Note: Main domain types (eg. `User`) go to `src/types/`. Other feature-specific types (form values, actions, queries...) go in here.
 2. Add schemas and builders in `utils/`.
 3. Add fetchers and hooks in `api/`.
 4. Build the feature components.
-5. Mount the feature from `src/app/routes`.
+5. Add page access in `src/utils/permissions.ts` if the feature has protected pages.
+6. Mount the feature from `src/app/routes` with the correct `PageAccess` value.
 
 ## Rules
 
 - Keep feature code together.
 - Do not import one feature directly into another feature.
 - Move code to shared folders only when it is truly reused.
+- Keep route access checks in the app layer.
 
 [← Shared Components](./02_shared_components.md) | [Server Communication →](./04_server_communication.md)
