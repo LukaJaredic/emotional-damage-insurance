@@ -35,8 +35,9 @@ function UsersMaster() {
         tableColumns={userColumns}
         tableCaption="Users table"
         filters={userFilters}
+        emptyContent="No users found."
         loadingContent="Loading users..."
-        emptyContent="No users found"
+        errorContent="An error occurred while loading users. Please try again."
         listItemContent={(_, user) => <UserCard user={user} />}
       />
     </PageLayout>

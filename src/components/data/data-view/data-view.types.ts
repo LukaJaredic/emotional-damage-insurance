@@ -8,9 +8,11 @@ type DataViewProps<T extends Record<string, unknown>> = {
   listItemContent: (index: number, item: T) => ReactNode
   tableCaption: string
   emptyContent?: ReactNode
+  errorContent?: ReactNode
   loadingContent?: ReactNode
   virtualized?: boolean
   isLoading?: boolean
+  isError?: boolean
   className?: string
   onEndReached?: (lastIndex: number) => void
 }

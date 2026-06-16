@@ -10,6 +10,7 @@ type RemoteDataState<T> = {
   isFetchingMore: boolean
   hasNextPage: boolean
   fetchNextPage?: () => Promise<unknown> | void
+  isError: boolean
 }
 
 type RemoteDataProps<T extends Record<string, unknown>> = Omit<

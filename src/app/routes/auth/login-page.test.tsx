@@ -9,6 +9,9 @@ import { queryKeys } from '@/utils'
 
 import LoginPage from './login-page'
 
+const USER_EMAIL = 'ronnie-coleman@email.com'
+const USER_PASSWORD = '123admin321'
+
 function emailInput() {
   return screen.getByLabelText('Email')
 }
@@ -33,19 +36,21 @@ async function fillForm(
   await userEventInstance.type(passwordInput(), password)
 }
 
+/**
+ * We don't go into form details here since we have already tested
+ * the LoginForm component separately.
+ */
 describe('Login Page', () => {
   let user!: ReturnType<typeof createUser>
 
   beforeAll(async () => {
     user = createUser({
-      email: 'new-admin@whatever.com',
-      password: '123admin321',
+      email: USER_EMAIL,
+      password: USER_PASSWORD,
     })
   })
 
   beforeEach(async () => {
-    queryClient.clear()
-
     await renderApp(<LoginPage />, {
       user: null,
       path: paths.auth.login.path,
@@ -62,7 +67,7 @@ describe('Login Page', () => {
   it('should log in with valid credentials and redirect to the requested route', async () => {
     const userEventInstance = userEvent.setup()
 
-    await fillForm(userEventInstance, user.email, '123admin321')
+    await fillForm(userEventInstance, USER_EMAIL, USER_PASSWORD)
 
     await userEventInstance.click(submitButton())
 
@@ -72,7 +77,7 @@ describe('Login Page', () => {
 
     expect(queryClient.getQueryData(queryKeys.auth.me())).toMatchObject({
       id: user.id,
-      email: user.email,
+      email: USER_EMAIL,
       roles: user.roles,
     })
   })

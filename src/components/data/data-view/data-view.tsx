@@ -1,5 +1,5 @@
 import Spinner from '@/components/ui/spinner'
-import useMediaQuery from '@/hooks/use-media-query'
+import { useMediaQuery } from '@/hooks'
 import { cn } from '@/lib/utils'
 
 import { List } from '../list'
@@ -28,8 +28,10 @@ function DataView<T extends Record<string, unknown>>({
   listItemContent,
   emptyContent = 'No items yet',
   loadingContent = 'Loading items...',
+  errorContent = 'Something went wrong while loading the data.',
   virtualized = false,
   isLoading = false,
+  isError = false,
   className,
   onEndReached = (lastIndex) => void lastIndex,
 }: DataViewProps<T>) {
@@ -41,6 +43,7 @@ function DataView<T extends Record<string, unknown>>({
   const sharedProps = {
     virtualized,
     isLoading,
+    isError,
     onEndReached,
     ...(className ? { className } : {}),
   }
@@ -52,6 +55,10 @@ function DataView<T extends Record<string, unknown>>({
         <span>{loadingContent}</span>
       </div>
     )
+  }
+
+  if (isError) {
+    return <div className={stateClassName}>{errorContent}</div>
   }
 
   if (items.length === 0) {

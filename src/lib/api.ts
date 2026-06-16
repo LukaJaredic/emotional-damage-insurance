@@ -5,6 +5,7 @@ import { env } from '@/config'
 
 const api = axios.create({
   baseURL: env.API_URL,
+  withCredentials: true,
 })
 
 api.interceptors.response.use(

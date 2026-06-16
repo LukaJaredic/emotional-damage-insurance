@@ -25,10 +25,10 @@ import {
 } from '@features/users/utils/user-form'
 import { roleOptions } from '@features/users/utils/user-options'
 
-type UserFormProps = Omit<ComponentProps<'form'>, 'onSubmit'> & {
+export type UserFormProps = Omit<ComponentProps<'form'>, 'onSubmit'> & {
   user?: User | undefined
-  showSubmit?: boolean
-  onStatusChange?: (status: UserFormStatus) => void | undefined
+  showSubmit?: boolean | undefined
+  onStatusChange?: ((status: UserFormStatus) => void) | undefined
 }
 
 function UserForm({

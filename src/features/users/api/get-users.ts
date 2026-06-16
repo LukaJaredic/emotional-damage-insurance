@@ -30,5 +30,6 @@ export function useUsers(params: UseUsersQuery): RemoteDataState<User> {
     isFetchingMore: query.isFetchingNextPage,
     hasNextPage: query.hasNextPage ?? false,
     fetchNextPage: query.fetchNextPage,
+    isError: query.isError,
   }
 }

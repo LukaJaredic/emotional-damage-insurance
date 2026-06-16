@@ -15,6 +15,11 @@ type TableColumnBuilder<T> = Readonly<{
   email: (title: string, dataIndex: keyof T) => TableColumn<T>
   primaryLink: (options: PrimaryLinkColumnOptions<T>) => TableColumn<T>
   array: (title: string, dataIndex: keyof T) => TableColumn<T>
+  custom: (options: {
+    title: string
+    dataIndex: keyof T
+    render: (row: T) => React.ReactNode
+  }) => TableColumn<T>
 }>
 
 /**
@@ -39,6 +44,19 @@ export function tableColumnBuilder<T>(): TableColumnBuilder<T> {
       title,
       dataIndex,
       render: (row) => renderPrimaryLinkCell(getHref(row), getLabel(row)),
+    }),
+    custom: ({
+      title,
+      dataIndex,
+      render,
+    }: {
+      title: string
+      dataIndex: keyof T
+      render: (row: T) => React.ReactNode
+    }) => ({
+      title,
+      dataIndex,
+      render: (row) => render(row),
     }),
   }
 }
