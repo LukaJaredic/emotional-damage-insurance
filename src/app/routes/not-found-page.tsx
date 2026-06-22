@@ -1,5 +1,5 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 
 import { Button } from '@/components/ui/shadcn/button'
 import { paths } from '@/config'

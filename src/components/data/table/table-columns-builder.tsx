@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 import type { TableColumn } from '@/components/data/table'
 import { Email } from '@/components/ui'

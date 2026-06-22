@@ -1,4 +1,4 @@
-import { Navigate, useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router'
 
 import { paths } from '@/config'
 import UserDetail from '@/features/users/components/detail/user-detail'

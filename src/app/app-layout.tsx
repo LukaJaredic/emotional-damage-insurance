@@ -1,5 +1,5 @@
 import { SignOutIcon } from '@phosphor-icons/react'
-import { NavLink, Navigate } from 'react-router-dom'
+import { NavLink, Navigate } from 'react-router'
 
 import { sidebarItems, type SidebarItem } from '@/app/sidebar-items'
 import { Avatar, Logo, Spinner } from '@/components/ui'

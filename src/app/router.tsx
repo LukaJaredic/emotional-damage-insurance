@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter } from 'react-router'
+import { RouterProvider } from 'react-router/dom'
 
 import { Spinner } from '@/components/ui'
 import { paths } from '@/config'
