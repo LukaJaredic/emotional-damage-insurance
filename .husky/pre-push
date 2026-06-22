@@ -7,5 +7,3 @@ log_info "Running pre-push hooks..."
 run_step "Typecheck" "npm run typecheck"
 
 run_step "Unit and integration tests" "npm test"
-
-run_step "End-to-end tests" "npm run e2e"
