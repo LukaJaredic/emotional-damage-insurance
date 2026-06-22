@@ -15,11 +15,29 @@ const adminUser = {
   roles: ['admin'],
 }
 
+const EmployeeUser = {
+  id: 'employee-user',
+  firstName: 'Employee',
+  lastName: 'User',
+  email: 'employee@example.com',
+  password: '2951957434',
+  roles: ['employee'],
+}
+
+const CustomerUser = {
+  id: 'customer-user',
+  firstName: 'Customer',
+  lastName: 'User',
+  email: 'customer@example.com',
+  password: '2951957434',
+  roles: ['customer'],
+}
+
 type DB = FactoryAPI<typeof models>
 
 function seed(db: DB, profile: SeedProfile) {
   drop(db)
-  seedAdminUser(db)
+  seedConstUsers(db)
 
   // if (profile === 'e2e') // Ready when needed
 
@@ -28,20 +46,22 @@ function seed(db: DB, profile: SeedProfile) {
   }
 }
 
-function seedAdminUser(db: DB) {
-  const existingAdminUser = db.user.findFirst({
-    where: {
-      email: {
-        equals: adminUser.email,
+function seedConstUsers(db: DB) {
+  ;[adminUser, EmployeeUser, CustomerUser].forEach((user) => {
+    const existingUser = db.user.findFirst({
+      where: {
+        email: {
+          equals: user.email,
+        },
       },
-    },
+    })
+
+    if (existingUser) {
+      return
+    }
+
+    db.user.create(user)
   })
-
-  if (existingAdminUser) {
-    return
-  }
-
-  db.user.create(adminUser)
 }
 
 function seedUsers(db: DB, count: number = 100) {

@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { RouterProvider, createMemoryRouter } from 'react-router-dom'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Filter } from '@/components/form'
 import { useMediaQuery } from '@/hooks'
@@ -74,6 +74,7 @@ function buildQueryState(params: Query): RemoteDataState<CreativeWork> {
     isInitialLoading: false,
     isFetchingMore: false,
     hasNextPage: false,
+    isError: false,
   }
 }
 
@@ -102,11 +103,9 @@ function renderRemoteDataWithFilters(url = '/') {
     },
   )
 
-  return {
-    user: userEvent.setup(),
-    router,
-    ...render(<RouterProvider router={router} />),
-  }
+  render(<RouterProvider router={router} />)
+
+  return { user: userEvent.setup(), router }
 }
 
 function searchInput() {
@@ -121,10 +120,6 @@ describe('RemoteDataWithFilters', () => {
   beforeEach(() => {
     mockedUseMediaQuery.mockReturnValue(false)
     mockedUseQuery.mockImplementation(buildQueryState)
-  })
-
-  afterEach(() => {
-    vi.clearAllMocks()
   })
 
   it('should render default filters and data', () => {

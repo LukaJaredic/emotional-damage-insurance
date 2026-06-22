@@ -61,10 +61,6 @@ describe('LoginForm', () => {
     user = userEvent.setup()
   })
 
-  afterEach(() => {
-    vi.clearAllMocks()
-  })
-
   it('renders the default credentials', () => {
     renderWithProviders(<LoginForm redirectTo="/" />)
 

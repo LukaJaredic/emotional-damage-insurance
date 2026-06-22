@@ -18,6 +18,7 @@ function RemoteData<T extends Record<string, unknown>>({
     isFetchingMore,
     hasNextPage,
     fetchNextPage,
+    isError,
   } = query
 
   function handleEndReached() {
@@ -34,6 +35,7 @@ function RemoteData<T extends Record<string, unknown>>({
       items={items}
       isLoading={items.length === 0 ? isInitialLoading : isFetchingMore}
       onEndReached={handleEndReached}
+      isError={isError}
     />
   )
 }

@@ -20,7 +20,7 @@ import UserForm from './user-form'
 
 type UserFormDialogProps = {
   children: React.ReactNode
-  user?: User
+  user?: User | undefined
 }
 
 type UserFormDialogStatus = Omit<UserFormStatus, 'success'> | 'closed'

@@ -1,7 +1,8 @@
 import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
-import type { UserRole } from '@/types/user'
+import type { User, UserRole } from '@/types/user'
+import { buildPermissionsFor } from '@/utils'
 import { db, persistDb } from '@testing/mocks/db'
 import { requireAuth } from '@testing/mocks/db.utils'
 import { hash, networkDelay, sanitizeUser } from '@testing/mocks/helpers'
@@ -82,6 +83,8 @@ export const usersHandlers = [
         return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
       }
 
+      const { can } = buildPermissionsFor(user as User)
+
       const url = new URL(request.url)
       const page = normalizePage(url.searchParams.get('page'))
 
@@ -96,6 +99,10 @@ export const usersHandlers = [
       const users = db.user
         .getAll()
         .filter((candidate) => {
+          if (!can('user:read', candidate as User)) {
+            return false
+          }
+
           if (!search) {
             return true
           }
@@ -146,6 +153,12 @@ export const usersHandlers = [
 
       if (!foundUser) {
         return HttpResponse.json({ message: 'User not found' }, { status: 404 })
+      }
+
+      const { can } = buildPermissionsFor(user as User)
+
+      if (!can('user:read', foundUser as User)) {
+        return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
       }
 
       return HttpResponse.json(sanitizeUser(foundUser))

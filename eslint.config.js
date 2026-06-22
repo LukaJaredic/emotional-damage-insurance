@@ -12,6 +12,23 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 const sharedDirectories = ['components', 'hooks', 'lib', 'types', 'utils']
+const featureDirectories = ['auth', 'users']
+
+const nodeFiles = [
+  'vite.config.ts',
+  'playwright.config.ts',
+  'mock-server.ts',
+  'e2e/**/*.ts',
+]
+
+const testFiles = [
+  'src/**/*.test.ts',
+  'src/**/*.test.tsx',
+  'src/**/*.spec.ts',
+  'src/**/*.spec.tsx',
+  'src/testing/**/*.ts',
+  'src/testing/**/*.tsx',
+]
 
 export default defineConfig([
   {
@@ -39,10 +56,6 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
     },
     settings: {
       react: {
@@ -54,7 +67,11 @@ export default defineConfig([
         },
         typescript: {
           noWarnOnMultipleProjects: true,
-          project: ['./tsconfig.app.json', './tsconfig.node.json'],
+          project: [
+            './tsconfig.app.json',
+            './tsconfig.node.json',
+            './tsconfig.test.json',
+          ],
         },
       },
     },
@@ -85,21 +102,24 @@ export default defineConfig([
         'error',
         {
           zones: [
+            // Disable cross-feature imports.
+            ...featureDirectories.map((directory) => ({
+              target: `./src/features/${directory}`,
+              from: './src/features',
+              except: [`./${directory}`],
+            })),
+            // Enforce unidirectional codebase: app can import features, not the reverse.
             {
               target: './src/features',
               from: './src/app',
             },
+            // Shared modules can be imported by app/features, but not the reverse.
             {
               target: sharedDirectories.map(
                 (directory) => `./src/${directory}`,
               ),
-              from: './src/app',
-              except: ['./providers'],
+              from: ['./src/features', './src/app'],
             },
-            ...sharedDirectories.map((directory) => ({
-              target: `./src/${directory}`,
-              from: './src/features',
-            })),
           ],
         },
       ],
@@ -180,6 +200,28 @@ export default defineConfig([
           ignoreMiddleExtensions: true,
         },
       ],
+    },
+  },
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: testFiles,
+    languageOptions: {
+      globals: globals.browser,
+    },
+  },
+  {
+    files: testFiles,
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+  },
+  {
+    files: nodeFiles,
+    languageOptions: {
+      globals: globals.node,
     },
   },
   {

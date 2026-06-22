@@ -45,18 +45,20 @@ function renderDataView(props?: Partial<DataViewProps<DemoItem>>) {
   return render(
     <div className="h-96">
       <DataView
+        virtualized={props?.virtualized ?? false}
         items={props?.items ?? items}
         tableColumns={props?.tableColumns ?? tableColumns}
         listItemContent={
           props?.listItemContent ?? ((_, item) => <span>{item.name}</span>)
         }
-        tableCaption={props?.tableCaption ?? 'Clients table'}
-        virtualized={props?.virtualized ?? false}
-        isLoading={props?.isLoading ?? false}
-        className={props?.className ?? ''}
         onEndReached={props?.onEndReached ?? ((lastIndex) => void lastIndex)}
+        isLoading={props?.isLoading ?? false}
+        isError={props?.isError ?? false}
         emptyContent={props?.emptyContent ?? ''}
         loadingContent={props?.loadingContent ?? ''}
+        errorContent={props?.errorContent ?? ''}
+        tableCaption={props?.tableCaption ?? 'Clients table'}
+        className={props?.className ?? ''}
       />
     </div>,
     {
@@ -101,6 +103,19 @@ describe('DataView', () => {
     })
 
     expect(screen.getByText('Loading claims...')).toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.queryByRole('list')).not.toBeInTheDocument()
+  })
+
+  it('renders error state', () => {
+    renderDataView({
+      items: [],
+      isError: true,
+      isLoading: false,
+      errorContent: 'Error loading claims',
+    })
+
+    expect(screen.getByText('Error loading claims')).toBeInTheDocument()
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(screen.queryByRole('list')).not.toBeInTheDocument()
   })

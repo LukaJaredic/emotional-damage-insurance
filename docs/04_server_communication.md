@@ -8,15 +8,45 @@ The usual pattern is:
 
 1. Write a fetcher function.
 2. Wrap it in a query or mutation hook.
-3. Use shared query keys.
+3. Use the query keys owned by the feature.
 4. Invalidate related queries and show success toasts after mutations.
 
 ## Shared pieces
 
 - `src/lib/api.ts` contains the shared Axios client.
 - `src/lib/react-query.ts` creates the shared `QueryClient`.
-- `src/config/query-keys.ts` contains shared query keys.
+- `src/utils/query-keys.ts` contains query keys used from shared code.
 - `src/app/providers/app-provider.tsx` mounts `QueryClientProvider`.
+
+## Query keys
+
+Each feature owns its own query keys.
+
+Put feature query keys in the feature `utils/` folder, using this shape:
+
+- file: `feature-name-query-keys.ts`
+- export: `featureNameQueryKeys`
+
+The users feature is the current reference:
+
+```ts
+// src/features/users/utils/user-query-keys.ts
+export const userQueryKeys = {
+  all: () => ['users'] as const,
+  list: ({ perPage, search, roles }: UseUsersQuery) =>
+    [
+      'users',
+      'list',
+      perPage ?? DEFAULT_PAGE_LOAD_SIZE,
+      search ?? '',
+      'roles',
+      ...[...(roles ?? [])].sort(),
+    ] as const,
+  detail: (userId: string) => ['users', 'detail', userId] as const,
+}
+```
+
+Only put a key in `src/utils/query-keys.ts` when the key is used by shared space outside a single feature. Auth is the main example because `useMe()` and `useLogout()` live in shared utilities.
 
 ## Query example
 
@@ -34,11 +64,10 @@ Then wrap it in a TanStack Query hook.
 ```ts
 export function useUsers(params: UseUsersQuery): RemoteDataState<User> {
   const query = useInfiniteQuery({
-    queryKey: queryKeys.users.list({ ...params, perPage: 25 }),
+    queryKey: userQueryKeys.list(params),
     queryFn: ({ pageParam }) =>
       getUsers({
         ...params,
-        perPage: 25,
         page: pageParam,
       }),
   })
@@ -66,7 +95,7 @@ export function useCreateUser() {
   return useMutation({
     mutationFn: createUser,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.users.all() })
+      void queryClient.invalidateQueries({ queryKey: userQueryKeys.all() })
     },
   })
 }
@@ -75,7 +104,8 @@ export function useCreateUser() {
 ## Simple rules
 
 - Keep fetchers inside feature `api/` files.
-- Keep query keys in `src/config/query-keys.ts`.
+- Keep feature query keys inside the feature, usually in `utils/feature-name-query-keys.ts`.
+- Keep shared-space query keys in `src/utils/query-keys.ts`.
 - Use invalidation instead of manually syncing many views.
 - Non-GET API errors are already shown through the shared Axios interceptor.
 

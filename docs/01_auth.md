@@ -14,18 +14,38 @@
 2. `UserProvider` calls `useMe()` to load the current user.
 3. `AuthGuard` checks whether the current route requires a user.
 4. If the user is missing, the app redirects to `/auth/login?redirectTo=...`.
-5. The login form submits to `POST /auth/login`.
-6. On success, the logged-in user is written into React Query.
-7. The app redirects back to the requested page.
-8. Logout calls `POST /auth/logout` and clears the query cache.
-9. Cleared cache causes `AuthGuard` to redirect.
+5. If the route passes a `page`, `AuthGuard` checks `canAccess(page)`.
+6. If the user cannot access that page, the app redirects to the not-found page.
+7. The login form submits to `POST /auth/login`.
+8. On success, the logged-in user is written into React Query.
+9. The app redirects back to the requested page.
+10. Logout calls `POST /auth/logout` and clears the query cache.
+11. Cleared cache causes `AuthGuard` to redirect.
 
 ## Session setup
 
 - The frontend does not store tokens manually.
 - The mock API sets an HTTPOnly cookie on `/login`.
 - The current user is cached in React Query under `queryKeys.auth.me()`.
-- Protected routes check if user exists in context.
+- Protected routes check if the user exists in context.
+- Protected routes can also pass a `PageAccess` value to check whether the user may open that page.
+
+## Route Access
+
+Auth and page access are related, but they are not the same thing.
+
+- auth answers: "Is there a logged-in user?"
+- page access answers: "Can this logged-in user open this page?"
+
+Use `AuthGuard page={...}` for protected pages that need page-level permission checks.
+
+```tsx
+<AuthGuard page="users:master-page">
+  <AppLayout>{page}</AppLayout>
+</AuthGuard>
+```
+
+Page access rules are defined with `allowPage()` in `src/utils/permissions.ts`. See [Permissions](./08_permissions.md) for the full pattern.
 
 ## Simple example
 

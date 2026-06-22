@@ -55,7 +55,7 @@ export const authHandlers = [
         return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
       }
 
-      return HttpResponse.json({ data: user })
+      return HttpResponse.json(user)
     } catch (error: any) {
       return HttpResponse.json(
         { message: error?.message || 'Server Error' },

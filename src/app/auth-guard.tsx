@@ -1,22 +1,33 @@
 import { Navigate } from 'react-router-dom'
 
 import { paths } from '@/config'
-import { useUser } from '@/hooks'
+import { usePermissions, useUser } from '@/hooks'
+import type { PageAccess } from '@/utils'
 
 type AuthGuardProps = {
   children: React.ReactNode
+  page?: PageAccess
   shouldHaveUser?: boolean
 }
 
-function AuthGuard({ children, shouldHaveUser = true }: AuthGuardProps) {
+function AuthGuard({ children, page, shouldHaveUser = true }: AuthGuardProps) {
   const { user, isLoading } = useUser()
-
-  if (shouldHaveUser && !user && !isLoading) {
-    return <Navigate to={paths.auth.login.getHref(window.location.pathname)} />
-  }
+  const { canAccess } = usePermissions()
 
   if (!shouldHaveUser && user && !isLoading) {
     return <Navigate to={paths.root.getHref()} replace />
+  }
+
+  if (shouldHaveUser) {
+    if (!user && !isLoading) {
+      return (
+        <Navigate to={paths.auth.login.getHref(window.location.pathname)} />
+      )
+    }
+
+    if (page && !canAccess(page)) {
+      return <Navigate to={paths.notFound.getHref()} replace />
+    }
   }
 
   return children

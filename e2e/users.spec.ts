@@ -188,11 +188,10 @@ async function assertUserInTable(
   },
 ) {
   const fullName = `${values.firstName} ${values.lastName}`
+  const row = page.getByRole('row', { name: fullName })
 
-  await expect(page.getByRole('link', { name: fullName })).toBeVisible()
-  await expect(page.getByText(values.email, { exact: true })).toBeVisible()
-
-  await expect(page.getByText(values.roles.join(', '))).toBeVisible()
+  await expect(row.getByText(values.email, { exact: true })).toBeVisible()
+  await expect(row.getByText(values.roles.join(', '))).toBeVisible()
 }
 
 async function assertUserDetails(

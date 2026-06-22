@@ -58,4 +58,4 @@ That means the page decides what the trigger button looks like, while the dialog
 - Pending actions disable buttons and show a spinner.
 - Successful actions close the dialog via mentioned conversion `success` -> `closed`.
 
-[← Forms](./06_forms.md) | [Testing →](./08_testing.md)
+[← Forms](./06_forms.md) | [Permissions →](./08_permissions.md)

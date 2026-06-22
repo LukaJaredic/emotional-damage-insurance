@@ -1,6 +1,5 @@
+import { UserContext } from '@/hooks/user-context'
 import { useLogout, useMe } from '@/utils'
-
-import { UserContext } from './user-context'
 
 type UserProviderProps = {
   children: React.ReactNode

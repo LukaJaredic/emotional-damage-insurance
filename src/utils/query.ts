@@ -4,10 +4,13 @@
  */
 function getNextPageParam<T>(
   lastPage: T[],
-  _allPages: T[][],
+  pages: T[][],
   lastPageParam: number,
 ): number | undefined {
-  if (lastPage.length === 0) {
+  if (
+    lastPage.length === 0 ||
+    (pages.length > 1 && lastPage.length < pages[0]!.length) // last page is not full - no more loads
+  ) {
     return undefined
   }
 
@@ -19,6 +22,7 @@ function getNextPageParam<T>(
  * You can import and use it as-is in your infinite queries.
  */
 const commonQueryOptions = {
+  retry: false,
   initialPageParam: 1,
   getNextPageParam,
 }
