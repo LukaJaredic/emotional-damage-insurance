@@ -1,10 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { RouterProvider, createMemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Filter } from '@/components/form'
 import { useMediaQuery } from '@/hooks'
+import { renderApp } from '@/testing/test-utils'
 
 import type { TableColumn } from '../table'
 
@@ -78,34 +78,23 @@ function buildQueryState(params: Query): RemoteDataState<CreativeWork> {
   }
 }
 
-function renderRemoteDataWithFilters(url = '/') {
-  const router = createMemoryRouter(
-    [
-      {
-        path: '/',
-        element: (
-          <div className="h-96">
-            <RemoteDataWithFilters
-              useQuery={mockedUseQuery}
-              filters={filters}
-              tableColumns={tableColumns}
-              tableCaption="Creative works table"
-              loadingContent="Loading creative works..."
-              emptyContent="No creative works found"
-              listItemContent={(_, item) => <span>{item.title}</span>}
-            />
-          </div>
-        ),
-      },
-    ],
-    {
-      initialEntries: [url],
-    },
+async function renderRemoteDataWithFilters(url = '/') {
+  const result = await renderApp(
+    <div className="h-96">
+      <RemoteDataWithFilters
+        useQuery={mockedUseQuery}
+        filters={filters}
+        tableColumns={tableColumns}
+        tableCaption="Creative works table"
+        loadingContent="Loading creative works..."
+        emptyContent="No creative works found"
+        listItemContent={(_, item) => <span>{item.title}</span>}
+      />
+    </div>,
+    { url },
   )
 
-  render(<RouterProvider router={router} />)
-
-  return { user: userEvent.setup(), router }
+  return { router: result.router, user: userEvent.setup() }
 }
 
 function searchInput() {
@@ -122,8 +111,8 @@ describe('RemoteDataWithFilters', () => {
     mockedUseQuery.mockImplementation(buildQueryState)
   })
 
-  it('should render default filters and data', () => {
-    renderRemoteDataWithFilters()
+  it('should render default filters and data', async () => {
+    await renderRemoteDataWithFilters()
 
     expect(searchInput()).toHaveValue('')
     expect(screen.getByText('Choose type')).toBeInTheDocument()
@@ -138,8 +127,10 @@ describe('RemoteDataWithFilters', () => {
     })
   })
 
-  it('should pre-fill data using search', () => {
-    renderRemoteDataWithFilters('/?search=batman&type=movie&foo=bar&page=99')
+  it('should pre-fill data using search', async () => {
+    await renderRemoteDataWithFilters(
+      '/?search=batman&type=movie&foo=bar&page=99',
+    )
 
     expect(searchInput()).toHaveValue('batman')
     expect(screen.getByText('Movie')).toBeInTheDocument()
@@ -151,7 +142,7 @@ describe('RemoteDataWithFilters', () => {
   })
 
   it('should set search params when filters change', async () => {
-    const { router, user } = renderRemoteDataWithFilters('/?foo=bar')
+    const { router, user } = await renderRemoteDataWithFilters('/?foo=bar')
 
     await user.type(searchInput(), 'planet')
     await user.click(typeSelect())
@@ -165,7 +156,7 @@ describe('RemoteDataWithFilters', () => {
   })
 
   it('should query data using params', async () => {
-    const { user } = renderRemoteDataWithFilters()
+    const { user } = await renderRemoteDataWithFilters()
 
     mockedUseQuery.mockClear()
 

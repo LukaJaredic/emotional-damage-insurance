@@ -1,5 +1,5 @@
 import type { DefaultValues, FieldValues } from 'react-hook-form'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router'
 
 import { Filters, type Filter } from '@/components/form'
 import { cn } from '@/lib'

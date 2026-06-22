@@ -2,7 +2,8 @@ import { screen, waitFor } from '@testing-library/dom'
 import { render, type RenderOptions } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import type React from 'react'
-import { createMemoryRouter, RouterProvider } from 'react-router-dom'
+import { createMemoryRouter } from 'react-router'
+import { RouterProvider } from 'react-router/dom'
 
 import type { User, UserRole } from '@/types/user'
 import AppProvider from '@app/providers/app-provider'
@@ -120,6 +121,7 @@ export const renderApp = async (
 
   const returnValue = {
     ...renderResult,
+    router,
     user: initializedUser,
   }
 

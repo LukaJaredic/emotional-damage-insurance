@@ -3,7 +3,7 @@ import {
   CircleNotchIcon,
   HouseIcon,
 } from '@phosphor-icons/react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 
 import { paths } from '@/config'
 
