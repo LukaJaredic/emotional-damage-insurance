@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { DefaultValues, FieldValues } from 'react-hook-form'
 import { useSearchParams } from 'react-router'
 
@@ -77,7 +78,7 @@ function buildNextSearchParams<T extends FieldValues>(
 /**
  * Renders a filterable remote-data view synchronized with the URL search params.
  *
- * @param useQuery Query hook used to fetch filtered remote data.
+ * @param useRemoteData TenStack Query Hook used to fetch filtered remote data.
  * @param filters Filter definitions rendered above the data view.
  * @param className Optional class name applied to the outer layout.
  * @param props Additional remote-data props passed to the underlying `<RemoteData>`.
@@ -86,7 +87,7 @@ function RemoteDataWithFilters<
   TItem extends Record<string, unknown>,
   TFilters extends FieldValues,
 >({
-  useQuery,
+  useRemoteData,
   filters,
   className,
   ...props
@@ -94,7 +95,14 @@ function RemoteDataWithFilters<
   const [searchParams, setSearchParams] = useSearchParams()
   const filterValues = buildFilterValues(searchParams, filters)
 
-  const query = useQuery(filterValues)
+  const [initialUseRemoteData] = useState(() => useRemoteData)
+  if (import.meta.env.DEV && initialUseRemoteData !== useRemoteData) {
+    throw new Error(
+      'RemoteDataWithFilters received a different useRemoteData hook between renders. This breaks the rules of hooks. Pass a stable hook reference.',
+    )
+  }
+
+  const query = useRemoteData(filterValues)
 
   function handleFilterChange(values: TFilters) {
     setSearchParams(buildNextSearchParams(searchParams, values, filters), {

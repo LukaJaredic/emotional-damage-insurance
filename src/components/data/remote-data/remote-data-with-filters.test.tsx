@@ -1,5 +1,6 @@
-import { screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { Filter } from '@/components/form'
@@ -64,7 +65,10 @@ const tableColumns: TableColumn<CreativeWork>[] = [
 ]
 
 const mockedUseMediaQuery = vi.mocked(useMediaQuery)
-const mockedUseQuery = vi.fn<(params: Query) => RemoteDataState<CreativeWork>>()
+const mockedUseRemoteData =
+  vi.fn<(params: Query) => RemoteDataState<CreativeWork>>()
+const alternateUseRemoteData =
+  vi.fn<(params: Query) => RemoteDataState<CreativeWork>>()
 
 function buildQueryState(params: Query): RemoteDataState<CreativeWork> {
   void params
@@ -82,7 +86,7 @@ async function renderRemoteDataWithFilters(url = '/') {
   const result = await renderApp(
     <div className="h-96">
       <RemoteDataWithFilters
-        useQuery={mockedUseQuery}
+        useRemoteData={mockedUseRemoteData}
         filters={filters}
         tableColumns={tableColumns}
         tableCaption="Creative works table"
@@ -108,7 +112,8 @@ function typeSelect() {
 describe('RemoteDataWithFilters', () => {
   beforeEach(() => {
     mockedUseMediaQuery.mockReturnValue(false)
-    mockedUseQuery.mockImplementation(buildQueryState)
+    mockedUseRemoteData.mockImplementation(buildQueryState)
+    alternateUseRemoteData.mockImplementation(buildQueryState)
   })
 
   it('should render default filters and data', async () => {
@@ -121,7 +126,7 @@ describe('RemoteDataWithFilters', () => {
       expect(screen.getByText(demo.title)).toBeInTheDocument()
     }
 
-    expect(mockedUseQuery).toHaveBeenLastCalledWith({
+    expect(mockedUseRemoteData).toHaveBeenLastCalledWith({
       search: '',
       type: '',
     })
@@ -135,7 +140,7 @@ describe('RemoteDataWithFilters', () => {
     expect(searchInput()).toHaveValue('batman')
     expect(screen.getByText('Movie')).toBeInTheDocument()
 
-    expect(mockedUseQuery).toHaveBeenLastCalledWith({
+    expect(mockedUseRemoteData).toHaveBeenLastCalledWith({
       search: 'batman',
       type: 'movie',
     })
@@ -158,17 +163,56 @@ describe('RemoteDataWithFilters', () => {
   it('should query data using params', async () => {
     const { user } = await renderRemoteDataWithFilters()
 
-    mockedUseQuery.mockClear()
+    mockedUseRemoteData.mockClear()
 
     await user.type(searchInput(), 'batman')
     await user.click(typeSelect())
     await user.click(await screen.findByText('Movie'))
 
     await waitFor(() => {
-      expect(mockedUseQuery).toHaveBeenLastCalledWith({
+      expect(mockedUseRemoteData).toHaveBeenLastCalledWith({
         search: 'batman',
         type: 'movie',
       })
     })
+  })
+
+  it('should throw when the query hook changes identity', async () => {
+    // MemoryRouter is used because we have useSearchParams inside
+    const { rerender } = render(
+      <MemoryRouter>
+        <div className="h-96">
+          <RemoteDataWithFilters
+            useRemoteData={mockedUseRemoteData}
+            filters={filters}
+            tableColumns={tableColumns}
+            tableCaption="Creative works table"
+            loadingContent="Loading creative works..."
+            emptyContent="No creative works found"
+            listItemContent={(_, item) => <span>{item.title}</span>}
+          />
+        </div>
+      </MemoryRouter>,
+    )
+
+    expect(() => {
+      rerender(
+        <MemoryRouter>
+          <div className="h-96">
+            <RemoteDataWithFilters
+              useRemoteData={alternateUseRemoteData}
+              filters={filters}
+              tableColumns={tableColumns}
+              tableCaption="Creative works table"
+              loadingContent="Loading creative works..."
+              emptyContent="No creative works found"
+              listItemContent={(_, item) => <span>{item.title}</span>}
+            />
+          </div>
+        </MemoryRouter>,
+      )
+    }).toThrow(
+      'RemoteDataWithFilters received a different useRemoteData hook between renders. Pass a stable hook reference.',
+    )
   })
 })
