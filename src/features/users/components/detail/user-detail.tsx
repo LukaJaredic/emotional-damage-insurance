@@ -1,7 +1,7 @@
 import { PencilIcon, TrashIcon } from '@phosphor-icons/react'
 
 import { PageLayout } from '@/components/layout'
-import { QueryError, QueryLoading } from '@/components/ui'
+import { QueryLoading } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { useUserDetail } from '@/features/users/api/get-user'
 import { usePermissions, useUser } from '@/hooks'
@@ -27,12 +27,7 @@ function UserDetail({ userId }: UserDetailProps) {
   }
 
   if (query.isError) {
-    return (
-      <QueryError
-        title="User not found"
-        description="We couldn't load this user right now."
-      />
-    )
+    throw query.error
   }
 
   const user = query.data
