@@ -36,6 +36,23 @@ export function email() {
 }
 
 /**
+ * Builds a select schema for one of predefined string options.
+ *
+ * @param options Allowed option values.
+ * @param required Whether an option must be selected.
+ * @returns A Zod enum schema for the provided select options (with messages).
+ */
+export function singleSelect<T extends string>(options: T[], required = false) {
+  const schema = z.enum(options)
+
+  if (required) {
+    return schema.refine((value) => value !== '', 'Select an option')
+  }
+
+  return schema
+}
+
+/**
  * Builds a select schema for one or more predefined string options.
  *
  * @param options Allowed option values.

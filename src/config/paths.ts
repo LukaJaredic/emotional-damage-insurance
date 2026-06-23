@@ -12,6 +12,16 @@ export const paths = {
       getHref: (userId: string) => `/users/${userId}`,
     },
   },
+  policyHolders: {
+    path: '/policy-holders',
+    getHref: () => '/policy-holders',
+    getDetailHref: (policyHolderId: string) =>
+      `/policy-holders/${policyHolderId}`,
+    detail: {
+      path: '/policy-holders/:policyHolderId',
+      getHref: (policyHolderId: string) => `/policy-holders/${policyHolderId}`,
+    },
+  },
   notFound: {
     path: '/404',
     getHref: () => '/404',
