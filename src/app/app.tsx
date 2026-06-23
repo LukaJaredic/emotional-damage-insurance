@@ -8,6 +8,7 @@ import AppRouter from './router'
 
 Sentry.init({
   dsn: env.SENTRY_DSN,
+  enabled: env.SENTRY_ENABLED,
   environment: import.meta.env.MODE,
   dataCollection: {
     userInfo: false,

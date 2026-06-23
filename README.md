@@ -21,6 +21,7 @@ The current codebase includes authentication, protected routing, shared UI primi
 - shadcn/ui
 - React Hook Form
 - Zod
+- Sentry
 - Vitest
 - Playwright
 - MSW
@@ -38,10 +39,16 @@ The current codebase includes authentication, protected routing, shared UI primi
 Create a `.env` file in the project root:
 
 ```bash
-VITE_APP_API_URL=http://localhost:8080/api
 VITE_APP_APP_URL=http://localhost:5173
+# Backend
+VITE_APP_API_URL=http://localhost:8080/api
 VITE_APP_MOCK_API_PORT=8080
+# Sentry
+VITE_APP_SENTRY_ENABLED=false
+VITE_APP_SENTRY_DSN=
 ```
+
+Set `VITE_APP_SENTRY_ENABLED=true` and provide `VITE_APP_SENTRY_DSN` to send Sentry events. This works in development too; events are tagged with the current Vite mode, such as `development`.
 
 ```bash
 # Check dependencies before installing
@@ -182,6 +189,12 @@ See more here: [07 Dialogs And Alerts](./docs/07_dialogs_and_alerts.md)
 Permissions are built centrally with `allow()` rules and checked in UI with `can()`.
 
 See more here: [08 Permissions](./docs/08_permissions.md)
+
+### Observability
+
+Sentry is used for client-side error monitoring. Error boundaries report React errors, and the shared API client reports failed HTTP responses.
+
+See more here: [10 Observability](./docs/10_observability.md)
 
 ## Testing
 

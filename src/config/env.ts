@@ -1,11 +1,25 @@
 import { z, ZodError } from 'zod'
 
-const EnvSchema = z.object({
-  API_URL: z.string(),
-  APP_URL: z.string(),
-  MOCK_API_PORT: z.string(),
-  SENTRY_DSN: z.string().optional(),
-})
+const EnvSchema = z
+  .object({
+    API_URL: z.string(),
+    APP_URL: z.string(),
+    MOCK_API_PORT: z.string(),
+    SENTRY_ENABLED: z
+      .enum(['true', 'false'])
+      .default('false')
+      .transform((value) => value === 'true'),
+    SENTRY_DSN: z.string().optional(),
+  })
+  .superRefine((env, ctx) => {
+    if (env.SENTRY_ENABLED && !env.SENTRY_DSN) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['SENTRY_DSN'],
+        message: 'SENTRY_DSN is required when SENTRY_ENABLED is true',
+      })
+    }
+  })
 
 function mapEnvToClient(env: Record<string, string>): Record<string, string> {
   return Object.fromEntries(

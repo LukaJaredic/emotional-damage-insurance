@@ -38,7 +38,6 @@ function ErrorBoundary({
         ))
       }
       onError={(error, info) => {
-        // TODO: Sentry logging
         console.error('ErrorBoundary caught an error:', error, info)
         captureReactException(error, info)
       }}
