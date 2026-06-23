@@ -1,10 +1,11 @@
 import isEqual from 'lodash/isEqual'
 
-import type { User, StringKeyOf } from '@/types'
+import type { User, StringKeyOf, PolicyHolder } from '@/types'
 
 // Just add new resource:domain-types or [R:T], types will cascade
 type ResourceMap = {
   user: User
+  'policy-holder': PolicyHolder
 }
 type Resource = keyof ResourceMap
 type Action = 'create' | 'read' | 'update' | 'delete'

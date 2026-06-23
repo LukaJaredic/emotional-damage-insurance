@@ -125,11 +125,11 @@ describe('PermissionBuilder', () => {
       })
 
       it('should return true if checked field is missing', async () => {
-        expect(checkFields([])).toBe(true)
+        expect(checkFields<'user'>([])).toBe(true)
       })
 
       it('should return true if checked field is provided', async () => {
-        expect(checkFields([], 'firstName')).toBe(true)
+        expect(checkFields<'user'>([], 'firstName')).toBe(true)
       })
     })
 
@@ -137,19 +137,19 @@ describe('PermissionBuilder', () => {
       const allowedFields = ['firstName', 'lastName'] as StringKeyOf<User>[]
 
       it("should return true if checked field is '*'", async () => {
-        expect(checkFields(allowedFields, '*')).toBe(true)
+        expect(checkFields<'user'>(allowedFields, '*')).toBe(true)
       })
 
       it('should return true if checked field is included in allowed fields', async () => {
-        expect(checkFields(allowedFields, 'firstName')).toBe(true)
+        expect(checkFields<'user'>(allowedFields, 'firstName')).toBe(true)
       })
 
       it('should return false if checked field is not included in allowed fields', async () => {
-        expect(checkFields(allowedFields, 'email')).toBe(false)
+        expect(checkFields<'user'>(allowedFields, 'email')).toBe(false)
       })
 
       it('should return false if checked field is missing', async () => {
-        expect(checkFields(allowedFields)).toBe(false)
+        expect(checkFields<'user'>(allowedFields)).toBe(false)
       })
     })
   })

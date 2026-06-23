@@ -31,6 +31,14 @@ function addAdminPermissions(builder: PermissionsBuilder) {
     .allowPage('users:detail-page')
     .allow('user:update')
     .allow('user:delete')
+
+    .allowPage('policy-holders:master-page')
+    .allow('policy-holder:read')
+    .allow('policy-holder:create')
+
+    .allowPage('policy-holders:detail-page')
+    .allow('policy-holder:update')
+    .allow('policy-holder:delete')
 }
 
 function addEmployeePermissions(builder: PermissionsBuilder, user: User) {
@@ -41,13 +49,19 @@ function addEmployeePermissions(builder: PermissionsBuilder, user: User) {
     .allow('user:read')
 
     .allowPage('users:detail-page')
-    .allow('user:read', { id: user.id })
     .allow('user:update', { id: user.id }, ['firstName', 'lastName', 'email'])
     .allow('user:update', { roles: ['customer'] }, [
       'firstName',
       'lastName',
       'email',
     ])
+
+    .allowPage('policy-holders:master-page')
+    .allow('policy-holder:read')
+    .allow('policy-holder:create')
+
+    .allowPage('policy-holders:detail-page')
+    .allow('policy-holder:update')
 }
 
 function addCustomerPermissions(builder: PermissionsBuilder, user: User) {

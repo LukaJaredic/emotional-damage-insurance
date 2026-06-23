@@ -13,6 +13,7 @@ const seedProfile = process.env.MOCK_DB_SEED_PROFILE as SeedProfile | undefined
 
 function getEmptyData() {
   return {
+    policyHolder: [],
     user: [],
   }
 }
