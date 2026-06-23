@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react'
 import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 
+import { ErrorBoundary } from '@/components/errors'
 import { Spinner } from '@/components/ui'
 import { paths } from '@/config'
 import type { PageAccess } from '@/utils'
@@ -32,16 +33,24 @@ function withSuspense(page: React.ReactNode) {
   )
 }
 
+function withErrorBoundary(page: React.ReactNode) {
+  return <ErrorBoundary>{page}</ErrorBoundary>
+}
+
 function protectedRoute(pageName: PageAccess, page: React.ReactNode) {
   return (
     <AuthGuard page={pageName}>
-      <AppLayout>{withSuspense(page)}</AppLayout>
+      <AppLayout>{withErrorBoundary(withSuspense(page))}</AppLayout>
     </AuthGuard>
   )
 }
 
 function unprotectedRoute(page: React.ReactNode) {
-  return <AuthGuard shouldHaveUser={false}>{withSuspense(page)}</AuthGuard>
+  return (
+    <AuthGuard shouldHaveUser={false}>
+      {withErrorBoundary(withSuspense(page))}
+    </AuthGuard>
+  )
 }
 
 const router = createBrowserRouter([
@@ -54,7 +63,7 @@ const router = createBrowserRouter([
       },
       {
         path: paths.notFound.path,
-        element: withSuspense(<NotFoundPage />),
+        element: withErrorBoundary(withSuspense(<NotFoundPage />)),
       },
       {
         path: paths.root.path,
@@ -70,7 +79,7 @@ const router = createBrowserRouter([
       },
       {
         path: '*',
-        element: withSuspense(<NotFoundPage />),
+        element: withErrorBoundary(withSuspense(<NotFoundPage />)),
       },
     ],
   },
