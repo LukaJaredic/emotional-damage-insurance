@@ -31,7 +31,7 @@ function UsersMaster() {
       }
     >
       <RemoteDataWithFilters
-        useQuery={useUsers}
+        useRemoteData={useUsers}
         tableColumns={userColumns}
         tableCaption="Users table"
         filters={userFilters}

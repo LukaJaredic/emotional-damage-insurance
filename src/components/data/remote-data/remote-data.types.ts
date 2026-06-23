@@ -24,7 +24,7 @@ type RemoteDataWithFiltersProps<
   TItem extends Record<string, unknown>,
   TFilters extends FieldValues,
 > = Omit<RemoteDataProps<TItem>, 'query'> & {
-  useQuery: (params: TFilters) => RemoteDataState<TItem>
+  useRemoteData: (params: TFilters) => RemoteDataState<TItem>
   filters: Filter<TFilters>[]
 }
 
