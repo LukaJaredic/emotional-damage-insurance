@@ -11,4 +11,14 @@ export const models = {
     roles: Array,
     createdAt: Date.now,
   },
+  policyHolder: {
+    id: primaryKey(nanoid),
+    type: String,
+    governmentId: String,
+    email: String,
+    phone: String,
+    firstName: String,
+    lastName: String,
+    businessName: String,
+  },
 }
