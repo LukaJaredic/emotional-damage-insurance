@@ -1,7 +1,19 @@
+import * as Sentry from '@sentry/react'
+
 import ErrorBoundary from '@/components/errors/error-boundary'
 import { Button } from '@/components/ui/shadcn/button'
+import { env } from '@/config'
 
 import AppRouter from './router'
+
+Sentry.init({
+  dsn: env.SENTRY_DSN,
+  environment: import.meta.env.MODE,
+  dataCollection: {
+    userInfo: false,
+    httpBodies: [],
+  },
+})
 
 function App() {
   return (

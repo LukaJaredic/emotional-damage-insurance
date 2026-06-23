@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/react'
 import axios, { AxiosError } from 'axios'
 import { toast } from 'sonner'
 
@@ -20,6 +21,8 @@ api.interceptors.response.use(
 
       toast.error(message)
     }
+
+    captureException(error)
 
     return Promise.reject(error)
   },

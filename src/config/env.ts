@@ -4,6 +4,7 @@ const EnvSchema = z.object({
   API_URL: z.string(),
   APP_URL: z.string(),
   MOCK_API_PORT: z.string(),
+  SENTRY_DSN: z.string().optional(),
 })
 
 function mapEnvToClient(env: Record<string, string>): Record<string, string> {
