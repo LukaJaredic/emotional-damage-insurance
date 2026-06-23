@@ -11,8 +11,6 @@ export type ErrorProps = {
   onActionClick?: ErrorActionsProps['onActionClick']
 }
 
-const headingClassName = 'text'
-
 function Error({
   status,
   variant,
@@ -31,10 +29,10 @@ function Error({
       {variant === 'page' ? (
         <h1 className={'text-2xl'}>{title}</h1>
       ) : (
-        <h2 className={headingClassName}>{title}</h2>
+        <h2 className={'text-xl'}>{title}</h2>
       )}
 
-      <div className="font-heading text-foreground animate-fade-in-up stagger-self-2 text-8xl font-bold">
+      <div className="font-heading text-foreground animate-fade-in-up stagger-self-2 text-6xl font-bold">
         {status}
       </div>
 
