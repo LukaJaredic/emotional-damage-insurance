@@ -187,8 +187,6 @@ describe('RemoteDataWithFilters', () => {
             filters={filters}
             tableColumns={tableColumns}
             tableCaption="Creative works table"
-            loadingContent="Loading creative works..."
-            emptyContent="No creative works found"
             listItemContent={(_, item) => <span>{item.title}</span>}
           />
         </div>
@@ -204,15 +202,13 @@ describe('RemoteDataWithFilters', () => {
               filters={filters}
               tableColumns={tableColumns}
               tableCaption="Creative works table"
-              loadingContent="Loading creative works..."
-              emptyContent="No creative works found"
               listItemContent={(_, item) => <span>{item.title}</span>}
             />
           </div>
         </MemoryRouter>,
       )
     }).toThrow(
-      'RemoteDataWithFilters received a different useRemoteData hook between renders. Pass a stable hook reference.',
+      'RemoteDataWithFilters received a different useRemoteData hook between renders. This breaks the rules of hooks. Pass a stable hook reference.',
     )
   })
 })
