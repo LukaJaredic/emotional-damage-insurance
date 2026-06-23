@@ -16,7 +16,7 @@ The users page is the main example.
 
 ```tsx
 <RemoteDataWithFilters
-  useQuery={useUsers}
+  useRemoteData={useUsers}
   filters={userFilters}
   tableColumns={userColumns}
   tableCaption="Users table"
@@ -25,6 +25,10 @@ The users page is the main example.
   listItemContent={(_, user) => <UserCard user={user} />}
 />
 ```
+
+`useRemoteData` is a hook prop. Pass a stable imported hook reference directly, such as `useRemoteData={useUsers}`.
+
+Do not pass inline functions or conditionally select between different hooks. `RemoteDataWithFilters` calls this hook during render, so the hook identity must stay stable to preserve React's fixed hook order. In development, the component throws if `useRemoteData` changes between renders.
 
 If the page has no filters, use `RemoteData` directly.
 
