@@ -8,7 +8,7 @@ export type ErrorProps = {
   description: string
   status: string | number
   actions: ErrorActionsProps['type']
-  onActionClick: ErrorActionsProps['onActionClick']
+  onActionClick?: ErrorActionsProps['onActionClick']
 }
 
 const headingClassName = 'text'
