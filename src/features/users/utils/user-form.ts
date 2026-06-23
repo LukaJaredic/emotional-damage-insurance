@@ -34,11 +34,11 @@ export function buildUserFormValues(user?: User): UserFormValues {
 }
 
 export function buildUserUpdatePayload(
-  id: User['id'],
+  userId: User['id'],
   values: UpdateUserFormValues,
 ): UpdateUserAction {
   return {
-    userId: id,
+    userId,
     data: values,
   }
 }

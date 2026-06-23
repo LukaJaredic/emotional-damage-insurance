@@ -149,6 +149,7 @@ export const policyHoldersHandlers = [
 
       const perPage = normalizePerPage(url.searchParams.get('perPage'))
       const search = url.searchParams.get('search')?.trim().toLowerCase()
+      const requestedType = url.searchParams.get('type')
 
       const policyHolders = db.policyHolder
         .getAll()
@@ -158,6 +159,10 @@ export const policyHoldersHandlers = [
           )
 
           if (!can('policy-holder:read', policyHolder)) {
+            return false
+          }
+
+          if (requestedType && policyHolder.type !== requestedType) {
             return false
           }
 
