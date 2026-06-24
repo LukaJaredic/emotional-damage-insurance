@@ -22,7 +22,7 @@ function UsersMaster() {
       actions={() =>
         can('user:create') ? (
           <UserFormDialog>
-            <Button className="btn">
+            <Button>
               <PlusIcon />
               Create a user
             </Button>

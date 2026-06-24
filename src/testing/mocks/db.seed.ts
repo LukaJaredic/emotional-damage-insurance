@@ -2,6 +2,7 @@ import { drop } from '@mswjs/data'
 import type { FactoryAPI } from '@mswjs/data/lib/glossary'
 
 import { models } from './db.models'
+import { generatePolicyHolders } from './generators/policy-holder'
 import { generateUsers } from './generators/user'
 
 type SeedProfile = 'dev' | 'e2e'
@@ -43,6 +44,7 @@ function seed(db: DB, profile: SeedProfile) {
 
   if (profile === 'dev') {
     seedUsers(db, 100)
+    seedPolicyHolders(db, 200)
   }
 }
 
@@ -87,6 +89,40 @@ function seedUsers(db: DB, count: number = 100) {
     }
 
     db.user.create(user)
+  })
+}
+
+function seedPolicyHolders(db: DB, count: number = 200) {
+  const policyHolders = generatePolicyHolders(count)
+
+  policyHolders.forEach((policyHolder) => {
+    if (
+      db.policyHolder.findFirst({
+        where: {
+          id: {
+            equals: policyHolder.id,
+          },
+        },
+      }) ||
+      db.policyHolder.findFirst({
+        where: {
+          email: {
+            equals: policyHolder.email,
+          },
+        },
+      }) ||
+      db.policyHolder.findFirst({
+        where: {
+          governmentId: {
+            equals: policyHolder.governmentId,
+          },
+        },
+      })
+    ) {
+      return
+    }
+
+    db.policyHolder.create(policyHolder)
   })
 }
 

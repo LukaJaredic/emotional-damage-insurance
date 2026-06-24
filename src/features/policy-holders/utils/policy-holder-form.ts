@@ -1,14 +1,14 @@
 import z from 'zod'
 
 import type { PolicyHolder } from '@/types'
-import { email, requiredString, singleSelect } from '@/utils'
+import { email, phone, requiredString, singleSelect } from '@/utils'
 
 import type { PolicyHolderFormValues } from '../types/policy-holder-form.types'
 
 const baseSchema = z.object({
   type: singleSelect(['individual', 'business'], true),
   email: email(),
-  phone: requiredString().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number'),
+  phone: phone(),
 })
 
 export const createSchema = z.discriminatedUnion('type', [

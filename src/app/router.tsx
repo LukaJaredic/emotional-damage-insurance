@@ -14,10 +14,17 @@ import AppProvider from './providers/app-provider'
 const HomePage = lazy(() => import('@app/routes/home/home-page'))
 const LoginPage = lazy(() => import('@app/routes/auth/login-page'))
 const NotFoundPage = lazy(() => import('@app/routes/not-found-page'))
+
+// USERS
 const UsersMasterPage = lazy(
   () => import('@app/routes/users/users-master-page'),
 )
 const UserDetailPage = lazy(() => import('@app/routes/users/user-detail-page'))
+
+// POLICY HOLDERS
+const PolicyHoldersMasterPage = lazy(
+  () => import('@app/routes/policy-holders/policy-holders-master-page'),
+)
 
 function withSuspense(page: ReactNode) {
   return (
@@ -76,6 +83,13 @@ const router = createBrowserRouter([
       {
         path: paths.users.detail.path,
         element: protectedRoute('users:detail-page', <UserDetailPage />),
+      },
+      {
+        path: paths.policyHolders.path,
+        element: protectedRoute(
+          'policy-holders:master-page',
+          <PolicyHoldersMasterPage />,
+        ),
       },
       {
         path: '*',

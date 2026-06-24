@@ -36,6 +36,17 @@ export function email() {
 }
 
 /**
+ * Builds a phone number schema with the application's default validation message.
+ *
+ * @returns A Zod string schema for phone numbers.
+ */
+export function phone() {
+  return z.string().regex(/^\+?[1-9]\d{1,14}$/, {
+    message: 'Invalid phone number',
+  })
+}
+
+/**
  * Builds a select schema for one of predefined string options.
  *
  * @param options Allowed option values.

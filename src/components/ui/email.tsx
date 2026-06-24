@@ -1,7 +1,7 @@
-import type { MouseEvent } from 'react'
 import { email, safeParse } from 'zod'
 
 import { cn } from '@/lib'
+import { stopPropagation } from '@/utils'
 
 type EmailProps = {
   email: unknown
@@ -28,10 +28,6 @@ function Email({ email, className }: EmailProps) {
       {email}
     </a>
   )
-}
-
-function stopPropagation(e: MouseEvent) {
-  e.stopPropagation()
 }
 
 function isValidEmail(value: unknown): value is string {
