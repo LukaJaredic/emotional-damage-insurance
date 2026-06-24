@@ -1,16 +1,14 @@
 import { QuestionMarkIcon } from '@phosphor-icons/react'
+import type { ComponentProps, ReactNode } from 'react'
 
 import { Button } from '@/components/ui/shadcn/button'
 import Tooltip from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
-type CommonTooltipProps = Omit<
-  React.ComponentProps<typeof Tooltip>,
-  'trigger'
-> & {
+type CommonTooltipProps = Omit<ComponentProps<typeof Tooltip>, 'trigger'> & {
   title?: string
   className?: string
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
 /**

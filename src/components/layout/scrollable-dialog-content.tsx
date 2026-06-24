@@ -1,5 +1,7 @@
+import type { ReactNode } from 'react'
+
 type ScrollableDialogContentProps = {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 /**

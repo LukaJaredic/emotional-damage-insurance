@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import {
   AlertDialog,
@@ -17,9 +17,9 @@ import Spinner from './spinner'
 type ConfirmDialogStatus = 'closed' | 'idle' | 'pending'
 
 type ConfirmDialogProps = {
-  children: React.ReactNode
-  title: React.ReactNode
-  description: React.ReactNode
+  children: ReactNode
+  title: ReactNode
+  description: ReactNode
   confirmLabel?: string
   cancelLabel?: string
   variant?: 'default' | 'destructive'

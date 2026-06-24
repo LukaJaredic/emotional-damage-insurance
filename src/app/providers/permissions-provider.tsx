@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react'
+
 import { useUser } from '@/hooks'
 import { PermissionsContext } from '@/hooks/permissions-context'
 import { buildPermissionsFor } from '@/utils'
 
 type PermissionsProviderProps = {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 function PermissionsProvider({ children }: PermissionsProviderProps) {

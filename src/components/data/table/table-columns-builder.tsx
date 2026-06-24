@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 
 import type { TableColumn } from '@/components/data/table'
@@ -18,7 +19,7 @@ type TableColumnBuilder<T> = Readonly<{
   custom: (options: {
     title: string
     dataIndex: keyof T
-    render: (row: T) => React.ReactNode
+    render: (row: T) => ReactNode
   }) => TableColumn<T>
 }>
 
@@ -52,7 +53,7 @@ export function tableColumnBuilder<T>(): TableColumnBuilder<T> {
     }: {
       title: string
       dataIndex: keyof T
-      render: (row: T) => React.ReactNode
+      render: (row: T) => ReactNode
     }) => ({
       title,
       dataIndex,

@@ -86,6 +86,7 @@ src/features/awesome-feature/
 - **Kebab-case** for file and folder names
 - **PascalCase** for React components
 - **camelCase** for functions and variables
+- **Explicit React imports** - Import React APIs directly from `react` (for example, `import { useState, type ReactNode } from 'react'`) instead of using `React.useState`, `React.ReactNode`, `React.ComponentProps`, or `import * as React`. Files copied from shadcn/Radix primitives under `src/components/ui/shadcn` are exempt because they follow upstream patterns.
 
 ### Architecture Rules
 

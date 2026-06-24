@@ -1,9 +1,9 @@
-import { useContext } from 'react'
+import { use } from 'react'
 
 import { PermissionsContext } from './permissions-context'
 
 function usePermissions() {
-  const context = useContext(PermissionsContext)
+  const context = use(PermissionsContext)
 
   if (!context) {
     throw new Error('usePermissions must be used within a PermissionsProvider')

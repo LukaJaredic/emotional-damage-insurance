@@ -1,4 +1,6 @@
-function Logo(props: React.SVGProps<SVGSVGElement>) {
+import type { SVGProps } from 'react'
+
+function Logo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="-2.4 -2.4 28.80 28.80"

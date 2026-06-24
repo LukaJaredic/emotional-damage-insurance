@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import { Avatar, Email } from '@/components/ui'
 import type { User } from '@/types'
 import { toAppDateTime } from '@/utils'
@@ -48,7 +50,7 @@ function DefinitionListItem({
   description,
 }: {
   term: string
-  description: React.ReactNode
+  description: ReactNode
 }) {
   return (
     <div className="flex items-start justify-between gap-4 pb-4 text-sm not-last:border-b">

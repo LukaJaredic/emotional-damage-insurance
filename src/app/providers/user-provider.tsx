@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react'
+
 import { UserContext } from '@/hooks/user-context'
 import { useLogout, useMe } from '@/utils'
 
 type UserProviderProps = {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 function UserProvider({ children }: UserProviderProps) {

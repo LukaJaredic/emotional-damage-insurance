@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Navigate } from 'react-router'
 
 import { paths } from '@/config'
@@ -5,7 +6,7 @@ import { usePermissions, useUser } from '@/hooks'
 import type { PageAccess } from '@/utils'
 
 type AuthGuardProps = {
-  children: React.ReactNode
+  children: ReactNode
   page?: PageAccess
   shouldHaveUser?: boolean
 }

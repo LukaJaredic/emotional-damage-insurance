@@ -1,4 +1,5 @@
 import { captureReactException } from '@sentry/react'
+import type { ReactNode } from 'react'
 import {
   getErrorMessage,
   ErrorBoundary as ReactErrorBoundary,
@@ -8,7 +9,7 @@ import {
 import Error, { type ErrorProps } from './error'
 
 type ErrorBoundaryProps = {
-  children: React.ReactNode
+  children: ReactNode
   variant?: ErrorProps['variant']
   actions?: ErrorProps['actions']
   fallBackRender?: ErrorBoundaryPropsWithRender['fallbackRender']

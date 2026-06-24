@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, type ReactNode } from 'react'
 import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 
@@ -19,7 +19,7 @@ const UsersMasterPage = lazy(
 )
 const UserDetailPage = lazy(() => import('@app/routes/users/user-detail-page'))
 
-function withSuspense(page: React.ReactNode) {
+function withSuspense(page: ReactNode) {
   return (
     <Suspense
       fallback={
@@ -33,11 +33,11 @@ function withSuspense(page: React.ReactNode) {
   )
 }
 
-function withErrorBoundary(page: React.ReactNode) {
+function withErrorBoundary(page: ReactNode) {
   return <ErrorBoundary>{page}</ErrorBoundary>
 }
 
-function protectedRoute(pageName: PageAccess, page: React.ReactNode) {
+function protectedRoute(pageName: PageAccess, page: ReactNode) {
   return (
     <AuthGuard page={pageName}>
       <AppLayout>{withErrorBoundary(withSuspense(page))}</AppLayout>
@@ -45,7 +45,7 @@ function protectedRoute(pageName: PageAccess, page: React.ReactNode) {
   )
 }
 
-function unprotectedRoute(page: React.ReactNode) {
+function unprotectedRoute(page: ReactNode) {
   return (
     <AuthGuard shouldHaveUser={false}>
       {withErrorBoundary(withSuspense(page))}

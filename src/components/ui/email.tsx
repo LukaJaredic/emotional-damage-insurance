@@ -1,3 +1,4 @@
+import type { MouseEvent } from 'react'
 import { email, safeParse } from 'zod'
 
 import { cn } from '@/lib'
@@ -29,7 +30,7 @@ function Email({ email, className }: EmailProps) {
   )
 }
 
-function stopPropagation(e: React.MouseEvent) {
+function stopPropagation(e: MouseEvent) {
   e.stopPropagation()
 }
 

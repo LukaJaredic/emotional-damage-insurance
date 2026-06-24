@@ -1,12 +1,14 @@
+import type { ComponentProps, ReactNode } from 'react'
+
 import {
   Tooltip as TooltipPrimitive,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/shadcn/tooltip'
 
-type TooltipProps = React.ComponentProps<typeof TooltipPrimitive> & {
-  trigger: React.ReactNode
-  children: React.ReactNode
+type TooltipProps = ComponentProps<typeof TooltipPrimitive> & {
+  trigger: ReactNode
+  children: ReactNode
 }
 
 /**

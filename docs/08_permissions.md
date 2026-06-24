@@ -56,7 +56,7 @@ return sidebarItems
 Protected routes should pass a `PageAccess` value to `AuthGuard`.
 
 ```tsx
-function protectedRoute(pageName: PageAccess, page: React.ReactNode) {
+function protectedRoute(pageName: PageAccess, page: ReactNode) {
   return (
     <AuthGuard page={pageName}>
       <AppLayout>{page}</AppLayout>

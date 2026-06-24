@@ -1,10 +1,11 @@
 import { SpinnerBallIcon } from '@phosphor-icons/react'
+import type { ComponentProps } from 'react'
 
 import { cn } from '@/lib/utils'
 
 type SpinnerProps = {
   className?: string
-} & Omit<React.ComponentProps<typeof SpinnerBallIcon>, 'className'>
+} & Omit<ComponentProps<typeof SpinnerBallIcon>, 'className'>
 
 /**
  * Renders the shared animated loading spinner icon.

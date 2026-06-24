@@ -59,5 +59,8 @@ import { StatusBadge } from '@/components/ui'
 - Keep shared components small and composable.
 - Do not import feature code into `src/components`.
 - Export from the local barrel so features can import from one place - reducing the number of import lines - clutter.
+- Import React APIs explicitly from `react`, for example `import { useState, type ReactNode } from 'react'`.
+- Do not use `React.useState`, `React.ReactNode`, `React.ComponentProps`, or `import * as React` in project-owned code.
+- `src/components/ui/shadcn` is exempt because shadcn/Radix primitives follow upstream namespace-import patterns.
 
 [← Auth](./01_auth.md) | [Features →](./03_features.md)

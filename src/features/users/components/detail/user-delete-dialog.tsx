@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react'
+
 import { ConfirmDialog } from '@/components/ui'
 import type { User } from '@/types/user'
 import { useDeleteUser } from '@features/users/api/delete-user'
 
 type UserFormDialogProps = {
-  children: React.ReactNode
+  children: ReactNode
   user: User | undefined
 }
 

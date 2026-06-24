@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
+import type { ReactElement } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { TooltipProvider } from '@/components/ui/shadcn/tooltip'
@@ -8,7 +9,7 @@ import { useLogin } from '../api/login'
 
 import LoginForm from './login-form'
 
-function renderWithProviders(ui: React.ReactElement) {
+function renderWithProviders(ui: ReactElement) {
   return render(ui, {
     wrapper: ({ children }) => <TooltipProvider>{children}</TooltipProvider>,
   })

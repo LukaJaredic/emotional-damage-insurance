@@ -1,5 +1,5 @@
 import { EyeClosedIcon, EyeIcon } from '@phosphor-icons/react'
-import { useState } from 'react'
+import { useState, type ComponentProps } from 'react'
 import { Controller } from 'react-hook-form'
 import type { Control, FieldPath, FieldValues } from 'react-hook-form'
 
@@ -20,7 +20,7 @@ import {
 type InputFieldType = 'email' | 'text' | 'number' | 'password'
 
 type InputFieldProps<TFieldValues extends FieldValues> = Omit<
-  React.ComponentProps<typeof Input>,
+  ComponentProps<typeof Input>,
   'type' | 'name' | 'value' | 'defaultValue' | 'onChange' | 'onBlur'
 > & {
   control: Control<TFieldValues>

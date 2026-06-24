@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/dom'
 import { render, type RenderOptions } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import type React from 'react'
+import type { ReactElement } from 'react'
 import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 
@@ -72,12 +72,12 @@ type RenderOptionsProps = {
   user?: Partial<BackendUser> | null
   url?: string
   path?: string
-  additionalRoutes?: { element: React.ReactElement; path: string }[]
+  additionalRoutes?: { element: ReactElement; path: string }[]
   renderOptions?: Omit<RenderOptions, 'wrapper'>
 }
 
 export const renderApp = async (
-  ui: React.ReactElement,
+  ui: ReactElement,
   {
     user,
     url = '/',

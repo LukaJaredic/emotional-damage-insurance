@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useState, type ReactNode } from 'react'
 
 import { ScrollableDialogContent } from '@/components/layout'
 import { Spinner } from '@/components/ui'
@@ -19,7 +19,7 @@ import type { UserFormStatus } from '@features/users/types/user-form.types'
 import UserForm from './user-form'
 
 type UserFormDialogProps = {
-  children: React.ReactNode
+  children: ReactNode
   user?: User | undefined
 }
 

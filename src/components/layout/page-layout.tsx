@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react'
+
 type PageLayoutProps = {
   heading: string
   description: string
-  actions?: () => React.ReactNode
-  children: React.ReactNode
+  actions?: () => ReactNode
+  children: ReactNode
 }
 
 /**

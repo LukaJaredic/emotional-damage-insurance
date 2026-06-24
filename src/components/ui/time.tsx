@@ -1,9 +1,11 @@
+import type { HTMLAttributes } from 'react'
+
 import { toAppDate, toAppDateTime } from '@/utils'
 
 type TimeProps = {
   date: Date | string | number
   format: 'date' | 'datetime'
-} & React.HTMLAttributes<HTMLTimeElement>
+} & HTMLAttributes<HTMLTimeElement>
 
 /**
  * Renders a formatted date or date-time inside a semantic time element.

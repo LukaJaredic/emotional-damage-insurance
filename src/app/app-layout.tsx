@@ -1,4 +1,5 @@
 import { SignOutIcon } from '@phosphor-icons/react'
+import type { ReactNode } from 'react'
 import { NavLink, Navigate } from 'react-router'
 
 import { sidebarItems, type SidebarItem } from '@/app/sidebar-items'
@@ -21,7 +22,7 @@ import { usePermissions, useUser } from '@/hooks'
 import type { User } from '@/types'
 
 type AppLayoutProps = {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 function AppLayout({ children }: AppLayoutProps) {
