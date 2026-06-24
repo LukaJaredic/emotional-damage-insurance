@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from 'node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup'
+import { useInfiniteQuery } from '@tanstack/react-query'
 
 import type { RemoteDataState } from '@/components/data/remote-data/remote-data.types'
 import { apiPaths } from '@/config'

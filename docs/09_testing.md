@@ -232,8 +232,7 @@ server.use(
 )
 
 await user.type(screen.getByPlaceholderText('Search by name or email'), 'Mike')
-await user.click(screen.getByRole('combobox'))
-await user.click(await screen.findByRole('option', { name: 'Customer' }))
+await selectOptions(screen.getByRole('combobox'), ['Customer'])
 
 await waitFor(() => {
   expect(requests.at(-1)?.get('search')).toBe('Mike')
