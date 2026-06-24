@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from 'node_modules/@tanstack/react-query/build/modern/_tsup-dts-rollup'
 
 import type { RemoteDataState } from '@/components/data/remote-data/remote-data.types'
+import { apiPaths } from '@/config'
 import { api } from '@/lib'
 import type { PolicyHolder } from '@/types/policy-holder'
 import { commonQueryOptions } from '@/utils/query'
@@ -14,7 +15,9 @@ import { policyHolderQueryKeys } from '../utils/policy-holder-query-keys'
 export async function getPolicyHolders(
   params: GetPolicyHoldersQuery,
 ): Promise<PolicyHolder[]> {
-  const response = await api.get<PolicyHolder[]>('/policy-holders', { params })
+  const response = await api.get<PolicyHolder[]>(apiPaths.policyHolders.all(), {
+    params,
+  })
   return response.data
 }
 

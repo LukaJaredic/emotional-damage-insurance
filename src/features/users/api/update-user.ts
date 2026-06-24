@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { apiPaths } from '@/config'
 import { api } from '@/lib'
 import type { User } from '@/types'
 
@@ -11,7 +12,7 @@ export async function updateUser({
   userId,
   data,
 }: UpdateUserAction): Promise<User> {
-  const response = await api.patch<User>(`/users/${userId}`, data)
+  const response = await api.patch<User>(apiPaths.users.one(userId), data)
   return response.data
 }
 

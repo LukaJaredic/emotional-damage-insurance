@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 import type { RemoteDataState } from '@/components/data/remote-data'
+import { apiPaths } from '@/config'
 import { api } from '@/lib'
 import type { User } from '@/types'
 import { commonQueryOptions } from '@/utils'
@@ -9,7 +10,7 @@ import type { GetUsersQuery, UseUsersQuery } from '../types/user-api.types'
 import { userQueryKeys } from '../utils/user-query-keys'
 
 export async function getUsers(params: GetUsersQuery): Promise<User[]> {
-  const response = await api.get<User[]>('/users', { params })
+  const response = await api.get<User[]>(apiPaths.users.all(), { params })
   return response.data
 }
 

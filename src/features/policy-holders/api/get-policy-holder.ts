@@ -1,5 +1,6 @@
 import { useQuery, type QueryOptions } from '@tanstack/react-query'
 
+import { apiPaths } from '@/config'
 import { api } from '@/lib/api'
 import type { PolicyHolder } from '@/types'
 
@@ -10,7 +11,7 @@ export async function getPolicyHolder({
   policyHolderId,
 }: GetPolicyHolderQuery): Promise<PolicyHolder> {
   const response = await api.get<PolicyHolder>(
-    `/policy-holders/${policyHolderId}`,
+    apiPaths.policyHolders.one(policyHolderId),
   )
   return response.data
 }

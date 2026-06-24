@@ -5,18 +5,19 @@ import {
   type QueryOptions,
 } from '@tanstack/react-query'
 
+import { apiPaths } from '@/config'
 import { api } from '@/lib'
 import type { User } from '@/types'
 
 import { queryKeys } from './query-keys'
 
 async function getMe() {
-  const { data } = await api.get<User>('/auth/me')
+  const { data } = await api.get<User>(apiPaths.auth.me())
   return data
 }
 
 async function logout() {
-  await api.post('/auth/logout')
+  await api.post(apiPaths.auth.logout())
 }
 
 export function useMe(queryOptions?: QueryOptions<User>) {

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { apiPaths } from '@/config'
 import { api } from '@/lib/api'
 import type { PolicyHolder } from '@/types'
 
@@ -12,7 +13,7 @@ export async function updatePolicyHolder({
   data,
 }: UpdatePolicyHolderAction): Promise<PolicyHolder> {
   const response = await api.patch<PolicyHolder>(
-    `/policy-holders/${policyHolderId}`,
+    apiPaths.policyHolders.one(policyHolderId),
     data,
   )
   return response.data
