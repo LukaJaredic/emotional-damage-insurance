@@ -8,7 +8,7 @@ import { env } from '@/config/env'
 import { stringifyRoles } from '@/features/users/utils/user-labels'
 import useMediaQuery from '@/hooks/use-media-query'
 import { server } from '@/testing/mocks/server'
-import { renderApp, testUsers } from '@/testing/test-utils'
+import { renderApp, selectOptions, testUsers } from '@/testing/test-utils'
 import type { User, UserRole } from '@/types'
 import AuthGuard from '@app/auth-guard'
 
@@ -206,8 +206,7 @@ describe('UsersMaster', () => {
       })
 
       await user.type(searchInput(), 'Mike')
-      await user.click(rolesSelect())
-      await user.click(await screen.findByRole('option', { name: 'Customer' }))
+      await selectOptions(rolesSelect(), ['Customer'])
 
       await waitFor(() => {
         expect(requests.at(-1)?.get('search')).toBe('Mike')
