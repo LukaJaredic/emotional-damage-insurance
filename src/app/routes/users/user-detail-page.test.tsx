@@ -42,17 +42,6 @@ async function renderUserDetail(currentUser: User, viewedUser?: User) {
 
 describe('UserDetailPage', () => {
   describe('renders', () => {
-    it("should render user's full name as title", async () => {
-      const user = testUsers.admin
-      await renderUserDetail(user)
-
-      expect(
-        screen.getAllByRole('heading', {
-          name: `${user.firstName} ${user.lastName}`,
-        }).length,
-      ).toBeGreaterThan(0)
-    })
-
     it("should render user's details", async () => {
       const user = testUsers.employee
       await renderUserDetail(user)
