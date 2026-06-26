@@ -25,6 +25,9 @@ const UserDetailPage = lazy(() => import('@app/routes/users/user-detail-page'))
 const PolicyHoldersMasterPage = lazy(
   () => import('@app/routes/policy-holders/policy-holders-master-page'),
 )
+const PolicyHolderDetailPage = lazy(
+  () => import('@app/routes/policy-holders/policy-holder-detail-page'),
+)
 
 function withSuspense(page: ReactNode) {
   return (
@@ -89,6 +92,13 @@ const router = createBrowserRouter([
         element: protectedRoute(
           'policy-holders:master-page',
           <PolicyHoldersMasterPage />,
+        ),
+      },
+      {
+        path: paths.policyHolders.detail.path,
+        element: protectedRoute(
+          'policy-holders:detail-page',
+          <PolicyHolderDetailPage />,
         ),
       },
       {
