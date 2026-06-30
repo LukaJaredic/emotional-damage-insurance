@@ -41,7 +41,7 @@ export function email() {
  * @returns A Zod string schema for phone numbers.
  */
 export function phone() {
-  return z.string().regex(/^\+?[1-9]\d{1,14}$/, {
+  return z.string().regex(/^\+[1-9]\d{1,14}$/, {
     message: 'Invalid phone number',
   })
 }

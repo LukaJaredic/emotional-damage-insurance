@@ -7,3 +7,5 @@ export type UpdatePolicyHolderFormValues = z.infer<typeof updateSchema>
 export type PolicyHolderFormValues =
   | CreatePolicyHolderFormValues
   | UpdatePolicyHolderFormValues
+
+export type PolicyHolderFormStatus = 'idle' | 'pending' | 'success'

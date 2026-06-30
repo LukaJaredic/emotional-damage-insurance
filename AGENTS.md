@@ -87,6 +87,7 @@ src/features/awesome-feature/
 - **PascalCase** for React components
 - **camelCase** for functions and variables
 - **Explicit React imports** - Import React APIs directly from `react` (for example, `import { useState, type ReactNode } from 'react'`) instead of using `React.useState`, `React.ReactNode`, `React.ComponentProps`, or `import * as React`. Files copied from shadcn/Radix primitives under `src/components/ui/shadcn` are exempt because they follow upstream patterns.
+- **Grouped component declarations** - Inside components, separate unrelated groups of declarations with blank lines: mode flags, hooks, mutations, form setup, and derived state should be visually grouped.
 
 ### Architecture Rules
 

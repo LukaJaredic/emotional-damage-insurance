@@ -12,7 +12,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 const sharedDirectories = ['components', 'hooks', 'lib', 'types', 'utils']
-const featureDirectories = ['auth', 'users']
+const featureDirectories = ['auth', 'users', 'policy-holders']
 
 const nodeFiles = [
   'vite.config.ts',

@@ -51,6 +51,20 @@ Then render shared fields.
 />
 ```
 
+## Component layout
+
+Inside form components, group related declarations with blank lines.
+
+Keep declarations ordered and visually separated by purpose:
+
+- mode flags, for example `const isEdit = !!user`
+- permissions and other context hooks
+- mutations
+- form setup
+- derived state, for example `const isPending = ...`
+
+This keeps form setup readable as forms grow.
+
 ## Submit flow
 
 The normal flow is:
