@@ -155,7 +155,11 @@ await waitFor(() => {
 
 ## User interactions
 
-Use `userEvent.setup()` and name the actor `user`.
+Prefer existing testing helpers for common app-specific interactions.
+
+Use helpers like `selectOptions()` for shared controls instead of reimplementing the interaction in each test.
+
+For interactions without a helper, use `userEvent.setup()` and name the actor `user`.
 
 ```tsx
 const user = userEvent.setup()

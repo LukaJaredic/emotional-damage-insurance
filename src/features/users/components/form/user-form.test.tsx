@@ -19,7 +19,7 @@ import { roleLabels } from '@features/users/utils/user-labels'
 import UserForm from './user-form'
 import type { UserFormProps } from './user-form'
 
-function mockCreateAndUpdateUserResponses({
+function mockUserResponses({
   status = 201,
   onRequest,
 }: {
@@ -139,7 +139,7 @@ describe('UserForm', () => {
   describe('validation', () => {
     it('should prevent submit when invalid', async () => {
       const requests: unknown[] = []
-      mockCreateAndUpdateUserResponses({
+      mockUserResponses({
         onRequest: (body) => {
           requests.push(body)
         },
@@ -161,7 +161,7 @@ describe('UserForm', () => {
 
     it('should create when valid', async () => {
       const requests: unknown[] = []
-      mockCreateAndUpdateUserResponses({
+      mockUserResponses({
         onRequest: (body) => {
           requests.push(body)
         },
@@ -184,7 +184,7 @@ describe('UserForm', () => {
 
     it('should update when valid', async () => {
       const requests: unknown[] = []
-      mockCreateAndUpdateUserResponses({
+      mockUserResponses({
         onRequest: (data) => {
           requests.push(data)
         },
@@ -246,7 +246,7 @@ describe('UserForm', () => {
     })
 
     it('should call #onStatusChange() with "pending" and "success" when submitted successfully', async () => {
-      mockCreateAndUpdateUserResponses()
+      mockUserResponses()
       await fillFormFields(buildUser(testUsers.customer), 'new-password')
       await userEvent.click(submitButton!)
 
@@ -257,7 +257,7 @@ describe('UserForm', () => {
     })
 
     it('should call #onStatusChange() with "pending" and "idle" when submitted unsuccessfully', async () => {
-      mockCreateAndUpdateUserResponses({ status: 500 })
+      mockUserResponses({ status: 500 })
 
       await fillFormFields(buildUser(testUsers.customer), 'new-password')
       await userEvent.click(submitButton!)
