@@ -30,23 +30,24 @@ export const updateSchema = createSchema
 export function buildPolicyHolderFormValues(
   policyHolder?: PolicyHolder,
 ): PolicyHolderFormValues {
-  if (policyHolder?.type === 'business') {
+  if (policyHolder?.type === 'individual') {
     return {
-      type: 'business',
+      type: 'individual',
       email: policyHolder.email,
       phone: policyHolder.phone,
       governmentId: policyHolder.governmentId,
-      businessName: policyHolder.businessName,
+      firstName: policyHolder.firstName,
+      lastName: policyHolder.lastName,
     }
   }
 
+  // On create defaults to business
   return {
-    type: 'individual',
+    type: 'business',
     email: policyHolder?.email ?? '',
     phone: policyHolder?.phone ?? '',
     governmentId: policyHolder?.governmentId ?? '',
-    firstName: policyHolder?.firstName ?? '',
-    lastName: policyHolder?.lastName ?? '',
+    businessName: policyHolder?.businessName ?? '',
   }
 }
 

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/shadcn/button'
 import { FieldGroup } from '@/components/ui/shadcn/field'
 import { usePermissions } from '@/hooks'
 import type { User } from '@/types'
+import { rowSm } from '@/utils/style'
 import { useCreateUser } from '@features/users/api/create-user'
 import { useUpdateUser } from '@features/users/api/update-user'
 import type {
@@ -25,7 +26,10 @@ import {
 } from '@features/users/utils/user-form'
 import { roleOptions } from '@features/users/utils/user-options'
 
-export type UserFormProps = Omit<ComponentProps<'form'>, 'onSubmit'> & {
+export type UserFormProps = Omit<
+  ComponentProps<'form'>,
+  'onSubmit' | 'noValidate'
+> & {
   user?: User | undefined
   showSubmit?: boolean | undefined
   onStatusChange?: ((status: UserFormStatus) => void) | undefined
@@ -35,17 +39,20 @@ function UserForm({
   user,
   showSubmit = true,
   onStatusChange,
-  className,
   ...props
 }: UserFormProps) {
   const isEdit = !!user
+
   const { can } = usePermissions()
+
   const createMutation = useCreateUser()
   const updateMutation = useUpdateUser()
+
   const form = useForm<UserFormValues>({
     resolver: zodResolver(isEdit ? updateSchema : createSchema),
     defaultValues: buildUserFormValues(user),
   })
+
   const isPending = createMutation.isPending || updateMutation.isPending
 
   function isFieldDisabled(fieldName: keyof UserFormValues) {
@@ -82,32 +89,39 @@ function UserForm({
   }
 
   return (
-    <form
-      {...props}
-      className={className}
-      onSubmit={form.handleSubmit(handleSubmit)}
-      noValidate
-    >
+    <form {...props} onSubmit={form.handleSubmit(handleSubmit)} noValidate>
       <FieldGroup>
-        <InputField
+        <div className={rowSm}>
+          <InputField
+            control={form.control}
+            id="first-name"
+            name="firstName"
+            label="First name"
+            type="text"
+            autoComplete="given-name"
+            placeholder="John"
+            disabled={isFieldDisabled('firstName')}
+          />
+          <InputField
+            control={form.control}
+            id="last-name"
+            name="lastName"
+            label="Last name"
+            type="text"
+            autoComplete="family-name"
+            placeholder="Doe"
+            disabled={isFieldDisabled('lastName')}
+          />
+        </div>
+        <SelectField
           control={form.control}
-          id="first-name"
-          name="firstName"
-          label="First name"
-          type="text"
-          autoComplete="given-name"
-          placeholder="John"
-          disabled={isFieldDisabled('firstName')}
-        />
-        <InputField
-          control={form.control}
-          id="last-name"
-          name="lastName"
-          label="Last name"
-          type="text"
-          autoComplete="family-name"
-          placeholder="Doe"
-          disabled={isFieldDisabled('lastName')}
+          id="roles"
+          name="roles"
+          label="Roles"
+          placeholder="Choose roles"
+          options={roleOptions}
+          isMultiple
+          disabled={isFieldDisabled('roles')}
         />
         <InputField
           control={form.control}
@@ -115,6 +129,7 @@ function UserForm({
           name="email"
           label="Email"
           type="email"
+          inputMode="email"
           autoComplete="email"
           placeholder="john.doe@example.com"
           disabled={isFieldDisabled('email')}
@@ -130,16 +145,6 @@ function UserForm({
             placeholder="Enter a password"
           />
         ) : null}
-        <SelectField
-          control={form.control}
-          id="roles"
-          name="roles"
-          label="Roles"
-          placeholder="Choose roles"
-          options={[...roleOptions]}
-          isMultiple
-          disabled={isFieldDisabled('roles')}
-        />
       </FieldGroup>
       {showSubmit ? (
         <Button type="submit" className="mt-6" disabled={isPending}>
