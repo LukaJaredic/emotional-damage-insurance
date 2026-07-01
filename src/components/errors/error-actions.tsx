@@ -12,10 +12,9 @@ import { Button } from '../ui/shadcn/button'
 
 export type ErrorActionsProps = {
   type: 'back-home' | 'back-login' | 'back-home-retry' | 'back-login-retry'
-  onActionClick?: (() => void) | undefined
 }
 
-export function ErrorActions({ type, onActionClick }: ErrorActionsProps) {
+export function ErrorActions({ type }: ErrorActionsProps) {
   const navigate = useNavigate()
 
   const hasHome = type.includes('home')
@@ -27,10 +26,7 @@ export function ErrorActions({ type, onActionClick }: ErrorActionsProps) {
         <Button
           type="button"
           variant="link"
-          onClick={() => {
-            navigate(-1)
-            onActionClick?.()
-          }}
+          onClick={() => navigate(-1)}
           className="group animate-fade-in-left stagger-self-9 text-4xl sm:group-hover:-translate-x-2"
         >
           <ArrowLeftIcon className="size-10 duration-200 ease-out group-hover:scale-x-120" />
@@ -45,7 +41,6 @@ export function ErrorActions({ type, onActionClick }: ErrorActionsProps) {
         >
           <Link
             to={hasHome ? paths.root.getHref() : paths.auth.login.getHref()}
-            onClick={onActionClick}
           >
             {hasHome ? 'Home' : 'Login'}{' '}
             <ArrowRightIcon className="size-10 duration-200 ease-out group-hover:scale-x-120" />
@@ -59,15 +54,12 @@ export function ErrorActions({ type, onActionClick }: ErrorActionsProps) {
           <Button
             type="button"
             variant="link"
-            onClick={() => {
-              window.location.reload()
-              onActionClick?.()
-            }}
+            onClick={() => window.location.reload()}
             className="animate-fade-in-up stagger-self-12 mt-4 text-4xl sm:-mt-1 sm:text-lg"
           >
             <ArrowCounterClockwiseIcon className="size-10 duration-200 ease-in group-hover:-rotate-90 sm:size-6" />{' '}
             Retry
-          </Button>{' '}
+          </Button>
         </>
       ) : null}
     </div>

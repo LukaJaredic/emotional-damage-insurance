@@ -8,17 +8,9 @@ export type ErrorProps = {
   description: string
   status: string | number
   actions: ErrorActionsProps['type']
-  onActionClick?: ErrorActionsProps['onActionClick']
 }
 
-function Error({
-  status,
-  variant,
-  title,
-  description,
-  actions,
-  onActionClick,
-}: ErrorProps) {
+function Error({ status, variant, title, description, actions }: ErrorProps) {
   return (
     <main
       className={cn(
@@ -39,7 +31,7 @@ function Error({
       <p className="text-muted-foreground animate-fade-in-up stagger-self-4">
         {description}
       </p>
-      <ErrorActions type={actions} onActionClick={onActionClick} />
+      <ErrorActions type={actions} />
     </main>
   )
 }
