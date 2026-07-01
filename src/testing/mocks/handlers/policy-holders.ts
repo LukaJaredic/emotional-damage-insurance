@@ -378,4 +378,62 @@ export const policyHoldersHandlers = [
       }
     },
   ),
+
+  http.delete(
+    `${env.API_URL}/policy-holders/:policyHolderId`,
+    async ({ cookies, params }) => {
+      await networkDelay()
+
+      try {
+        const { user } = requireAuth(cookies)
+
+        if (!user) {
+          return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        }
+
+        const policyHolderId = String(params.policyHolderId)
+        const existingPolicyHolder = findPolicyHolderById(policyHolderId)
+
+        if (!existingPolicyHolder) {
+          return HttpResponse.json(
+            { message: 'Policy holder not found' },
+            { status: 404 },
+          )
+        }
+
+        const existingPolicyHolderData = sanitizePolicyHolder(
+          existingPolicyHolder as MockPolicyHolder,
+        )
+        const { can } = buildPermissionsFor(user as User)
+
+        if (!can('policy-holder:delete', existingPolicyHolderData)) {
+          return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+        }
+
+        const deletedPolicyHolder = db.policyHolder.delete({
+          where: {
+            id: {
+              equals: policyHolderId,
+            },
+          },
+        })
+
+        if (!deletedPolicyHolder) {
+          return HttpResponse.json(
+            { message: 'Policy holder not found' },
+            { status: 404 },
+          )
+        }
+
+        await persistDb('policyHolder')
+
+        return new HttpResponse(null, { status: 204 })
+      } catch (error: any) {
+        return HttpResponse.json(
+          { message: error?.message || 'Server Error' },
+          { status: 500 },
+        )
+      }
+    },
+  ),
 ]

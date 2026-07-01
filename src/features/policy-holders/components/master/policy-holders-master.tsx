@@ -8,6 +8,8 @@ import { usePolicyHolders } from '@features/policy-holders/api/get-policy-holder
 import { policyHolderFilters } from '@features/policy-holders/utils/policy-holder-filters'
 import { policyHolderColumns } from '@features/policy-holders/utils/policy-holder-table-columns'
 
+import PolicyHolderFormDialog from '../form/policy-holder-form-dialog'
+
 import PolicyHolderCard from './policy-holder-card'
 
 function PolicyHoldersMaster() {
@@ -19,10 +21,12 @@ function PolicyHoldersMaster() {
       description="Browse and filter policy holders that are registered in the system."
       actions={() =>
         can('policy-holder:create') ? (
-          <Button>
-            <PlusIcon />
-            Create a policy holder
-          </Button>
+          <PolicyHolderFormDialog>
+            <Button>
+              <PlusIcon />
+              Create a policy holder
+            </Button>
+          </PolicyHolderFormDialog>
         ) : null
       }
     >
