@@ -3,8 +3,8 @@ import type { ReactNode } from 'react'
 import {
   getErrorMessage,
   ErrorBoundary as ReactErrorBoundary,
-  type ErrorBoundaryPropsWithRender,
 } from 'react-error-boundary'
+import { useLocation } from 'react-router'
 
 import Error, { type ErrorProps } from './error'
 
@@ -12,32 +12,29 @@ type ErrorBoundaryProps = {
   children: ReactNode
   variant?: ErrorProps['variant']
   actions?: ErrorProps['actions']
-  fallBackRender?: ErrorBoundaryPropsWithRender['fallbackRender']
 }
 
 function ErrorBoundary({
   children,
   variant = 'container',
   actions = 'back-home-retry',
-  fallBackRender,
 }: ErrorBoundaryProps) {
+  const location = useLocation()
+
   return (
     <ReactErrorBoundary
-      fallbackRender={
-        fallBackRender ||
-        ((error) => (
-          <Error
-            status="ERROR"
-            title="Something went wrong"
-            description={
-              getErrorMessage(error.error) || 'An unexpected error occurred.'
-            }
-            variant={variant}
-            actions={actions}
-            onActionClick={error.resetErrorBoundary}
-          />
-        ))
-      }
+      resetKeys={[location.key]}
+      fallbackRender={(error) => (
+        <Error
+          status="ERROR"
+          title="Something went wrong"
+          description={
+            getErrorMessage(error.error) || 'An unexpected error occurred.'
+          }
+          variant={variant}
+          actions={actions}
+        />
+      )}
       onError={(error, info) => {
         console.error('ErrorBoundary caught an error:', error, info)
         captureReactException(error, info)

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react'
+import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary'
 
-import ErrorBoundary from '@/components/errors/error-boundary'
 import { Button } from '@/components/ui/shadcn/button'
 import { env } from '@/config'
 
@@ -18,8 +18,12 @@ Sentry.init({
 
 function App() {
   return (
-    <ErrorBoundary
-      fallBackRender={() => (
+    <ReactErrorBoundary
+      onError={(error, info) => {
+        console.error('ErrorBoundary caught an error:', error, info)
+        Sentry.captureReactException(error, info)
+      }}
+      fallbackRender={() => (
         <div className="flex min-h-screen w-full flex-col items-center justify-center gap-4 bg-gray-100 p-4 text-center">
           <h1 className="text-destructive text-2xl font-bold">
             Critical app error
@@ -38,7 +42,7 @@ function App() {
       )}
     >
       <AppRouter />
-    </ErrorBoundary>
+    </ReactErrorBoundary>
   )
 }
 
