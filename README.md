@@ -31,8 +31,8 @@ The current codebase includes authentication, protected routing, shared UI primi
 
 ### Prerequisites
 
-- Node.js from `.nvmrc` (`nvm use`)
-- npm
+- Node.js v24 (or from `.nvmrc` - `nvm use`)
+- npm (should come with Node)
 
 ### Environment Variables
 
