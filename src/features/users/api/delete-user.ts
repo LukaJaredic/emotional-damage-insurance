@@ -19,8 +19,8 @@ export function useDeleteUser() {
   return useMutation({
     mutationFn: deleteUser,
     onSuccess: () => {
+      navigate(paths.users.getHref(), { flushSync: true })
       void queryClient.invalidateQueries({ queryKey: userQueryKeys.all() })
-      navigate(paths.users.getHref())
       toast.success('User deleted successfully')
     },
   })

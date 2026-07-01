@@ -21,10 +21,10 @@ export function useDeletePolicyHolder() {
   return useMutation({
     mutationFn: deletePolicyHolder,
     onSuccess: () => {
+      navigate(paths.policyHolders.getHref(), { flushSync: true })
       void queryClient.invalidateQueries({
         queryKey: policyHolderQueryKeys.all(),
       })
-      navigate(paths.policyHolders.getHref())
       toast.success('Policy holder deleted successfully')
     },
   })

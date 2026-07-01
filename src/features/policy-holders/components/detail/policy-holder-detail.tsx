@@ -7,7 +7,10 @@ import usePermissions from '@/hooks/use-permissions'
 import { usePolicyHolderDetail } from '@features/policy-holders/api/get-policy-holder'
 import { name } from '@features/policy-holders/utils/policy-holder-labels'
 
+import PolicyHolderFormDialog from '../form/policy-holder-form-dialog'
+
 import PolicyHolderBaseInfo from './policy-holder-base-info'
+import PolicyHolderDeleteDialog from './policy-holder-delete-dialog'
 
 type PolicyHolderDetailProps = {
   policyHolderId: string
@@ -34,15 +37,19 @@ function PolicyHolderDetail({ policyHolderId }: PolicyHolderDetailProps) {
       actions={() => (
         <>
           {can('policy-holder:update', policyHolder, '*') ? (
-            <Button>
-              <PencilIcon /> Edit policy holder
-            </Button>
+            <PolicyHolderFormDialog policyHolder={policyHolder}>
+              <Button>
+                <PencilIcon /> Edit policy holder
+              </Button>
+            </PolicyHolderFormDialog>
           ) : null}
           {can('policy-holder:delete', policyHolder) ? (
-            <Button variant="destructive">
-              <TrashIcon />
-              Delete policy holder
-            </Button>
+            <PolicyHolderDeleteDialog policyHolder={policyHolder}>
+              <Button variant="destructive">
+                <TrashIcon />
+                Delete policy holder
+              </Button>
+            </PolicyHolderDeleteDialog>
           ) : null}
         </>
       )}
