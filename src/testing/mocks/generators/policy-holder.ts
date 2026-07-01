@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 import { nanoid } from 'nanoid'
 
 import type { PolicyHolder } from '@/types'
+import { buildAuditFields, DEFAULT_AUDIT_USER_ID } from '@testing/mocks/audit'
 
 type GeneratedPolicyHolder = PolicyHolder & {
   firstName?: string
@@ -18,6 +19,7 @@ function generateIndividualPolicyHolder(): GeneratedPolicyHolder {
   const lastName = faker.person.lastName()
 
   return {
+    ...buildAuditFields(DEFAULT_AUDIT_USER_ID),
     id: nanoid(),
     type: 'individual',
     firstName,
@@ -33,6 +35,7 @@ function generateBusinessPolicyHolder(): GeneratedPolicyHolder {
   const businessName = faker.company.name()
 
   return {
+    ...buildAuditFields(DEFAULT_AUDIT_USER_ID),
     id: nanoid(),
     type: 'business',
     firstName: '',

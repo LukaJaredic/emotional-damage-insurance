@@ -31,8 +31,8 @@ The current codebase includes authentication, protected routing, shared UI primi
 
 ### Prerequisites
 
-- Node.js (v24 recommended)
-- npm
+- Node.js v24 (or from `.nvmrc` - `nvm use`)
+- npm (should come with Node)
 
 ### Environment Variables
 
@@ -118,10 +118,10 @@ npm run format:fix
 
 ```text
 src/
+├── api/         # Shared API fetchers and hooks used across app/common UI
 ├── app/         # Application shell, routes, providers
 ├── components/  # Shared UI and reusable components
-├── config/      # App configuration and constants
-├── docs/        # Detailed docs, many of them linked here, in README.md
+├── config/      # App configuration, paths, env, and shared query keys
 ├── features/    # Feature modules
 ├── hooks/       # Shared hooks
 ├── lib/         # Library setup and shared integrations
@@ -133,12 +133,14 @@ src/
 ## Architecture Notes
 
 - The repo follows a feature-based architecture inspired by Bulletproof React
-- Shared building blocks live in `src/components`, `src/lib`, `src/hooks`, `src/utils`, and `src/types`
+- Shared building blocks live in `src/api`, `src/components`, `src/config`, `src/lib`, `src/hooks`, `src/utils`, and `src/types`
 - Business features live in `src/features` and should stay self-contained
 - The application layer in `src/app` composes features into routes, providers, and page-level flows
 - Data flow is intentionally one-way: shared modules -> features -> app
 - Features should not import from other features directly
 - Server state is managed with TanStack Query
+- Shared query keys live in `src/config/query-keys.ts`; feature-only query keys stay with that feature
+- Persisted domain objects share `BaseEntity` audit fields and detail pages render audit metadata with `<Audit />`
 - Forms use React Hook Form with Zod validation
 - Local development and tests use mocked API handlers
 
@@ -162,7 +164,7 @@ See more here: [03 Features](./docs/03_features.md)
 
 ### Server Communication
 
-Server communication is built around TanStack Query hooks on top of the shared Axios client and feature-owned query keys.
+Server communication is built around TanStack Query hooks on top of the shared Axios client. Reused endpoints live in `src/api`; feature-only endpoints live in the owning feature.
 
 See more here: [04 Server Communication](./docs/04_server_communication.md)
 

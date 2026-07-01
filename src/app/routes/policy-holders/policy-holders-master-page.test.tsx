@@ -8,7 +8,12 @@ import { env } from '@/config/env'
 import { name } from '@/features/policy-holders/utils/policy-holder-labels'
 import useMediaQuery from '@/hooks/use-media-query'
 import { server } from '@/testing/mocks/server'
-import { renderApp, selectOptions, testUsers } from '@/testing/test-utils'
+import {
+  renderApp,
+  selectOptions,
+  testAuditFields,
+  testUsers,
+} from '@/testing/test-utils'
 import type { PolicyHolder, UserRole } from '@/types'
 import AuthGuard from '@app/auth-guard'
 
@@ -22,6 +27,7 @@ const mockedUseMediaQuery = vi.mocked(useMediaQuery)
 
 const returnedPolicyHolders: PolicyHolder[] = [
   {
+    ...testAuditFields,
     id: '1',
     firstName: 'John',
     lastName: 'Doe',
@@ -31,6 +37,7 @@ const returnedPolicyHolders: PolicyHolder[] = [
     governmentId: '123456789',
   },
   {
+    ...testAuditFields,
     id: '2',
     businessName: 'Acme Inc.',
     email: 'acme.inc@example.com',

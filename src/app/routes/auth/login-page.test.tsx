@@ -2,10 +2,9 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent, { type UserEvent } from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 
-import { paths } from '@/config'
+import { paths, queryKeys } from '@/config'
 import { queryClient } from '@/lib'
 import { createUser, renderApp } from '@/testing/test-utils'
-import { queryKeys } from '@/utils'
 
 import LoginPage from './login-page'
 

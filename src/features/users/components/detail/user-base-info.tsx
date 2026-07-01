@@ -1,6 +1,5 @@
-import { Avatar, DefinitionTermCard, Email } from '@/components/ui'
+import { Audit, Avatar, DefinitionTermCard, Email } from '@/components/ui'
 import type { User } from '@/types'
-import { toAppDateTime } from '@/utils'
 import { stringifyRoles } from '@features/users/utils/user-labels'
 
 type UserBaseInfoProps = {
@@ -32,7 +31,18 @@ export function UserBaseInfo({ user }: UserBaseInfoProps) {
             <Email email={user.email} className="text-sm font-medium" />
           ),
         },
-        { term: 'Created at', definition: toAppDateTime(user.createdAt) },
+        {
+          term: 'Created',
+          definition: (
+            <Audit userId={user.createdBy} timestamp={user.createdAt} />
+          ),
+        },
+        {
+          term: 'Last edited',
+          definition: (
+            <Audit userId={user.lastEditedBy} timestamp={user.lastEditedAt} />
+          ),
+        },
       ]}
     />
   )

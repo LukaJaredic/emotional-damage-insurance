@@ -1,13 +1,18 @@
 import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
-import type { PolicyHolder, User } from '@/types'
+import type { BaseEntity, PolicyHolder, User } from '@/types'
 import { buildPermissionsFor } from '@/utils'
+import {
+  buildAuditFields,
+  buildEditAuditFields,
+  compact,
+} from '@testing/mocks/audit'
 import { db, persistDb } from '@testing/mocks/db'
 import { requireAuth } from '@testing/mocks/db.utils'
 import { networkDelay } from '@testing/mocks/helpers'
 
-type MockCreatePolicyHolderBody = Omit<PolicyHolder, 'id'>
+type MockCreatePolicyHolderBody = Omit<PolicyHolder, keyof BaseEntity>
 
 type MockUpdatePolicyHolderBody = Partial<MockCreatePolicyHolderBody>
 
@@ -72,6 +77,10 @@ const findPolicyHolderByGovernmentId = (governmentId: string) => {
 const sanitizePolicyHolder = (policyHolder: MockPolicyHolder): PolicyHolder => {
   const base = {
     id: policyHolder.id,
+    createdAt: policyHolder.createdAt,
+    lastEditedAt: policyHolder.lastEditedAt,
+    createdBy: policyHolder.createdBy,
+    lastEditedBy: policyHolder.lastEditedBy,
     governmentId: policyHolder.governmentId,
     email: policyHolder.email,
     phone: policyHolder.phone,
@@ -96,22 +105,42 @@ const sanitizePolicyHolder = (policyHolder: MockPolicyHolder): PolicyHolder => {
 const normalizePolicyHolderData = (
   payload: MockCreatePolicyHolderBody | MockUpdatePolicyHolderBody,
 ) => {
+  const payloadFields = payload as Partial<{
+    businessName: string
+    firstName: string
+    lastName: string
+  }>
+  const base = compact({
+    email: payload.email,
+    governmentId: payload.governmentId,
+    phone: payload.phone,
+    type: payload.type,
+  })
+
   if (payload.type === 'business') {
-    return {
-      ...payload,
+    return compact({
+      ...base,
+      businessName: payloadFields.businessName,
       firstName: '',
       lastName: '',
-    }
+    })
   }
 
   if (payload.type === 'individual') {
-    return {
-      ...payload,
+    return compact({
+      ...base,
+      firstName: payloadFields.firstName,
+      lastName: payloadFields.lastName,
       businessName: '',
-    }
+    })
   }
 
-  return payload
+  return compact({
+    ...base,
+    businessName: payloadFields.businessName,
+    firstName: payloadFields.firstName,
+    lastName: payloadFields.lastName,
+  })
 }
 
 const includesSearch = (policyHolder: MockPolicyHolder, search: string) => {
@@ -173,6 +202,7 @@ export const policyHoldersHandlers = [
           return includesSearch(candidate as MockPolicyHolder, search)
         })
         .map((candidate) => sanitizePolicyHolder(candidate as MockPolicyHolder))
+        .sort((a, b) => b.lastEditedAt - a.lastEditedAt)
 
       const startIndex = (page - 1) * perPage
 
@@ -265,9 +295,10 @@ export const policyHoldersHandlers = [
         )
       }
 
-      const createdPolicyHolder = db.policyHolder.create(
-        normalizePolicyHolderData(payload),
-      )
+      const createdPolicyHolder = db.policyHolder.create({
+        ...normalizePolicyHolderData(payload),
+        ...buildAuditFields((user as User).id),
+      } as any)
 
       await persistDb('policyHolder')
 
@@ -355,7 +386,10 @@ export const policyHoldersHandlers = [
               equals: policyHolderId,
             },
           },
-          data: normalizePolicyHolderData(payload),
+          data: {
+            ...normalizePolicyHolderData(payload),
+            ...buildEditAuditFields((user as User).id),
+          } as any,
         })
 
         await persistDb('policyHolder')

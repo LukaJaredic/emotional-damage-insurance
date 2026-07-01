@@ -10,6 +10,7 @@ Good shared examples:
 - `InputField`
 - `SelectField`
 - `ConfirmDialog`
+- `Audit`
 
 Keep it inside a feature when it is specific to that feature.
 
@@ -25,6 +26,12 @@ Keep feature-local examples:
 - `src/components/layout` for layout helpers
 - `src/components/form` for shared form inputs and filters
 - `src/components/data` for generic data display components
+
+## Shared Data Dependencies
+
+Shared components must not import feature code. If a shared component needs server data, move that endpoint to `src/api` first and import it from there.
+
+For example, `<Audit />` lives in `src/components/ui` and loads users through `useUserDetail` from `@/api`, not through `src/features/users`.
 
 ## How to export it
 

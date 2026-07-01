@@ -1,24 +1,30 @@
 import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
-import type { User, UserRole } from '@/types/user'
+import type { BaseEntity } from '@/types'
+import type { User } from '@/types/user'
 import { buildPermissionsFor } from '@/utils'
+import {
+  buildAuditFields,
+  buildEditAuditFields,
+  compact,
+} from '@testing/mocks/audit'
 import { db, persistDb } from '@testing/mocks/db'
 import { requireAuth } from '@testing/mocks/db.utils'
 import { hash, networkDelay, sanitizeUser } from '@testing/mocks/helpers'
 
-type MockCreateUserBody = {
-  firstName: string
-  lastName: string
-  email: string
+type MockCreateUserBody = Omit<User, keyof BaseEntity> & {
   password: string
-  roles: UserRole[]
 }
 
 type MockUpdateUserBody = Partial<MockCreateUserBody>
 
 export type MockUser = MockCreateUserBody & {
   id: string
+  createdAt?: number
+  lastEditedAt?: number
+  createdBy?: string
+  lastEditedBy?: string
 }
 
 const DEFAULT_PER_PAGE = 25
@@ -123,6 +129,7 @@ export const usersHandlers = [
           )
         })
         .map((candidate) => sanitizeUser(candidate))
+        .sort((a, b) => b.lastEditedAt - a.lastEditedAt)
 
       const startIndex = (page - 1) * perPage
 
@@ -181,8 +188,9 @@ export const usersHandlers = [
       }
 
       const payload = (await request.json()) as MockCreateUserBody
+      const { email, firstName, lastName, password, roles } = payload
 
-      if (findUserByEmail(payload.email)) {
+      if (findUserByEmail(email)) {
         return HttpResponse.json(
           { message: 'User with this email already exists' },
           { status: 409 },
@@ -190,8 +198,12 @@ export const usersHandlers = [
       }
 
       const createdUser = db.user.create({
-        ...payload,
-        password: hash(payload.password),
+        ...buildAuditFields((user as User).id),
+        email,
+        firstName,
+        lastName,
+        password: hash(password),
+        roles,
       })
 
       await persistDb('user')
@@ -247,8 +259,14 @@ export const usersHandlers = [
             },
           },
           data: {
-            ...payload,
+            ...compact({
+              email: payload.email,
+              firstName: payload.firstName,
+              lastName: payload.lastName,
+              roles: payload.roles,
+            }),
             ...(payload.password ? { password: hash(payload.password) } : {}),
+            ...buildEditAuditFields((user as User).id),
           },
         })
 
