@@ -12,21 +12,23 @@
 
 For list pages, start with `RemoteDataWithFilters` if the page has filters.
 
-The users page is the main example.
+The policy holders page is the main example.
 
 ```tsx
 <RemoteDataWithFilters
-  useRemoteData={useUsers}
-  filters={userFilters}
-  tableColumns={userColumns}
-  tableCaption="Users table"
-  loadingContent="Loading users..."
-  emptyContent="No users found"
-  listItemContent={(_, user) => <UserCard user={user} />}
+  useRemoteData={usePolicyHolders}
+  filters={policyHolderFilters}
+  tableColumns={policyHolderColumns}
+  tableCaption="Policy holders table"
+  loadingContent="Loading policy holders..."
+  emptyContent="No policy holders found."
+  listItemContent={(_, policyHolder) => (
+    <PolicyHolderCard policyHolder={policyHolder} />
+  )}
 />
 ```
 
-`useRemoteData` is a hook prop. Pass a stable imported hook reference directly, such as `useRemoteData={useUsers}`.
+`useRemoteData` is a hook prop. Pass a stable imported hook reference directly, such as `useRemoteData={usePolicyHolders}`.
 
 Do not pass inline functions or conditionally select between different hooks. `RemoteDataWithFilters` calls this hook during render, so the hook identity must stay stable to preserve React's fixed hook order. In development, the component throws if `useRemoteData` changes between renders.
 
@@ -41,19 +43,28 @@ Do not hand-write raw table column objects in feature code, unless you are compl
 ```tsx
 import { tableColumnBuilder } from '@/components/data/table'
 import { paths } from '@/config'
-import type { User } from '@/types'
+import type { PolicyHolder } from '@/types'
 
-const tcb = tableColumnBuilder<User>()
+import { name, typeLabels } from './policy-holder-labels'
 
-export const userColumns = [
+const tcb = tableColumnBuilder<PolicyHolder>()
+
+export const policyHolderColumns = [
   tcb.primaryLink({
     title: 'Name',
-    dataIndex: 'firstName',
-    getHref: (user) => paths.users.detail.getHref(user.id),
-    getLabel: (user) => `${user.firstName} ${user.lastName}`,
+    dataIndex: 'id',
+    getHref: (policyHolder) =>
+      paths.policyHolders.detail.getHref(policyHolder.id),
+    getLabel: name,
   }),
+  tcb.custom({
+    title: 'Type',
+    dataIndex: 'type',
+    render: (policyHolder) => typeLabels[policyHolder.type],
+  }),
+  tcb.text('Government ID', 'governmentId'),
   tcb.email('Email', 'email'),
-  tcb.array('Roles', 'roles'),
+  tcb.phone('Phone', 'phone'),
 ]
 ```
 
@@ -62,9 +73,10 @@ A special column:
 ```ts
 tcb.primaryLink({
     title: 'Name',
-    dataIndex: 'firstName',
-    getHref: (user) => paths.users.detail.getHref(user.id),
-    getLabel: (user) => `${user.firstName} ${user.lastName}`,
+    dataIndex: 'id',
+    getHref: (policyHolder) =>
+      paths.policyHolders.detail.getHref(policyHolder.id),
+    getLabel: name,
   }),
 ```
 
@@ -87,6 +99,6 @@ Your query object should expose:
 - `hasNextPage`
 - `fetchNextPage`
 
-That is why the users query returns a `RemoteDataState<User>` instead of returning the raw TanStack Query object.
+That is why the policy holders query returns a `RemoteDataState<PolicyHolder>` instead of returning the raw TanStack Query object.
 
 [← Server Communication](./04_server_communication.md) | [Forms →](./06_forms.md)

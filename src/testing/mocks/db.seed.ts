@@ -1,13 +1,17 @@
 import { drop } from '@mswjs/data'
 import type { FactoryAPI } from '@mswjs/data/lib/glossary'
 
+import { buildAuditFields, DEFAULT_AUDIT_USER_ID } from './audit'
 import { models } from './db.models'
 import { generatePolicyHolders } from './generators/policy-holder'
 import { generateUsers } from './generators/user'
 
 type SeedProfile = 'dev' | 'e2e'
 
+const seedAuditFields = buildAuditFields(DEFAULT_AUDIT_USER_ID)
+
 const adminUser = {
+  ...seedAuditFields,
   id: 'admin-user',
   firstName: 'Admin',
   lastName: 'User',
@@ -17,6 +21,7 @@ const adminUser = {
 }
 
 const EmployeeUser = {
+  ...seedAuditFields,
   id: 'employee-user',
   firstName: 'Employee',
   lastName: 'User',
@@ -26,6 +31,7 @@ const EmployeeUser = {
 }
 
 const CustomerUser = {
+  ...seedAuditFields,
   id: 'customer-user',
   firstName: 'Customer',
   lastName: 'User',

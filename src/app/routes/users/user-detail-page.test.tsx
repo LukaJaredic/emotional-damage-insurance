@@ -55,6 +55,8 @@ describe('UserDetailPage', () => {
       expect(
         screen.getAllByRole('link', { name: user.email }).length,
       ).toBeGreaterThan(0)
+      expect(screen.getByText('Created')).toBeInTheDocument()
+      expect(screen.getByText('Last edited')).toBeInTheDocument()
     })
 
     it('should render activity section', async () => {

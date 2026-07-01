@@ -6,7 +6,8 @@
 - `src/app/providers/user-provider.tsx` loads the current user with `useMe()`.
 - `src/app/auth-guard.tsx` protects routes and handles redirects.
 - `src/features/auth/api/login.ts` handles login - since `useLogin()` is used only in `features/auth`.
-- `src/utils/auth-api.ts` handles `useMe()` and `useLogout()` - since they are used outside `features/auth`.
+- `src/api/auth/get-me.ts` handles `useMe()` - since the current user is needed by app-level providers.
+- `src/api/auth/logout.ts` handles `useLogout()` - since logout is exposed through app-level user context.
 
 ## How auth works
 
@@ -27,6 +28,7 @@
 - The frontend does not store tokens manually.
 - The mock API sets an HTTPOnly cookie on `/login`.
 - The current user is cached in React Query under `queryKeys.auth.me()`.
+- Shared auth query keys live in `src/config/query-keys.ts`.
 - Protected routes check if the user exists in context.
 - Protected routes can also pass a `PageAccess` value to check whether the user may open that page.
 

@@ -1,13 +1,14 @@
 import { screen, waitFor } from '@testing-library/dom'
 import userEvent from '@testing-library/user-event'
 
-import { renderApp, testUsers } from '@/testing/test-utils'
+import { renderApp, testAuditFields, testUsers } from '@/testing/test-utils'
 import type { PolicyHolder } from '@/types'
 
 import type { PolicyHolderFormProps } from './policy-holder-form'
 import PolicyHolderFormDialog from './policy-holder-form-dialog'
 
 const policyHolder: PolicyHolder = {
+  ...testAuditFields,
   id: 'policy-holder-id',
   type: 'individual',
   firstName: 'John',

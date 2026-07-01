@@ -79,10 +79,25 @@ For users, the builders are:
 - `buildCreateUserPayload()`
 - `buildUserUpdatePayload()`
 
+## Generated Fields
+
+Forms must not expose or submit backend-generated fields.
+
+Current generated fields are the shared `BaseEntity` fields:
+
+- `id`
+- `createdAt`
+- `lastEditedAt`
+- `createdBy`
+- `lastEditedBy`
+
+Audit fields are generated in the backend/mock backend and rendered on detail pages with the shared `<Audit />` component.
+
 ## Simple rules
 
 - Keep schemas and builders inside the feature.
 - Keep shared input behavior inside `src/components/form`.
+- Do not include generated audit fields in form schemas, default values, or payload builders.
 - Use inferred types from the Zod schema.
 - Prefer one form component that can handle create and edit when the fields are mostly the same.
 

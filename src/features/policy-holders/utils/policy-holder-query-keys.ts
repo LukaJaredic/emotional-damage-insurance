@@ -7,11 +7,10 @@ export const policyHolderQueryKeys = {
   list: ({ perPage, search, type }: UsePolicyHoldersQuery) =>
     [
       'policy-holders',
-      'list',
       perPage ?? DEFAULT_PAGE_LOAD_SIZE,
       search ?? '',
       type ?? '',
     ] as const,
   detail: (policyHolderId: string) =>
-    ['policy-holders', 'detail', policyHolderId] as const,
+    ['policy-holders', policyHolderId] as const,
 }

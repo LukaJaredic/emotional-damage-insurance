@@ -1,4 +1,4 @@
-import { DefinitionTermCard, Email } from '@/components/ui'
+import { Audit, DefinitionTermCard, Email } from '@/components/ui'
 import Phone from '@/components/ui/phone'
 import { Avatar, AvatarFallback } from '@/components/ui/shadcn/avatar'
 import type { PolicyHolder } from '@/types'
@@ -55,6 +55,24 @@ function PolicyHolderBaseInfo({ policyHolder }: PolicyHolderBaseInfoProps) {
           term: 'Phone',
           definition: (
             <Phone phone={policyHolder.phone} className="text-sm font-medium" />
+          ),
+        },
+        {
+          term: 'Created',
+          definition: (
+            <Audit
+              userId={policyHolder.createdBy}
+              timestamp={policyHolder.createdAt}
+            />
+          ),
+        },
+        {
+          term: 'Last edited',
+          definition: (
+            <Audit
+              userId={policyHolder.lastEditedBy}
+              timestamp={policyHolder.lastEditedAt}
+            />
           ),
         },
       ]}

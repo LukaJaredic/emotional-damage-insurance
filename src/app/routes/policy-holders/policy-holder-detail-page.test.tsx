@@ -11,13 +11,14 @@ import {
   typeLabels,
 } from '@/features/policy-holders/utils/policy-holder-labels'
 import { server } from '@/testing/mocks/server'
-import { renderApp, testUsers } from '@/testing/test-utils'
+import { renderApp, testAuditFields, testUsers } from '@/testing/test-utils'
 import type { PolicyHolder, PolicyHolderType, User } from '@/types'
 
 import PolicyHolderDetailPage from './policy-holder-detail-page'
 
 const testPolicyHolders: Record<PolicyHolderType, PolicyHolder> = {
   individual: {
+    ...testAuditFields,
     id: 'individual-policy-holder-id',
     type: 'individual',
     firstName: 'John',
@@ -27,6 +28,7 @@ const testPolicyHolders: Record<PolicyHolderType, PolicyHolder> = {
     phone: '+38269123123',
   },
   business: {
+    ...testAuditFields,
     id: 'business-policy-holder-id',
     type: 'business',
     businessName: 'Acme Corp',
@@ -104,6 +106,8 @@ describe('PolicyHolderDetailPage', () => {
       expectDefinition('Government ID', ph.governmentId)
       expectDefinitionLink('Email', ph.email)
       expectDefinitionLink('Phone', ph.phone)
+      expect(screen.getByText('Created')).toBeInTheDocument()
+      expect(screen.getByText('Last edited')).toBeInTheDocument()
     })
 
     it("should render business holder's details", async () => {
@@ -119,6 +123,8 @@ describe('PolicyHolderDetailPage', () => {
       expectDefinition('Tax ID', ph.governmentId)
       expectDefinitionLink('Email', ph.email)
       expectDefinitionLink('Phone', ph.phone)
+      expect(screen.getByText('Created')).toBeInTheDocument()
+      expect(screen.getByText('Last edited')).toBeInTheDocument()
     })
   })
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { testAuditFields } from '@/testing/test-utils'
 import type { User, StringKeyOf } from '@/types'
 
 import {
@@ -17,7 +18,7 @@ function createUser(overrides?: Partial<User>): User {
     lastName: 'Doe',
     email: 'john.doe@example.com',
     roles: ['admin'],
-    createdAt: Date.now(),
+    ...testAuditFields,
     ...overrides,
   }
 }

@@ -1,9 +1,15 @@
 import PolicyHolderForm from '@/features/policy-holders/components/form/policy-holder-form'
 import type { PolicyHolder } from '@/types/policy-holder'
 
+const SCRAP_AUDIT_TIMESTAMP = Date.UTC(2026, 0, 1, 12, 0)
+
 function Scrap() {
   const ph: PolicyHolder = {
     id: '1',
+    createdAt: SCRAP_AUDIT_TIMESTAMP,
+    lastEditedAt: SCRAP_AUDIT_TIMESTAMP,
+    createdBy: 'admin-user',
+    lastEditedBy: 'admin-user',
     type: 'individual',
     firstName: 'John',
     lastName: 'Doe',
