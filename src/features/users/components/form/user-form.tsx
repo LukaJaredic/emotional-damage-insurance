@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/shadcn/button'
 import { FieldGroup } from '@/components/ui/shadcn/field'
 import { usePermissions } from '@/hooks'
 import type { User } from '@/types'
-import { rowSm } from '@/utils/style'
+import { rowSm, setApiFieldErrors } from '@/utils'
 import { useCreateUser } from '@features/users/api/create-user'
 import { useUpdateUser } from '@features/users/api/update-user'
 import type {
@@ -83,8 +83,9 @@ function UserForm({
       }
 
       onStatusChange?.('success')
-    } catch {
+    } catch (e: unknown) {
       onStatusChange?.('idle')
+      setApiFieldErrors(form, e)
     }
   }
 

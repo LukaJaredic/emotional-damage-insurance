@@ -4,6 +4,8 @@ import { env } from '@/config/env'
 import { authenticate, requireAuth, AUTH_COOKIE } from '@testing/mocks/db.utils'
 import { networkDelay } from '@testing/mocks/helpers'
 
+import { mockApiError, mockInternalError } from './error-response'
+
 type LoginBody = {
   email: string
   password: string
@@ -22,13 +24,15 @@ export const authHandlers = [
           'Set-Cookie': `${AUTH_COOKIE}=${result.jwt}; Path=/;`,
         },
       })
-    } catch (error: any) {
-      return HttpResponse.json(
-        { message: error?.message || 'Server Error' },
-        {
-          status: error?.message === 'Invalid email or password' ? 401 : 500,
-        },
-      )
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === 'Invalid email or password'
+      ) {
+        return mockApiError({ code: 'INVALID_CREDENTIALS', status: 401 })
+      }
+
+      return mockInternalError()
     }
   }),
 
@@ -52,15 +56,12 @@ export const authHandlers = [
       const { user } = requireAuth(cookies)
 
       if (!user) {
-        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
       }
 
       return HttpResponse.json(user)
-    } catch (error: any) {
-      return HttpResponse.json(
-        { message: error?.message || 'Server Error' },
-        { status: 500 },
-      )
+    } catch {
+      return mockInternalError()
     }
   }),
 ]

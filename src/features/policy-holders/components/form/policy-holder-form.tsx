@@ -6,8 +6,8 @@ import { InputField, SelectField } from '@/components/form'
 import { Spinner } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { FieldGroup } from '@/components/ui/shadcn/field'
-import type { PolicyHolder } from '@/types'
-import { rowSm } from '@/utils/style'
+import { type PolicyHolder } from '@/types'
+import { rowSm, setApiFieldErrors } from '@/utils'
 import { useCreatePolicyHolder } from '@features/policy-holders/api/create-policy-holder'
 import { useUpdatePolicyHolder } from '@features/policy-holders/api/update-policy-holder'
 import type {
@@ -67,8 +67,9 @@ function PolicyHolderForm({
       }
 
       onStatusChange?.('success')
-    } catch {
+    } catch (e: unknown) {
       onStatusChange?.('idle')
+      setApiFieldErrors(form, e)
     }
   }
 

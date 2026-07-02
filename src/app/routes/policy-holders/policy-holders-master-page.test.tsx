@@ -7,6 +7,7 @@ import { paths } from '@/config'
 import { env } from '@/config/env'
 import { name } from '@/features/policy-holders/utils/policy-holder-labels'
 import useMediaQuery from '@/hooks/use-media-query'
+import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
 import {
   renderApp,
@@ -61,7 +62,7 @@ function mockPolicyHoldersResponse({
       onRequest?.(new URL(request.url).searchParams)
 
       if (status >= 400) {
-        return HttpResponse.json({ message: 'Server Error' }, { status })
+        return mockApiError({ code: 'INTERNAL_ERROR', status })
       }
 
       return HttpResponse.json(policyHolders, { status })
