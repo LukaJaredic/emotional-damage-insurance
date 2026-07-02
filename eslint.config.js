@@ -4,7 +4,6 @@ import eslintConfigPrettier from 'eslint-config-prettier'
 import checkFile from 'eslint-plugin-check-file'
 import importPlugin from 'eslint-plugin-import'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
-import prettierPlugin from 'eslint-plugin-prettier'
 import reactPlugin from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
@@ -57,9 +56,6 @@ export default defineConfig([
       reactRefresh.configs.vite,
       eslintConfigPrettier,
     ],
-    plugins: {
-      prettier: prettierPlugin,
-    },
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -198,7 +194,6 @@ export default defineConfig([
       '@typescript-eslint/no-empty-function': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': ['error'],
-      'prettier/prettier': ['error', {}, { usePrettierrc: true }],
       'check-file/filename-naming-convention': [
         'error',
         {
