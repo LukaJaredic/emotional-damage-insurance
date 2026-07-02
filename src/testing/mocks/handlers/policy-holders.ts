@@ -12,6 +12,8 @@ import { db, persistDb } from '@testing/mocks/db'
 import { requireAuth } from '@testing/mocks/db.utils'
 import { networkDelay } from '@testing/mocks/helpers'
 
+import { mockApiError, mockInternalError } from './error-response'
+
 type MockCreatePolicyHolderBody = Omit<PolicyHolder, keyof BaseEntity>
 
 type MockUpdatePolicyHolderBody = Partial<MockCreatePolicyHolderBody>
@@ -164,7 +166,7 @@ export const policyHoldersHandlers = [
       const { user } = requireAuth(cookies)
 
       if (!user) {
-        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
       }
 
       const { can } = buildPermissionsFor(user as User)
@@ -213,11 +215,8 @@ export const policyHoldersHandlers = [
       return HttpResponse.json(
         policyHolders.slice(startIndex, startIndex + perPage),
       )
-    } catch (error: any) {
-      return HttpResponse.json(
-        { message: error?.message || 'Server Error' },
-        { status: 500 },
-      )
+    } catch {
+      return mockInternalError()
     }
   }),
 
@@ -230,7 +229,7 @@ export const policyHoldersHandlers = [
         const { user } = requireAuth(cookies)
 
         if (!user) {
-          return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+          return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
         }
 
         const foundPolicyHolder = findPolicyHolderById(
@@ -238,10 +237,7 @@ export const policyHoldersHandlers = [
         )
 
         if (!foundPolicyHolder) {
-          return HttpResponse.json(
-            { message: 'Policy holder not found' },
-            { status: 404 },
-          )
+          return mockApiError({ code: 'POLICY_HOLDER_NOT_FOUND', status: 404 })
         }
 
         const policyHolder = sanitizePolicyHolder(
@@ -250,15 +246,12 @@ export const policyHoldersHandlers = [
         const { can } = buildPermissionsFor(user as User)
 
         if (!can('policy-holder:read', policyHolder)) {
-          return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+          return mockApiError({ code: 'FORBIDDEN', status: 403 })
         }
 
         return HttpResponse.json(policyHolder)
-      } catch (error: any) {
-        return HttpResponse.json(
-          { message: error?.message || 'Server Error' },
-          { status: 500 },
-        )
+      } catch {
+        return mockInternalError()
       }
     },
   ),
@@ -270,29 +263,39 @@ export const policyHoldersHandlers = [
       const { user } = requireAuth(cookies)
 
       if (!user) {
-        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
       }
 
       const { can } = buildPermissionsFor(user as User)
 
       if (!can('policy-holder:create')) {
-        return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+        return mockApiError({ code: 'FORBIDDEN', status: 403 })
       }
 
       const payload = (await request.json()) as MockCreatePolicyHolderBody
 
       if (findPolicyHolderByGovernmentId(payload.governmentId)) {
-        return HttpResponse.json(
-          { message: 'Policy holder with this government ID already exists' },
-          { status: 409 },
-        )
+        return mockApiError({
+          code: 'POLICY_HOLDER_ALREADY_EXISTS',
+          status: 409,
+          message: 'A policy holder with this government ID already exists.',
+          fieldErrors: {
+            governmentId: [
+              'A policy holder with this government ID already exists.',
+            ],
+          },
+        })
       }
 
       if (findPolicyHolderByEmail(payload.email)) {
-        return HttpResponse.json(
-          { message: 'Policy holder with this email already exists' },
-          { status: 409 },
-        )
+        return mockApiError({
+          code: 'POLICY_HOLDER_ALREADY_EXISTS',
+          status: 409,
+          message: 'A policy holder with this email already exists.',
+          fieldErrors: {
+            email: ['A policy holder with this email already exists.'],
+          },
+        })
       }
 
       const createdPolicyHolder = db.policyHolder.create({
@@ -306,11 +309,8 @@ export const policyHoldersHandlers = [
         sanitizePolicyHolder(createdPolicyHolder as MockPolicyHolder),
         { status: 201 },
       )
-    } catch (error: any) {
-      return HttpResponse.json(
-        { message: error?.message || 'Server Error' },
-        { status: 500 },
-      )
+    } catch {
+      return mockInternalError()
     }
   }),
 
@@ -323,17 +323,14 @@ export const policyHoldersHandlers = [
         const { user } = requireAuth(cookies)
 
         if (!user) {
-          return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+          return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
         }
 
         const policyHolderId = String(params.policyHolderId)
         const existingPolicyHolder = findPolicyHolderById(policyHolderId)
 
         if (!existingPolicyHolder) {
-          return HttpResponse.json(
-            { message: 'Policy holder not found' },
-            { status: 404 },
-          )
+          return mockApiError({ code: 'POLICY_HOLDER_NOT_FOUND', status: 404 })
         }
 
         const existingPolicyHolderData = sanitizePolicyHolder(
@@ -342,7 +339,7 @@ export const policyHoldersHandlers = [
         const { can } = buildPermissionsFor(user as User)
 
         if (!can('policy-holder:update', existingPolicyHolderData)) {
-          return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+          return mockApiError({ code: 'FORBIDDEN', status: 403 })
         }
 
         const payload = (await request.json()) as MockUpdatePolicyHolderBody
@@ -355,12 +352,17 @@ export const policyHoldersHandlers = [
             policyHolderWithSameGovernmentId &&
             policyHolderWithSameGovernmentId.id !== policyHolderId
           ) {
-            return HttpResponse.json(
-              {
-                message: 'Policy holder with this government ID already exists',
+            return mockApiError({
+              code: 'POLICY_HOLDER_ALREADY_EXISTS',
+              status: 409,
+              message:
+                'A policy holder with this government ID already exists.',
+              fieldErrors: {
+                governmentId: [
+                  'A policy holder with this government ID already exists.',
+                ],
               },
-              { status: 409 },
-            )
+            })
           }
         }
 
@@ -373,10 +375,14 @@ export const policyHoldersHandlers = [
             policyHolderWithSameEmail &&
             policyHolderWithSameEmail.id !== policyHolderId
           ) {
-            return HttpResponse.json(
-              { message: 'Policy holder with this email already exists' },
-              { status: 409 },
-            )
+            return mockApiError({
+              code: 'POLICY_HOLDER_ALREADY_EXISTS',
+              status: 409,
+              message: 'A policy holder with this email already exists.',
+              fieldErrors: {
+                email: ['A policy holder with this email already exists.'],
+              },
+            })
           }
         }
 
@@ -395,20 +401,14 @@ export const policyHoldersHandlers = [
         await persistDb('policyHolder')
 
         if (!updatedPolicyHolder) {
-          return HttpResponse.json(
-            { message: 'Policy holder not found' },
-            { status: 404 },
-          )
+          return mockApiError({ code: 'POLICY_HOLDER_NOT_FOUND', status: 404 })
         }
 
         return HttpResponse.json(
           sanitizePolicyHolder(updatedPolicyHolder as MockPolicyHolder),
         )
-      } catch (error: any) {
-        return HttpResponse.json(
-          { message: error?.message || 'Server Error' },
-          { status: 500 },
-        )
+      } catch {
+        return mockInternalError()
       }
     },
   ),
@@ -422,17 +422,14 @@ export const policyHoldersHandlers = [
         const { user } = requireAuth(cookies)
 
         if (!user) {
-          return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+          return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
         }
 
         const policyHolderId = String(params.policyHolderId)
         const existingPolicyHolder = findPolicyHolderById(policyHolderId)
 
         if (!existingPolicyHolder) {
-          return HttpResponse.json(
-            { message: 'Policy holder not found' },
-            { status: 404 },
-          )
+          return mockApiError({ code: 'POLICY_HOLDER_NOT_FOUND', status: 404 })
         }
 
         const existingPolicyHolderData = sanitizePolicyHolder(
@@ -441,7 +438,7 @@ export const policyHoldersHandlers = [
         const { can } = buildPermissionsFor(user as User)
 
         if (!can('policy-holder:delete', existingPolicyHolderData)) {
-          return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+          return mockApiError({ code: 'FORBIDDEN', status: 403 })
         }
 
         const deletedPolicyHolder = db.policyHolder.delete({
@@ -453,20 +450,14 @@ export const policyHoldersHandlers = [
         })
 
         if (!deletedPolicyHolder) {
-          return HttpResponse.json(
-            { message: 'Policy holder not found' },
-            { status: 404 },
-          )
+          return mockApiError({ code: 'POLICY_HOLDER_NOT_FOUND', status: 404 })
         }
 
         await persistDb('policyHolder')
 
         return new HttpResponse(null, { status: 204 })
-      } catch (error: any) {
-        return HttpResponse.json(
-          { message: error?.message || 'Server Error' },
-          { status: 500 },
-        )
+      } catch {
+        return mockInternalError()
       }
     },
   ),

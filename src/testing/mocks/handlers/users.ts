@@ -13,6 +13,8 @@ import { db, persistDb } from '@testing/mocks/db'
 import { requireAuth } from '@testing/mocks/db.utils'
 import { hash, networkDelay, sanitizeUser } from '@testing/mocks/helpers'
 
+import { mockApiError, mockInternalError } from './error-response'
+
 type MockCreateUserBody = Omit<User, keyof BaseEntity> & {
   password: string
 }
@@ -86,7 +88,7 @@ export const usersHandlers = [
       const { user } = requireAuth(cookies)
 
       if (!user) {
-        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
       }
 
       const { can } = buildPermissionsFor(user as User)
@@ -138,11 +140,8 @@ export const usersHandlers = [
       }
 
       return HttpResponse.json(users.slice(startIndex, startIndex + perPage))
-    } catch (error: any) {
-      return HttpResponse.json(
-        { message: error?.message || 'Server Error' },
-        { status: 500 },
-      )
+    } catch {
+      return mockInternalError()
     }
   }),
 
@@ -153,27 +152,24 @@ export const usersHandlers = [
       const { user } = requireAuth(cookies)
 
       if (!user) {
-        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
       }
 
       const foundUser = findUserById(String(params.userId))
 
       if (!foundUser) {
-        return HttpResponse.json({ message: 'User not found' }, { status: 404 })
+        return mockApiError({ code: 'USER_NOT_FOUND', status: 404 })
       }
 
       const { can } = buildPermissionsFor(user as User)
 
       if (!can('user:read', foundUser as User)) {
-        return HttpResponse.json({ message: 'Forbidden' }, { status: 403 })
+        return mockApiError({ code: 'FORBIDDEN', status: 403 })
       }
 
       return HttpResponse.json(sanitizeUser(foundUser))
-    } catch (error: any) {
-      return HttpResponse.json(
-        { message: error?.message || 'Server Error' },
-        { status: 500 },
-      )
+    } catch {
+      return mockInternalError()
     }
   }),
 
@@ -184,17 +180,19 @@ export const usersHandlers = [
       const { user } = requireAuth(cookies)
 
       if (!user) {
-        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
       }
 
       const payload = (await request.json()) as MockCreateUserBody
       const { email, firstName, lastName, password, roles } = payload
 
       if (findUserByEmail(email)) {
-        return HttpResponse.json(
-          { message: 'User with this email already exists' },
-          { status: 409 },
-        )
+        return mockApiError({
+          code: 'USER_ALREADY_EXISTS',
+          status: 409,
+          message: 'A user with this email already exists.',
+          fieldErrors: { email: ['A user with this email already exists.'] },
+        })
       }
 
       const createdUser = db.user.create({
@@ -209,11 +207,8 @@ export const usersHandlers = [
       await persistDb('user')
 
       return HttpResponse.json(sanitizeUser(createdUser), { status: 201 })
-    } catch (error: any) {
-      return HttpResponse.json(
-        { message: error?.message || 'Server Error' },
-        { status: 500 },
-      )
+    } catch {
+      return mockInternalError()
     }
   }),
 
@@ -226,17 +221,14 @@ export const usersHandlers = [
         const { user } = requireAuth(cookies)
 
         if (!user) {
-          return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+          return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
         }
 
         const userId = String(params.userId)
         const existingUser = findUserById(userId)
 
         if (!existingUser) {
-          return HttpResponse.json(
-            { message: 'User not found' },
-            { status: 404 },
-          )
+          return mockApiError({ code: 'USER_NOT_FOUND', status: 404 })
         }
 
         const payload = (await request.json()) as MockUpdateUserBody
@@ -245,10 +237,14 @@ export const usersHandlers = [
           const userWithSameEmail = findUserByEmail(payload.email)
 
           if (userWithSameEmail && userWithSameEmail.id !== userId) {
-            return HttpResponse.json(
-              { message: 'User with this email already exists' },
-              { status: 409 },
-            )
+            return mockApiError({
+              code: 'USER_ALREADY_EXISTS',
+              status: 409,
+              message: 'A user with this email already exists.',
+              fieldErrors: {
+                email: ['A user with this email already exists.'],
+              },
+            })
           }
         }
 
@@ -273,18 +269,12 @@ export const usersHandlers = [
         await persistDb('user')
 
         if (!updatedUser) {
-          return HttpResponse.json(
-            { message: 'User not found' },
-            { status: 404 },
-          )
+          return mockApiError({ code: 'USER_NOT_FOUND', status: 404 })
         }
 
         return HttpResponse.json(sanitizeUser(updatedUser))
-      } catch (error: any) {
-        return HttpResponse.json(
-          { message: error?.message || 'Server Error' },
-          { status: 500 },
-        )
+      } catch {
+        return mockInternalError()
       }
     },
   ),
@@ -296,14 +286,14 @@ export const usersHandlers = [
       const { user } = requireAuth(cookies)
 
       if (!user) {
-        return HttpResponse.json({ message: 'Unauthorized' }, { status: 401 })
+        return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
       }
 
       const userId = String(params.userId)
       const existingUser = findUserById(userId)
 
       if (!existingUser) {
-        return HttpResponse.json({ message: 'User not found' }, { status: 404 })
+        return mockApiError({ code: 'USER_NOT_FOUND', status: 404 })
       }
 
       const deletedUser = db.user.delete({
@@ -315,17 +305,14 @@ export const usersHandlers = [
       })
 
       if (!deletedUser) {
-        return HttpResponse.json({ message: 'User not found' }, { status: 404 })
+        return mockApiError({ code: 'USER_NOT_FOUND', status: 404 })
       }
 
       await persistDb('user')
 
       return new HttpResponse(null, { status: 204 })
-    } catch (error: any) {
-      return HttpResponse.json(
-        { message: error?.message || 'Server Error' },
-        { status: 500 },
-      )
+    } catch {
+      return mockInternalError()
     }
   }),
 ]

@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
+import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
 import {
   buildUser,
@@ -33,7 +34,7 @@ function mockUserResponses({
       onRequest?.(body)
 
       if (status >= 400) {
-        return HttpResponse.json({ message: 'Server Error' }, { status })
+        return mockApiError({ code: 'INTERNAL_ERROR', status })
       }
 
       return HttpResponse.json({ id: 'created-user-id', ...body }, { status })
@@ -46,7 +47,7 @@ function mockUserResponses({
       onRequest?.({ body, id: params.id })
 
       if (status >= 400) {
-        return HttpResponse.json({ message: 'Server Error' }, { status })
+        return mockApiError({ code: 'INTERNAL_ERROR', status })
       }
 
       return HttpResponse.json({ ...body }, { status })

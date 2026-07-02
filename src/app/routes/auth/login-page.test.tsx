@@ -89,7 +89,9 @@ describe('Login Page', () => {
     await userEventInstance.click(submitButton())
 
     await waitFor(() => {
-      expect(screen.getByText(/invalid email or password/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/the email or password is incorrect/i),
+      ).toBeInTheDocument()
     })
 
     expect(queryClient.getQueryData(queryKeys.auth.me())).toBeUndefined()

@@ -7,6 +7,7 @@ import { paths } from '@/config'
 import { env } from '@/config/env'
 import { stringifyRoles } from '@/features/users/utils/user-labels'
 import useMediaQuery from '@/hooks/use-media-query'
+import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
 import { renderApp, selectOptions, testUsers } from '@/testing/test-utils'
 import type { User, UserRole } from '@/types'
@@ -36,7 +37,7 @@ function mockUsersResponse({
       onRequest?.(new URL(request.url).searchParams)
 
       if (status >= 400) {
-        return HttpResponse.json({ message: 'Server Error' }, { status })
+        return mockApiError({ code: 'INTERNAL_ERROR', status })
       }
 
       return HttpResponse.json(users, { status })
