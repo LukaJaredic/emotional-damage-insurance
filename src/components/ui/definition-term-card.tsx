@@ -37,8 +37,8 @@ function DefinitionListItem({
 }) {
   return (
     <div className="flex items-start justify-between gap-4 pb-4 text-sm not-last:border-b">
-      <dt className="text-muted-foreground">{term}</dt>
-      <dd className="text-right font-medium">{description}</dd>
+      <dt className="text-muted-foreground whitespace-nowrap">{term}</dt>
+      <dd className="truncate text-right font-medium">{description}</dd>
     </div>
   )
 }

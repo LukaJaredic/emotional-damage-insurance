@@ -31,6 +31,8 @@ function PolicyHoldersMaster() {
       }
     >
       <RemoteDataWithFilters
+        virtualized
+        className="w-0"
         useRemoteData={usePolicyHolders}
         tableColumns={policyHolderColumns}
         tableCaption="Policy holders table"

@@ -1,7 +1,7 @@
 import { isValidElement, useState } from 'react'
 
 const DEFAULT_COLUMN_WIDTH = 100
-const EXPANDED_COLUMN_WIDTH = 300
+const EXPANDED_COLUMN_WIDTH = 400
 
 /**
  * Shared class names used by table wrappers.
