@@ -89,8 +89,11 @@ npm run build
 # Preview the production build locally
 npm run preview
 
-# Run ESLint
+# Run ESLint - defaults to no import cycle checks during development, because the operation is very expensive
 npm run lint
+
+# Run ESLint with import cycle checks
+npm run lint:with-cycle-check
 
 # Run ESLint with automatic fixes
 npm run lint:fix
@@ -216,6 +219,8 @@ The local API runs through an Express server wired to MSW handlers and mock data
 - Husky runs Git hooks before commits and pushes
 - To skip Git hooks for a one-off commit: `git commit -m "..." --no-verify`
 - To skip Git hooks for a one-off push: `git push --no-verify`
+
+See more here: [11 Git And Versioning](./docs/11_git_and_versioning.md)
 
 ## Status
 

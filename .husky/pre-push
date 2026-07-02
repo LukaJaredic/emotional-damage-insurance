@@ -4,6 +4,8 @@
 
 log_info "Running pre-push hooks..."
 
+run_step "Hard lint (with dependency cycle check and no cache)" "npm run lint:with-cycle-check"
+
 run_step "Typecheck" "npm run typecheck"
 
 run_step "Unit and integration tests" "npm test"
