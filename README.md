@@ -220,6 +220,8 @@ The local API runs through an Express server wired to MSW handlers and mock data
 - To skip Git hooks for a one-off commit: `git commit -m "..." --no-verify`
 - To skip Git hooks for a one-off push: `git push --no-verify`
 
+See more here: [11 Git And Versioning](./docs/11_git_and_versioning.md)
+
 ## Status
 
 The repo is in development and is meant to serve as a personal portfolio project, if you want to use it for your own projects, do so at your own discretion
