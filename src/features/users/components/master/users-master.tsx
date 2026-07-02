@@ -31,6 +31,8 @@ function UsersMaster() {
       }
     >
       <RemoteDataWithFilters
+        virtualized
+        className="w-0"
         useRemoteData={useUsers}
         tableColumns={userColumns}
         tableCaption="Users table"

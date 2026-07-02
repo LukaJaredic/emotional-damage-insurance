@@ -23,10 +23,13 @@ function PolicyHolderBaseInfo({ policyHolder }: PolicyHolderBaseInfoProps) {
           </Avatar>
 
           <div className="min-w-0">
-            <p className="text-foreground text-base font-semibold">
+            <p className="text-foreground truncate text-base font-semibold">
               {policyHolderName}
             </p>
-            <Email email={policyHolder.email} className="text-sm" />
+            <Email
+              email={policyHolder.email}
+              className="block truncate text-sm"
+            />
           </div>
         </div>
       }

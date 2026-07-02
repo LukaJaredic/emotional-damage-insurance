@@ -15,11 +15,11 @@ function UserCard({ user }: UserCardProps) {
       className="hover:bg-accent block rounded-xl border p-4"
     >
       <div className="flex items-start justify-between gap-4">
-        <div className="space-y-1">
-          <h2 className="font-medium">
+        <div className="min-w-0 space-y-1">
+          <h2 className="truncate font-medium">
             {user.firstName} {user.lastName}
           </h2>
-          <p className="text-muted-foreground text-sm">{user.email}</p>
+          <p className="text-muted-foreground truncate text-sm">{user.email}</p>
         </div>
         <p className="text-muted-foreground text-xs uppercase">
           {stringifyRoles(user.roles)}

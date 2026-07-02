@@ -5,7 +5,10 @@ import { QueryLoading } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import usePermissions from '@/hooks/use-permissions'
 import { usePolicyHolderDetail } from '@features/policy-holders/api/get-policy-holder'
-import { name } from '@features/policy-holders/utils/policy-holder-labels'
+import {
+  name,
+  typeLabels,
+} from '@features/policy-holders/utils/policy-holder-labels'
 
 import PolicyHolderFormDialog from '../form/policy-holder-form-dialog'
 
@@ -33,7 +36,7 @@ function PolicyHolderDetail({ policyHolderId }: PolicyHolderDetailProps) {
   return (
     <PageLayout
       heading={name(policyHolder)}
-      description={policyHolder.email}
+      description={typeLabels[policyHolder.type]}
       actions={() => (
         <>
           {can('policy-holder:update', policyHolder, '*') ? (
