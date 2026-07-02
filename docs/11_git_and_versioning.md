@@ -74,6 +74,28 @@ Good examples:
 - Fixes XYZ loading behavior.
 - Updates `eslint.config.js` to skip expensive checks during development.
 
+When a PR has multiple points, use matching numbered lists across `What`, `Why`, and `How`.
+
+```md
+## What
+
+1. Optimizes ESLint during development.
+2. Separates Prettier formatting from ESLint checks.
+3. Adds Git and versioning documentation.
+
+## Why
+
+1. Keeps save-time, lint, and commit workflows faster.
+2. Avoids running Prettier twice through editor and ESLint flows.
+3. Makes branch, PR, and squash merge expectations explicit.
+
+## How
+
+1. Disables `import/no-cycle` during normal `npm run lint`, adds `npm run lint:with-cycle-check`, and runs it during pre-push.
+2. Removes `eslint-plugin-prettier` and keeps formatting enforced through `npm run format`.
+3. Adds `docs/11_git_and_versioning.md` and links it from `README.md`.
+```
+
 Avoid long explanations unless the change needs them.
 
 ## Squash Merge
