@@ -89,8 +89,11 @@ npm run build
 # Preview the production build locally
 npm run preview
 
-# Run ESLint
+# Run ESLint - defaults to no import cycle checks during development, because the operation is very expensive
 npm run lint
+
+# Run ESLint with import cycle checks
+npm run lint:with-cycle-check
 
 # Run ESLint with automatic fixes
 npm run lint:fix

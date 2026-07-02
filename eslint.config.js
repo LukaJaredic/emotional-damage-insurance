@@ -13,6 +13,7 @@ import tseslint from 'typescript-eslint'
 
 const sharedDirectories = ['components', 'hooks', 'lib', 'types', 'utils']
 const featureDirectories = ['auth', 'users', 'policy-holders']
+const cycleCheckEnabled = process.env.CYCLE_CHECK_ENABLED === 'true'
 
 const nodeFiles = [
   'vite.config.ts',
@@ -36,7 +37,13 @@ export default defineConfig([
       'check-file': checkFile,
     },
   },
-  globalIgnores(['dist', 'node_modules', 'coverage', 'generators/*']),
+  globalIgnores([
+    'dist',
+    'node_modules',
+    'coverage',
+    'generators/*',
+    '.eslintcache',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -81,7 +88,8 @@ export default defineConfig([
       'react/react-in-jsx-scope': 'off',
       'react/prop-types': 'off',
       'import/default': 'off',
-      'import/no-cycle': 'error',
+      // Disabled during dev because it traverses the import graph and is slow.
+      'import/no-cycle': cycleCheckEnabled ? 'error' : 'off',
       'import/no-named-as-default': 'off',
       'import/no-named-as-default-member': 'off',
       'import/no-unresolved': 'off',

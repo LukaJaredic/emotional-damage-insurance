@@ -37,3 +37,4 @@ dist-ssr
 # Misc
 mocked-db*json
 *.tsbuildinfo
+.eslintcache
