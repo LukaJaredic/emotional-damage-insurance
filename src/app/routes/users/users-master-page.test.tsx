@@ -1,6 +1,7 @@
 import { cleanup, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
+import { VirtuosoMockContext } from 'react-virtuoso'
 import { describe, expect, it, vi } from 'vitest'
 
 import { paths } from '@/config'
@@ -62,9 +63,13 @@ async function renderUsersMaster({
   mockUsersResponse({ users, status, onRequest: onUsersRequest })
 
   await renderApp(
-    <AuthGuard shouldHaveUser page="users:master-page">
-      <UsersMasterPage />
-    </AuthGuard>,
+    <VirtuosoMockContext.Provider
+      value={{ viewportHeight: 800, itemHeight: 50 }}
+    >
+      <AuthGuard shouldHaveUser page="users:master-page">
+        <UsersMasterPage />
+      </AuthGuard>
+    </VirtuosoMockContext.Provider>,
     {
       user: testUsers[role],
       path: paths.users.path,
@@ -137,9 +142,11 @@ describe('UsersMaster', () => {
       await renderUsersMaster()
 
       for (const user of returnedUsers) {
-        const link = await screen.findByRole('link', {
-          name: `${user.firstName} ${user.lastName}`,
-        })
+        const link = (
+          await screen.findAllByRole('link', {
+            name: `${user.firstName} ${user.lastName}`,
+          })
+        )[0]!
 
         const row = link.closest('tr')
 
@@ -162,9 +169,9 @@ describe('UsersMaster', () => {
       expect(screen.queryByRole('table')).not.toBeInTheDocument()
 
       for (const user of returnedUsers) {
-        const card = screen.getByRole('link', {
+        const card = screen.getAllByRole('link', {
           name: new RegExp(`${user.firstName} ${user.lastName}`, 'i'),
-        })
+        })[0]!
 
         expect(card).toHaveAttribute(
           'href',

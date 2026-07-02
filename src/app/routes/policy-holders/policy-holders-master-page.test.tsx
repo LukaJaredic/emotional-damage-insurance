@@ -1,6 +1,7 @@
 import { cleanup, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
+import { VirtuosoMockContext } from 'react-virtuoso'
 import { describe, expect, it, vi } from 'vitest'
 
 import { paths } from '@/config'
@@ -91,9 +92,13 @@ async function renderPolicyHoldersMaster({
   })
 
   await renderApp(
-    <AuthGuard shouldHaveUser page="policy-holders:master-page">
-      <PolicyHoldersMasterPage />
-    </AuthGuard>,
+    <VirtuosoMockContext.Provider
+      value={{ viewportHeight: 800, itemHeight: 50 }}
+    >
+      <AuthGuard shouldHaveUser page="policy-holders:master-page">
+        <PolicyHoldersMasterPage />
+      </AuthGuard>
+    </VirtuosoMockContext.Provider>,
     {
       user: testUsers[role],
       path: paths.policyHolders.path,
@@ -169,9 +174,11 @@ describe('PolicyHoldersMaster', () => {
       await renderPolicyHoldersMaster()
 
       for (const policyHolder of returnedPolicyHolders) {
-        const link = await screen.findByRole('link', {
-          name: name(policyHolder),
-        })
+        const link = (
+          await screen.findAllByRole('link', {
+            name: name(policyHolder),
+          })
+        )[0]!
 
         const row = link.closest('tr')
 
@@ -191,9 +198,9 @@ describe('PolicyHoldersMaster', () => {
       expect(screen.queryByRole('table')).not.toBeInTheDocument()
 
       for (const policyHolder of returnedPolicyHolders) {
-        const card = screen.getByRole('link', {
+        const card = screen.getAllByRole('link', {
           name: new RegExp(name(policyHolder), 'i'),
-        })
+        })[0]!
 
         expect(card).toHaveAttribute(
           'href',

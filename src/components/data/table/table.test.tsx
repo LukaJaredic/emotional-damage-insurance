@@ -115,14 +115,14 @@ function expectExpandedColumn(dataIndex: keyof DemoRow, value: string) {
   const bodyCell = getTableCell(dataIndex, value)
 
   expect(headerCell).toHaveStyle({
-    width: '300px',
-    minWidth: '300px',
-    maxWidth: '300px',
+    width: '400px',
+    minWidth: '400px',
+    maxWidth: '400px',
   })
   expect(bodyCell).toHaveStyle({
-    width: '300px',
-    minWidth: '300px',
-    maxWidth: '300px',
+    width: '400px',
+    minWidth: '400px',
+    maxWidth: '400px',
   })
   expect(headerCell.querySelector('span')).toHaveClass('whitespace-normal')
   expect(bodyCell!.querySelector('div')).toHaveClass('whitespace-normal')
