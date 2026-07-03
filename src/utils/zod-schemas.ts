@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { toInputDate } from './dates'
+
 /**
  * Builds a trimmed required string schema with optional length limits.
  *
@@ -79,5 +81,30 @@ export function multipleSelect<T extends string>(
   if (required) {
     return schema.min(1, 'Select at least one option')
   }
+  return schema
+}
+
+/**
+ * Builds a required date string schema with the application's default validation message.
+ *
+ * @returns A Zod string schema for date strings.
+ */
+export function requiredDateString() {
+  return requiredString().refine((value) => {
+    return toInputDate(value) === value
+  }, 'Invalid date')
+}
+
+export function requiredNumber(min?: number, max?: number) {
+  let schema = z.coerce.number()
+
+  if (min !== undefined) {
+    schema = schema.min(min, `Value must be at least ${min}`)
+  }
+
+  if (max !== undefined) {
+    schema = schema.max(max, `Value must be at most ${max}`)
+  }
+
   return schema
 }
