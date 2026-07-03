@@ -17,15 +17,29 @@ export async function getPolicies(params: GetPoliciesQuery): Promise<Policy[]> {
   return response.data
 }
 
+function buildGetPoliciesQuery(
+  params: UsePoliciesQuery,
+  page: number,
+): GetPoliciesQuery {
+  const { terminated, ...rest } = params
+  const normalizedTerminated =
+    terminated === 'true' ? true : terminated === 'false' ? false : undefined
+
+  return {
+    ...rest,
+    page,
+    ...(normalizedTerminated !== undefined
+      ? { terminated: normalizedTerminated }
+      : {}),
+  }
+}
+
 export function usePolicies(params: UsePoliciesQuery): RemoteDataState<Policy> {
   const query = useInfiniteQuery({
     ...commonQueryOptions,
     queryKey: policyQueryKeys.list(params),
     queryFn: ({ pageParam }) =>
-      getPolicies({
-        ...params,
-        page: pageParam,
-      }),
+      getPolicies(buildGetPoliciesQuery(params, pageParam)),
   })
 
   return {

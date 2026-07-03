@@ -26,13 +26,17 @@ type TextFilter<T> = BaseFilter<T> & {
   type: 'text'
 }
 
+type DateFilter<T> = BaseFilter<T> & {
+  type: 'date'
+}
+
 type SelectFilter<T> = BaseFilter<T> & {
   type: 'select'
   isMultiple?: boolean
   options: SelectOption[]
 }
 
-type Filter<T> = TextFilter<T> | SelectFilter<T>
+type Filter<T> = TextFilter<T> | DateFilter<T> | SelectFilter<T>
 
 type FiltersProps<T> = {
   filters: Filter<T>[]
@@ -85,6 +89,14 @@ function Filters<T extends FieldValues>({
                       placeholder={filter.placeholder}
                     />
                   )
+                case 'date':
+                  return (
+                    <DateFilter
+                      {...field}
+                      label={filter.label}
+                      placeholder={filter.placeholder}
+                    />
+                  )
                 case 'select':
                   return (
                     <SelectFilter
@@ -121,6 +133,9 @@ function Filters<T extends FieldValues>({
   )
 }
 
+const filterClassName =
+  'flex w-50 min-w-40 flex-1 flex-col gap-1 sm:flex-none whitespace-nowrap'
+
 type TextFilterProps<T extends FieldValues> = ControllerRenderProps<T> & {
   label: string
   placeholder: string
@@ -134,9 +149,29 @@ function TextFilter<T extends FieldValues>({
   const inputId = `text-filter-${props.name}`
 
   return (
-    <div className="flex w-50 flex-1 flex-col space-y-1 sm:flex-none">
+    <div className={filterClassName}>
       <Label htmlFor={inputId}>{label}</Label>
       <Input id={inputId} placeholder={placeholder} {...props} />
+    </div>
+  )
+}
+
+type DateFilterProps<T extends FieldValues> = ControllerRenderProps<T> & {
+  label: string
+  placeholder: string
+}
+
+function DateFilter<T extends FieldValues>({
+  label,
+  placeholder,
+  ...props
+}: DateFilterProps<T>) {
+  const inputId = `date-filter-${props.name}`
+
+  return (
+    <div className={filterClassName}>
+      <Label htmlFor={inputId}>{label}</Label>
+      <Input id={inputId} type="date" placeholder={placeholder} {...props} />
     </div>
   )
 }
@@ -158,7 +193,7 @@ function SelectFilter<T extends FieldValues>({
   const inputId = `select-filter-${props.name}`
 
   return (
-    <div className="flex w-50 flex-1 flex-col space-y-1 sm:flex-none">
+    <div className={filterClassName}>
       <Label htmlFor={inputId}>{label}</Label>
       <Select
         inputId={inputId}
@@ -178,6 +213,7 @@ function buildEmptyFilters<T extends FieldValues>(filters: Filter<T>[]): T {
   filters.forEach((filter) => {
     switch (filter.type) {
       case 'text':
+      case 'date':
         emptyValues[filter.name] = '' as T[Path<T>]
         break
       case 'select':
