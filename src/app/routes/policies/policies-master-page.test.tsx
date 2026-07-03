@@ -149,6 +149,17 @@ function endBeforeInput() {
   return screen.getByLabelText('Ends before')
 }
 
+// Complicated assertion, but its flaky otherwise
+function normalizeText(value: string | null | undefined) {
+  return value?.replace(/\s/g, ' ') ?? ''
+}
+
+function expectPremiumText(element: HTMLElement, policy: Policy) {
+  expect(normalizeText(element.textContent)).toContain(
+    normalizeText(premium(policy)),
+  )
+}
+
 describe('PoliciesMaster', () => {
   it('should redirect customer to 404', async () => {
     await renderPoliciesMaster({ role: 'customer' })
@@ -214,9 +225,7 @@ describe('PoliciesMaster', () => {
           paths.policies.detail.getHref(policy.id),
         )
         expect(row).toHaveTextContent(status(policy))
-        expect(row!.textContent?.replace(/\s/g, ' ')).toContain(
-          premium(policy).replace(/\s/g, ' '),
-        )
+        expectPremiumText(row!, policy)
       }
     })
 
@@ -245,9 +254,7 @@ describe('PoliciesMaster', () => {
         expect(
           within(card).getByText(toAppDate(policy.endDate)),
         ).toBeInTheDocument()
-        expect(
-          within(card).getByText(new RegExp(premium(policy), 'i')),
-        ).toBeInTheDocument()
+        expectPremiumText(card, policy)
       }
     })
   })
