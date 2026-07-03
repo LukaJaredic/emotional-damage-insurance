@@ -23,7 +23,7 @@ async function renderUserDetail(currentUser: User, viewedUser?: User) {
   mockUserDetailResponse(userToView)
 
   await renderApp(
-    <AuthGuard shouldHaveUser page="users:detail-page">
+    <AuthGuard shouldHaveUser page="user:detail-page">
       <UserDetailPage />
     </AuthGuard>,
     {

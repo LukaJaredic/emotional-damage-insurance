@@ -1,20 +1,19 @@
 import isEqual from 'lodash/isEqual'
 
-import type { User, StringKeyOf, PolicyHolder } from '@/types'
+import type { User, StringKeyOf, PolicyHolder, Policy } from '@/types'
 
 // Just add new resource:domain-types or [R:T], types will cascade
 type ResourceMap = {
   user: User
   'policy-holder': PolicyHolder
+  policy: Policy
 }
 type Resource = keyof ResourceMap
 type Action = 'create' | 'read' | 'update' | 'delete'
 type ResourceAction<R extends Resource> = `${R}:${Action}`
 
 type CustomPages = 'home'
-type ResourcePages<R extends Resource> =
-  | `${R}s:master-page`
-  | `${R}s:detail-page`
+type ResourcePages<R extends Resource> = `${R}:master-page` | `${R}:detail-page`
 type PageAccess<R extends Resource = Resource> = CustomPages | ResourcePages<R>
 
 type PermissionRule<R extends Resource> = {

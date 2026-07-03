@@ -23,52 +23,67 @@ export function buildPermissionsFor(user: User | null) {
 function addAdminPermissions(builder: PermissionsBuilder) {
   builder
     .allowPage('home')
-
-    .allowPage('users:master-page')
+    // Users
+    .allowPage('user:master-page')
     .allow('user:read')
     .allow('user:create')
 
-    .allowPage('users:detail-page')
+    .allowPage('user:detail-page')
     .allow('user:update')
     .allow('user:delete')
-
-    .allowPage('policy-holders:master-page')
+    // Policy Holders
+    .allowPage('policy-holder:master-page')
     .allow('policy-holder:read')
     .allow('policy-holder:create')
 
-    .allowPage('policy-holders:detail-page')
+    .allowPage('policy-holder:detail-page')
     .allow('policy-holder:update')
     .allow('policy-holder:delete')
+    // Policies
+    .allowPage('policy:master-page')
+    .allow('policy:read')
+    .allow('policy:create')
+
+    .allowPage('policy:detail-page')
+    .allow('policy:update')
+    .allow('policy:delete')
 }
 
 function addEmployeePermissions(builder: PermissionsBuilder, user: User) {
   builder
     .allowPage('home')
-
-    .allowPage('users:master-page')
+    // Users
+    .allowPage('user:master-page')
     .allow('user:read')
 
-    .allowPage('users:detail-page')
+    .allowPage('user:detail-page')
     .allow('user:update', { id: user.id }, ['firstName', 'lastName', 'email'])
     .allow('user:update', { roles: ['customer'] }, [
       'firstName',
       'lastName',
       'email',
     ])
-
-    .allowPage('policy-holders:master-page')
+    // Policy Holders
+    .allowPage('policy-holder:master-page')
     .allow('policy-holder:read')
     .allow('policy-holder:create')
 
-    .allowPage('policy-holders:detail-page')
+    .allowPage('policy-holder:detail-page')
     .allow('policy-holder:update')
+    // Policies
+    .allowPage('policy:master-page')
+    .allow('policy:read')
+    .allow('policy:create')
+
+    .allowPage('policy:detail-page')
+    .allow('policy:update')
 }
 
 function addCustomerPermissions(builder: PermissionsBuilder, user: User) {
   builder
     .allowPage('home')
 
-    .allowPage('users:detail-page')
+    .allowPage('user:detail-page')
     .allow('user:read', { id: user.id, roles: ['customer'] })
     .allow('user:update', { id: user.id }, ['firstName', 'lastName', 'email'])
 }

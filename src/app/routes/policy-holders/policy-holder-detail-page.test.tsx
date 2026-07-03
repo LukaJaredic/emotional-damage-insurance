@@ -54,7 +54,7 @@ async function renderPolicyHolderDetail(
   mockPolicyHolderDetailResponse(viewedPolicyHolder)
 
   await renderApp(
-    <AuthGuard shouldHaveUser page="policy-holders:detail-page">
+    <AuthGuard shouldHaveUser page="policy-holder:detail-page">
       <PolicyHolderDetailPage />
     </AuthGuard>,
     {

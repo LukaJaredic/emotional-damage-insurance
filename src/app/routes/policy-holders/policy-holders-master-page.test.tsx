@@ -95,7 +95,7 @@ async function renderPolicyHoldersMaster({
     <VirtuosoMockContext.Provider
       value={{ viewportHeight: 800, itemHeight: 50 }}
     >
-      <AuthGuard shouldHaveUser page="policy-holders:master-page">
+      <AuthGuard shouldHaveUser page="policy-holder:master-page">
         <PolicyHoldersMasterPage />
       </AuthGuard>
     </VirtuosoMockContext.Provider>,

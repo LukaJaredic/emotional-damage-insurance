@@ -81,23 +81,23 @@ const router = createBrowserRouter([
       },
       {
         path: paths.users.path,
-        element: protectedRoute('users:master-page', <UsersMasterPage />),
+        element: protectedRoute('user:master-page', <UsersMasterPage />),
       },
       {
         path: paths.users.detail.path,
-        element: protectedRoute('users:detail-page', <UserDetailPage />),
+        element: protectedRoute('user:detail-page', <UserDetailPage />),
       },
       {
         path: paths.policyHolders.path,
         element: protectedRoute(
-          'policy-holders:master-page',
+          'policy-holder:master-page',
           <PolicyHoldersMasterPage />,
         ),
       },
       {
         path: paths.policyHolders.detail.path,
         element: protectedRoute(
-          'policy-holders:detail-page',
+          'policy-holder:detail-page',
           <PolicyHolderDetailPage />,
         ),
       },
