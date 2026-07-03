@@ -19,8 +19,12 @@ function PolicyCard({ policy }: PolicyCardProps) {
         <div className="flex min-w-0 flex-col gap-1">
           <h2 className="truncate font-medium">{policy.name}</h2>
           <p className="text-muted-foreground truncate text-sm">
-            {premium(policy)} · <Time date={policy.startDate} format="date" /> -{' '}
-            <Time date={policy.endDate} format="date" />
+            <span>{premium(policy)}</span>
+            <div className="flex gap-2">
+              <Time date={policy.startDate} format="date" />
+              -
+              <Time date={policy.endDate} format="date" />
+            </div>
           </p>
         </div>
         <p className="text-muted-foreground text-xs uppercase">
