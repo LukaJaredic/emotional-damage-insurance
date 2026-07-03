@@ -3,6 +3,7 @@ import type { FactoryAPI } from '@mswjs/data/lib/glossary'
 
 import { buildAuditFields, DEFAULT_AUDIT_USER_ID } from './audit'
 import { models } from './db.models'
+import { generatePolicies } from './generators/policy'
 import { generatePolicyHolders } from './generators/policy-holder'
 import { generateUsers } from './generators/user'
 
@@ -51,6 +52,7 @@ function seed(db: DB, profile: SeedProfile) {
   if (profile === 'dev') {
     seedUsers(db, 100)
     seedPolicyHolders(db, 200)
+    seedPolicies(db, 10)
   }
 }
 
@@ -130,6 +132,72 @@ function seedPolicyHolders(db: DB, count: number = 200) {
 
     db.policyHolder.create(policyHolder)
   })
+}
+
+function seedPolicies(db: DB, count: number = 10) {
+  const policyHolderIds = db.policyHolder
+    .getAll()
+    .slice(0, count)
+    .map((policyHolder) => policyHolder.id)
+  const policies = generatePolicies(policyHolderIds)
+
+  policies.forEach((policy) => {
+    if (
+      db.policy.findFirst({
+        where: {
+          id: {
+            equals: policy.id,
+          },
+        },
+      }) ||
+      db.policy.findFirst({
+        where: {
+          name: {
+            equals: policy.name,
+          },
+        },
+      })
+    ) {
+      return
+    }
+
+    const createdPolicy = db.policy.create(policy as any)
+    seedPolicyUsers(db, createdPolicy.id, createdPolicy.limits, 20)
+  })
+}
+
+function seedPolicyUsers(
+  db: DB,
+  policyId: string,
+  limits: Record<string, number>,
+  count: number,
+) {
+  db.user
+    .getAll()
+    .slice(0, count)
+    .forEach((user) => {
+      const existingPolicyUser = db.policyUser.findFirst({
+        where: {
+          policyId: {
+            equals: policyId,
+          },
+          userId: {
+            equals: user.id,
+          },
+        },
+      })
+
+      if (existingPolicyUser) {
+        return
+      }
+
+      db.policyUser.create({
+        ...seedAuditFields,
+        policyId,
+        userId: user.id,
+        limits: { ...limits },
+      })
+    })
 }
 
 export { seed, type SeedProfile }

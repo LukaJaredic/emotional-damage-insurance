@@ -99,7 +99,7 @@ npm run lint:with-cycle-check
 npm run lint:fix
 
 # Run TypeScript checks without emitting files
-npm run typecheck
+npm run tsc
 
 # Run Vitest (Unit and Integration)
 npm run test

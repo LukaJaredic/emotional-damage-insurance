@@ -11,7 +11,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 const sharedDirectories = ['components', 'hooks', 'lib', 'types', 'utils']
-const featureDirectories = ['auth', 'users', 'policy-holders']
+const featureDirectories = ['auth', 'users', 'policy-holders', 'policies']
 const cycleCheckEnabled = process.env.CYCLE_CHECK_ENABLED === 'true'
 
 const nodeFiles = [
