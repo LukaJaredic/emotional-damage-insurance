@@ -1,5 +1,17 @@
 import type { BaseEntity } from './base-entity'
 import type { PolicyHolder } from './policy-holder'
+import type { User } from './user'
+
+export type PolicyLimits = {
+  insult: number
+  rejection: number
+  badJoke: number
+  gaslighting: number
+  overthinking: number
+  awkwardSilence: number
+  whyDontYouQuestion: number
+  meetingThatCouldHaveBeenEmail: number
+}
 
 export type Policy = BaseEntity & {
   policyHolderId: PolicyHolder['id']
@@ -8,14 +20,11 @@ export type Policy = BaseEntity & {
   premium: number
   startDate: Date
   endDate: Date
-  limits: {
-    insult: number
-    rejection: number
-    badJoke: number
-    gaslighting: number
-    overthinking: number
-    awkwardSilence: number
-    whyDontYouQuestion: number
-    meetingThatCouldHaveBeenEmail: number
-  }
+  limits: PolicyLimits
+}
+
+export type PolicyUser = BaseEntity & {
+  policyId: Policy['id']
+  userId: User['id']
+  limits: PolicyLimits
 }
