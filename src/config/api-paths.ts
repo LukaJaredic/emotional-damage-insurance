@@ -12,4 +12,13 @@ export const apiPaths = {
     all: () => '/policy-holders',
     one: (policyHolderId: string) => `/policy-holders/${policyHolderId}`,
   },
+  policies: {
+    all: () => '/policies',
+    one: (policyId: string) => `/policies/${policyId}`,
+    terminate: (policyId: string) => `/policies/${policyId}/terminate`,
+    reactivate: (policyId: string) => `/policies/${policyId}/reactivate`,
+    users: (policyId: string) => `/policies/${policyId}/users`,
+    user: (policyId: string, userId: string) =>
+      `/policies/${policyId}/users/${userId}`,
+  },
 } as const

@@ -472,7 +472,7 @@ export const policiesHandlers = [
   ),
 
   http.patch(
-    `${env.API_URL}/policies/:policyId/re-activate`,
+    `${env.API_URL}/policies/:policyId/reactivate`,
     async ({ cookies, params }) => {
       await networkDelay()
 
