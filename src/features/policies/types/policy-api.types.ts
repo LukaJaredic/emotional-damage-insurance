@@ -19,7 +19,9 @@ export type GetPoliciesQuery = {
   endBeforeDate?: string
 }
 
-export type UsePoliciesQuery = Omit<GetPoliciesQuery, 'page'>
+export type UsePoliciesQuery = Omit<GetPoliciesQuery, 'page' | 'terminated'> & {
+  terminated?: string
+}
 
 export type DeletePolicyAction = {
   policyId: Policy['id']

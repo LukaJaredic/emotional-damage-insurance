@@ -17,7 +17,7 @@ import {
   InputGroupInput,
 } from '@/components/ui/shadcn/input-group'
 
-type InputFieldType = 'email' | 'text' | 'number' | 'password'
+type InputFieldType = 'date' | 'email' | 'text' | 'number' | 'password'
 
 type InputFieldProps<TFieldValues extends FieldValues> = Omit<
   ComponentProps<typeof Input>,
@@ -39,7 +39,7 @@ type InputFieldProps<TFieldValues extends FieldValues> = Omit<
  * @param label Field label.
  * @param description Optional helper text shown below the field.
  * @param id Input id used to associate the label.
- * @param type Input type to render (options: 'email', 'text', 'number', 'password').
+ * @param type Input type to render (options: 'date', 'email', 'text', 'number', 'password').
  * @param className Optional class name for the field container.
  * @param props Additional input props passed to the underlying `<Input>` or `<InputGroupInput>`.
  */

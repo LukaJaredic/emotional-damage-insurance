@@ -300,6 +300,12 @@
     @apply bg-primary! text-primary-foreground!;
   }
 
+  /* Dates look weird on some mobiles without this */
+  input[type='date'] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
   /* tw4 switched to cursor: default for interactive elements */
   @media (hover: hover) {
     a[href],

@@ -1,30 +1,26 @@
-import { addDays, format, startOfTomorrow } from 'date-fns'
+import { addDays, isValid, parseISO, startOfTomorrow } from 'date-fns'
 import z from 'zod'
 
 import type { Policy } from '@/types'
-import { requiredString } from '@/utils'
+import {
+  requiredDateString,
+  requiredNumber,
+  requiredString,
+  toInputDate,
+} from '@/utils'
 
 import type { CreatePolicyAction } from '../types/policy-api.types'
 import type { PolicyFormValues } from '../types/policy-form.types'
 
-// TBD: first time working with a date in this repo - see how we handle it
-const dateString = requiredString().refine((value) => {
-  return !Number.isNaN(new Date(value).getTime())
-}, 'Invalid date')
-
-const limitSchema = z.coerce
-  .number()
-  .nonnegative('Limit must be zero or greater')
-
 const limitsSchema = z.object({
-  insult: limitSchema,
-  rejection: limitSchema,
-  badJoke: limitSchema,
-  gaslighting: limitSchema,
-  overthinking: limitSchema,
-  awkwardSilence: limitSchema,
-  whyDontYouQuestion: limitSchema,
-  meetingThatCouldHaveBeenEmail: limitSchema,
+  insult: requiredNumber(0),
+  rejection: requiredNumber(0),
+  badJoke: requiredNumber(0),
+  gaslighting: requiredNumber(0),
+  overthinking: requiredNumber(0),
+  awkwardSilence: requiredNumber(0),
+  whyDontYouQuestion: requiredNumber(0),
+  meetingThatCouldHaveBeenEmail: requiredNumber(0),
 })
 
 export const createSchema = z
@@ -32,19 +28,16 @@ export const createSchema = z
     policyHolderId: requiredString(),
     name: requiredString(1, 150),
     premium: z.coerce.number().positive('Premium must be greater than zero'),
-    startDate: dateString,
-    endDate: dateString,
+    startDate: requiredDateString(),
+    endDate: requiredDateString(),
     limits: limitsSchema,
   })
   .refine(
     ({ startDate, endDate }) => {
-      const parsedStartDate = new Date(startDate)
-      const parsedEndDate = new Date(endDate)
+      const parsedStartDate = parseISO(startDate)
+      const parsedEndDate = parseISO(endDate)
 
-      if (
-        Number.isNaN(parsedStartDate.getTime()) ||
-        Number.isNaN(parsedEndDate.getTime())
-      ) {
+      if (!isValid(parsedStartDate) || !isValid(parsedEndDate)) {
         return true
       }
 
@@ -56,27 +49,13 @@ export const createSchema = z
     },
   )
 
-function toDateInputValue(value?: Date | string) {
-  if (!value) {
-    return ''
-  }
-
-  try {
-    return format(new Date(value), 'yyyy-MM-dd')
-  } catch {
-    return ''
-  }
-}
-
 export function buildPolicyFormValues(policy?: Policy): PolicyFormValues {
   return {
     policyHolderId: policy?.policyHolderId ?? '',
     name: policy?.name ?? '',
     premium: policy?.premium ?? 0,
-    startDate: toDateInputValue(policy?.startDate || startOfTomorrow()),
-    endDate: toDateInputValue(
-      policy?.endDate || addDays(startOfTomorrow(), 30),
-    ),
+    startDate: toInputDate(policy?.startDate || startOfTomorrow()),
+    endDate: toInputDate(policy?.endDate || addDays(startOfTomorrow(), 30)),
     limits: {
       insult: policy?.limits.insult ?? 0,
       rejection: policy?.limits.rejection ?? 0,

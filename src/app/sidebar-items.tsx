@@ -1,4 +1,9 @@
-import { HandshakeIcon, UsersThreeIcon, type Icon } from '@phosphor-icons/react'
+import {
+  FileTextIcon,
+  HandshakeIcon,
+  UsersThreeIcon,
+  type Icon,
+} from '@phosphor-icons/react'
 
 import { paths } from '@/config'
 import type { PageAccess } from '@/utils'
@@ -22,5 +27,11 @@ export const sidebarItems: SidebarItem[] = [
     href: paths.policyHolders.getHref(),
     icon: HandshakeIcon,
     access: 'policy-holder:master-page',
+  },
+  {
+    title: 'Policies',
+    href: paths.policies.getHref(),
+    icon: FileTextIcon,
+    access: 'policy:master-page',
   },
 ]
