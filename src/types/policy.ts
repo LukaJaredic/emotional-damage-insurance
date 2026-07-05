@@ -28,3 +28,5 @@ export type PolicyUser = BaseEntity & {
   userId: User['id']
   limits: PolicyLimits
 }
+
+export type PolicyStatus = 'active' | 'terminated' | 'expired' | 'future'

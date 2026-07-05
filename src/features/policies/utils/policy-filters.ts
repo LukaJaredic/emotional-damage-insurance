@@ -17,12 +17,12 @@ export const policyFilters = [
   {
     name: 'terminated',
     type: 'select',
-    label: 'Status',
-    placeholder: 'Choose status',
+    label: 'Terminated',
+    placeholder: 'Is terminated?',
     isMultiple: false,
     options: [
-      { label: 'Active', value: 'false' },
-      { label: 'Terminated', value: 'true' },
+      { label: 'No', value: 'false' },
+      { label: 'Yes', value: 'true' },
     ],
   },
   {

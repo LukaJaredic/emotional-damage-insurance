@@ -6,7 +6,8 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { paths } from '@/config'
 import { env } from '@/config/env'
-import { premium, status } from '@/features/policies/utils/policy-labels'
+import type { PolicyDto } from '@/features/policies/types/policy-api.types'
+import { premium, statusLabel } from '@/features/policies/utils/policy-labels'
 import useMediaQuery from '@/hooks/use-media-query'
 import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
@@ -88,9 +89,17 @@ function mockPoliciesResponse({
         return mockApiError({ code: 'INTERNAL_ERROR', status })
       }
 
-      return HttpResponse.json(policies, { status })
+      return HttpResponse.json(policies.map(toPolicyDto), { status })
     }),
   )
+}
+
+function toPolicyDto(policy: Policy): PolicyDto {
+  return {
+    ...policy,
+    startDate: policy.startDate.toISOString(),
+    endDate: policy.endDate.toISOString(),
+  }
 }
 
 async function renderPoliciesMaster({
@@ -137,7 +146,7 @@ function searchInput() {
   return screen.getByPlaceholderText('Search by policy name')
 }
 
-function statusSelect() {
+function terminatedStatusSelect() {
   return screen.getByRole('combobox')
 }
 
@@ -172,7 +181,7 @@ describe('PoliciesMaster', () => {
       await renderPoliciesMaster()
 
       expect(searchInput()).toBeInTheDocument()
-      expect(statusSelect()).toBeInTheDocument()
+      expect(terminatedStatusSelect()).toBeInTheDocument()
       expect(startAfterInput()).toBeInTheDocument()
       expect(endBeforeInput()).toBeInTheDocument()
     })
@@ -224,7 +233,7 @@ describe('PoliciesMaster', () => {
           'href',
           paths.policies.detail.getHref(policy.id),
         )
-        expect(row).toHaveTextContent(status(policy))
+        expect(row).toHaveTextContent(statusLabel(policy))
         expectPremiumText(row!, policy)
       }
     })
@@ -245,7 +254,7 @@ describe('PoliciesMaster', () => {
           paths.policies.detail.getHref(policy.id),
         )
 
-        expect(within(card).getByText(status(policy))).toBeInTheDocument()
+        expect(within(card).getByText(statusLabel(policy))).toBeInTheDocument()
         expect(within(card).getByText(/cover/i)).toBeInTheDocument()
 
         expect(
@@ -287,7 +296,7 @@ describe('PoliciesMaster', () => {
       })
 
       await user.type(searchInput(), 'Premium')
-      await selectOptions(statusSelect(), ['Terminated'])
+      await selectOptions(terminatedStatusSelect(), ['Yes'])
       await user.type(startAfterInput(), '2026-01-01')
       await user.type(endBeforeInput(), '2027-12-31')
 

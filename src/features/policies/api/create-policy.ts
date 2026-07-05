@@ -5,12 +5,13 @@ import { apiPaths } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
 
-import type { CreatePolicyAction } from '../types/policy-api.types'
+import type { CreatePolicyAction, PolicyDto } from '../types/policy-api.types'
+import { normalizePolicy } from '../utils/normalize-policy'
 import { policyQueryKeys } from '../utils/policy-query-keys'
 
 export async function createPolicy(data: CreatePolicyAction): Promise<Policy> {
-  const response = await api.post<Policy>(apiPaths.policies.all(), data)
-  return response.data
+  const response = await api.post<PolicyDto>(apiPaths.policies.all(), data)
+  return normalizePolicy(response.data)
 }
 
 export function useCreatePolicy() {

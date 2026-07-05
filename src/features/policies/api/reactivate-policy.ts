@@ -5,16 +5,20 @@ import { apiPaths } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
 
-import type { ReactivatePolicyAction } from '../types/policy-api.types'
+import type {
+  PolicyDto,
+  ReactivatePolicyAction,
+} from '../types/policy-api.types'
+import { normalizePolicy } from '../utils/normalize-policy'
 import { policyQueryKeys } from '../utils/policy-query-keys'
 
 export async function reactivatePolicy({
   policyId,
 }: ReactivatePolicyAction): Promise<Policy> {
-  const response = await api.patch<Policy>(
+  const response = await api.patch<PolicyDto>(
     apiPaths.policies.reactivate(policyId),
   )
-  return response.data
+  return normalizePolicy(response.data)
 }
 
 export function useReactivatePolicy() {

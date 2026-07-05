@@ -3,7 +3,9 @@ import { Link } from 'react-router'
 import { Time } from '@/components/ui'
 import { paths } from '@/config'
 import type { Policy } from '@/types'
-import { premium, status } from '@features/policies/utils/policy-labels'
+import { premium } from '@features/policies/utils/policy-labels'
+
+import PolicyStatus from '../policy-status'
 
 type PolicyCardProps = {
   policy: Policy
@@ -28,7 +30,7 @@ function PolicyCard({ policy }: PolicyCardProps) {
           </div>
         </div>
         <p className="text-muted-foreground text-xs uppercase">
-          {status(policy)}
+          <PolicyStatus policy={policy} />
         </p>
       </div>
     </Link>
