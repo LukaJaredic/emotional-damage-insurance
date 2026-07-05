@@ -8,13 +8,17 @@ import { commonQueryOptions } from '@/utils'
 
 import type {
   GetPoliciesQuery,
+  PolicyDto,
   UsePoliciesQuery,
 } from '../types/policy-api.types'
+import { normalizePolicy } from '../utils/normalize-policy'
 import { policyQueryKeys } from '../utils/policy-query-keys'
 
 export async function getPolicies(params: GetPoliciesQuery): Promise<Policy[]> {
-  const response = await api.get<Policy[]>(apiPaths.policies.all(), { params })
-  return response.data
+  const response = await api.get<PolicyDto[]>(apiPaths.policies.all(), {
+    params,
+  })
+  return response.data.map(normalizePolicy)
 }
 
 function buildGetPoliciesQuery(

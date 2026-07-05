@@ -3,7 +3,9 @@ import { Time } from '@/components/ui'
 import { paths } from '@/config'
 import type { Policy } from '@/types'
 
-import { premium, status } from './policy-labels'
+import PolicyStatus from '../components/policy-status'
+
+import { premium } from './policy-labels'
 
 const tcb = tableColumnBuilder<Policy>()
 
@@ -17,7 +19,7 @@ export const policyColumns: TableColumn<Policy>[] = [
   tcb.custom({
     title: 'Status',
     dataIndex: 'terminated',
-    render: status,
+    render: (policy) => <PolicyStatus policy={policy} />,
   }),
   tcb.custom({
     title: 'Premium',
