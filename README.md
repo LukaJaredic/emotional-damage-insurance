@@ -1,10 +1,11 @@
-# Insurance Admin Dashboard
+# Insurance company - source of truth app
 
-Personal Portfolio - Internal insurance operations dashboard built with React, TypeScript, and Vite.
+Personal Portfolio - Internal insurance operations built with React, TypeScript, and Vite.
+Inspired by what I've seen in the field.
 
 ## Overview
 
-This project is an internal admin application for insurance workflows.
+This project is an application for insurance company's workflows.
 
 It is structured around a feature-based architecture inspired by Bulletproof React and is set up for local development with a mocked API.
 
