@@ -34,7 +34,7 @@ function buildRemoteDataState<T>(items: T[]): RemoteDataState<T> {
   }
 }
 
-function getOption(item: TestItem) {
+function renderOption(item: TestItem) {
   return {
     label: item.name,
     value: item.id,
@@ -56,7 +56,7 @@ function renderRemoteSelect({
         value={value}
         onChange={setValue}
         useRemoteData={useRemoteData}
-        getOption={getOption}
+        renderOption={renderOption}
       />
     )
   }

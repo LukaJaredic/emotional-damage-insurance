@@ -8,7 +8,7 @@ This project is an internal admin application for insurance workflows.
 
 It is structured around a feature-based architecture inspired by Bulletproof React and is set up for local development with a mocked API.
 
-The current codebase includes authentication, protected routing, shared UI primitives, testing utilities, and the foundation for building out insurance management flows such as clients, policy holders, policies, hospitals, and damage reports.
+The current codebase includes authentication, protected routing, users, policy holders, policies, shared UI components, and testing utilities.
 
 ## Tech Stack
 
@@ -31,7 +31,7 @@ The current codebase includes authentication, protected routing, shared UI primi
 
 ### Prerequisites
 
-- Node.js v24 (or from `.nvmrc` - `nvm use`)
+- Node.js v24 (see `.nvmrc`)
 - npm (should come with Node)
 
 ### Environment Variables
@@ -51,25 +51,12 @@ VITE_APP_SENTRY_DSN=
 Set `VITE_APP_SENTRY_ENABLED=true` and provide `VITE_APP_SENTRY_DSN` to send Sentry events. This works in development too; events are tagged with the current Vite mode, such as `development`.
 
 ```bash
-# Check dependencies before installing
-npm audit
-
-# If you see anything other than:
-found 0 vulnerabilities
-
-# run:
-npm audit fix
-
-# Only then install the dependencies.
-npm install
-
-# Start the app
+nvm use
+npm ci
 npm run dev
-
-# This starts both:
-# - the Vite development server
-# - the local mock API server
 ```
+
+`npm run dev` starts both the Vite app and the local mock API. Log in with `admin@example.com` and `admin123`.
 
 ## Available Scripts
 
@@ -143,6 +130,7 @@ src/
 - Features should not import from other features directly
 - Server state is managed with TanStack Query
 - Shared query keys live in `src/config/query-keys.ts`; feature-only query keys stay with that feature
+- Shared pagination settings live in `src/config/pagination.ts`
 - Persisted domain objects share `BaseEntity` audit fields and detail pages render audit metadata with `<Audit />`
 - Forms use React Hook Form with Zod validation
 - Local development and tests use mocked API handlers
@@ -179,7 +167,7 @@ See more here: [05 Lists And Tables](./docs/05_lists_and_tables.md)
 
 ### Forms
 
-Forms use React Hook Form with Zod, and shared field components from `src/components/form`.
+Forms use React Hook Form with Zod and shared fields from `src/components/form`. Remote selects load options through TanStack Query hooks.
 
 See more here: [06 Forms](./docs/06_forms.md)
 
@@ -209,7 +197,11 @@ See more here: [09 Testing](./docs/09_testing.md)
 
 ## Mock API
 
-The local API runs through an Express server wired to MSW handlers and mock data. This keeps frontend development and testing isolated from any real backend dependency.
+The local API runs through an Express server wired to MSW handlers and mock data. It supports users, policy holders, policies, policy lifecycle actions, and policy-user relationships.
+
+## Current Status
+
+This personal portfolio project is still in development. User and policy-holder flows are connected in the UI. Policy list and detail pages, mock APIs, permissions, and the policy form are implemented. The form is temporarily shown on the home page; the policy create button, detail actions, and policy-user management UI are not connected yet.
 
 ## Tooling notes
 
@@ -217,11 +209,5 @@ The local API runs through an Express server wired to MSW handlers and mock data
 - ESLint and Prettier are configured for code quality and consistency
 - Absolute imports are available through the `@/` alias family
 - Husky runs Git hooks before commits and pushes
-- To skip Git hooks for a one-off commit: `git commit -m "..." --no-verify`
-- To skip Git hooks for a one-off push: `git push --no-verify`
 
 See more here: [11 Git And Versioning](./docs/11_git_and_versioning.md)
-
-## Status
-
-The repo is in development and is meant to serve as a personal portfolio project, if you want to use it for your own projects, do so at your own discretion

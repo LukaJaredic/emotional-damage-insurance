@@ -9,6 +9,7 @@ Good shared examples:
 - `PageLayout`
 - `InputField`
 - `SelectField`
+- `RemoteSelectField`
 - `ConfirmDialog`
 - `Audit`
 
@@ -31,7 +32,7 @@ Keep feature-local examples:
 
 Shared components must not import feature code. If a shared component needs server data, move that endpoint to `src/api` first and import it from there.
 
-For example, `<Audit />` lives in `src/components/ui` and loads users through `useUserDetail` from `@/api`, not through `src/features/users`.
+For example, `<Audit />` loads users through `@/api`, not through `src/features/users`. The policy form also loads policy holders through `src/api/policy-holders` because that endpoint is used by more than one feature.
 
 ## How to export it
 
@@ -65,7 +66,7 @@ import { StatusBadge } from '@/components/ui'
 
 - Keep shared components small and composable.
 - Do not import feature code into `src/components`.
-- Export from the local barrel so features can import from one place - reducing the number of import lines - clutter.
+- Export from the local barrel so consumers have a clear import path.
 - Import React APIs explicitly from `react`, for example `import { useState, type ReactNode } from 'react'`.
 - Do not use `React.useState`, `React.ReactNode`, `React.ComponentProps`, or `import * as React` in project-owned code.
 - `src/components/ui/shadcn` is exempt because shadcn/Radix primitives follow upstream namespace-import patterns.

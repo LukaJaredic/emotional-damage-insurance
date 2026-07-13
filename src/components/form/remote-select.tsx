@@ -25,17 +25,17 @@ type RemoteSelectProps<
   | 'onMenuScrollToBottom'
 > & {
   useRemoteData: (params: TQuery) => RemoteDataState<TItem>
-  getOption: (item: TItem) => SelectOption
+  renderOption: (item: TItem) => SelectOption
   params?: Omit<TQuery, keyof RemoteSelectQuery>
 }
 
 function buildOptions<TItem extends Record<string, unknown>>(
   items: TItem[],
-  getOption: (item: TItem) => SelectOption,
+  renderOption: (item: TItem) => SelectOption,
   selectedOption: SelectOption | null,
   value: string | undefined,
 ) {
-  const options = items.map(getOption)
+  const options = items.map(renderOption)
 
   if (
     !selectedOption ||
@@ -53,7 +53,7 @@ function buildOptions<TItem extends Record<string, unknown>>(
  * Typing in the select updates the hook's `search` param.
  *
  * @param useRemoteData - A TenStack hook that fetches remote data based on the provided query parameters.
- * @param getOption - A function that maps each item returned by the remote data hook to a SelectOption.
+ * @param renderOption - A function that maps each item returned by the remote data hook to a SelectOption.
  * @param params - Additional query parameters (search param is already included) to pass to the remote data hook.
  * @param value - The currently selected value of the select.
  * @param onChange - A callback function that is called when the selected value changes.
@@ -65,7 +65,7 @@ function RemoteSelect<
   TQuery extends RemoteSelectQuery = RemoteSelectQuery,
 >({
   useRemoteData,
-  getOption,
+  renderOption,
   params,
   value,
   onChange,
@@ -89,7 +89,7 @@ function RemoteSelect<
     ...(params ?? {}),
     ...(search ? { search } : {}),
   } as TQuery)
-  const options = buildOptions(query.items, getOption, selectedOption, value)
+  const options = buildOptions(query.items, renderOption, selectedOption, value)
 
   function handleInputChange(nextValue: string, actionMeta: InputActionMeta) {
     if (actionMeta.action === 'input-change') {

@@ -26,7 +26,7 @@ export type PolicyFormProps = Omit<ComponentProps<'form'>, 'onSubmit'> & {
   onStatusChange?: ((status: PolicyFormStatus) => void) | undefined
 }
 
-function getPolicyHolderOption(policyHolder: PolicyHolder) {
+function renderPolicyHolderOption(policyHolder: PolicyHolder) {
   const displayName =
     policyHolder.type === 'business'
       ? policyHolder.businessName
@@ -79,7 +79,7 @@ function PolicyForm({
           label="Policy holder"
           placeholder="Search policy holders"
           useRemoteData={usePolicyHolders}
-          getOption={getPolicyHolderOption}
+          renderOption={renderPolicyHolderOption}
         />
         <InputField
           control={form.control}
