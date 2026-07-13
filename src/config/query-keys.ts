@@ -1,5 +1,6 @@
-import { DEFAULT_PAGE_LOAD_SIZE } from '@/lib'
 import type { PolicyHolderType } from '@/types'
+
+import { DEFAULT_PAGE_LOAD_SIZE } from './pagination'
 
 type PolicyHolderListQuery = {
   perPage?: number

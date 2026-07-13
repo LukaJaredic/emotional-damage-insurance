@@ -1,4 +1,4 @@
-import { DEFAULT_PAGE_LOAD_SIZE } from '@/lib'
+import { DEFAULT_PAGE_LOAD_SIZE } from '@/config'
 
 import type {
   UsePoliciesQuery,
