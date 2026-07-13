@@ -3,8 +3,11 @@ import type { FieldPath, FieldValues, UseFormReturn } from 'react-hook-form'
 
 import { isValidationApiError, type ApiErrorResponse } from '@/types'
 
-export function setApiFieldErrors<TFieldValues extends FieldValues>(
-  form: UseFormReturn<TFieldValues>,
+export function setApiFieldErrors<
+  TFieldValues extends FieldValues,
+  TTransformedValues extends FieldValues | undefined = TFieldValues,
+>(
+  form: UseFormReturn<TFieldValues, unknown, TTransformedValues>,
   apiError: unknown,
 ) {
   if (!isAxiosError<ApiErrorResponse>(apiError)) {

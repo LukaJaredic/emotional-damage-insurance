@@ -1,7 +1,11 @@
 export { default as Filters } from './filters'
 export { default as InputField } from './input-field'
+export { default as RemoteSelect } from './remote-select'
+export { default as RemoteSelectField } from './remote-select-field'
 export { default as Select } from './select'
 export { default as SelectField } from './select-field'
 
 export * from './filters'
+export * from './remote-select'
+export * from './remote-select-field'
 export * from './select'

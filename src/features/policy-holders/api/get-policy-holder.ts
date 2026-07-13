@@ -1,11 +1,10 @@
 import { useQuery, type QueryOptions } from '@tanstack/react-query'
 
-import { apiPaths } from '@/config'
+import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib/api'
 import type { PolicyHolder } from '@/types'
 
 import type { GetPolicyHolderQuery } from '../types/policy-holder-api.types'
-import { policyHolderQueryKeys } from '../utils/policy-holder-query-keys'
 
 export async function getPolicyHolder({
   policyHolderId,
@@ -21,7 +20,7 @@ export function usePolicyHolderDetail(
   queryOptions?: QueryOptions<PolicyHolder>,
 ) {
   return useQuery({
-    queryKey: policyHolderQueryKeys.detail(policyHolderId),
+    queryKey: queryKeys.policyHolders.detail(policyHolderId),
     queryFn: () => getPolicyHolder({ policyHolderId }),
     retry: false,
     ...queryOptions,
