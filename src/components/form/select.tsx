@@ -1,5 +1,6 @@
 import {
   type GroupBase,
+  type InputActionMeta,
   type MultiValue,
   type SingleValue,
   default as ReactSelect,
@@ -21,6 +22,9 @@ type BaseSelectProps = {
   name?: string
   noOptionsMessage?: string
   isClearable?: boolean
+  isLoading?: boolean
+  onInputChange?: (value: string, actionMeta: InputActionMeta) => void
+  onMenuScrollToBottom?: () => void
   'aria-invalid'?: boolean
   'aria-label'?: string
 }
@@ -92,6 +96,9 @@ function Select({
   name,
   noOptionsMessage = 'No options found',
   isClearable = true,
+  isLoading = false,
+  onInputChange,
+  onMenuScrollToBottom,
   'aria-invalid': ariaInvalid = false,
   'aria-label': ariaLabel,
 }: SelectProps) {
@@ -99,6 +106,8 @@ function Select({
     ...(inputId ? { inputId } : {}),
     ...(name ? { name } : {}),
     ...(placeholder ? { placeholder } : {}),
+    ...(onInputChange ? { onInputChange } : {}),
+    ...(onMenuScrollToBottom ? { onMenuScrollToBottom } : {}),
   }
 
   const selectedValue = buildValueObject(value, options)
@@ -120,6 +129,7 @@ function Select({
       isMulti={isMultiple}
       isDisabled={disabled}
       isClearable={isClearable}
+      isLoading={isLoading}
       menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
       menuPosition="fixed"
       menuShouldScrollIntoView={false}

@@ -1,181 +1,116 @@
-# AGENTS.md
+# Agent Guide
 
-The inspiration for this document and overall project architecture comes from:
-https://github.com/alan2207/bulletproof-react/
+This repository is a React and Vite insurance administration dashboard. Its architecture is inspired by [Bulletproof React](https://github.com/alan2207/bulletproof-react/), but this project has its own conventions.
 
-## Project Overview
+## Before Changing Code
 
-Bulletproof React is a scalable React application architecture that provides opinionated guidelines and best practices for building production-ready React applications. The project includes three different implementations:
+1. Read `README.md` for setup and project structure.
+2. Read the relevant guide in `docs/`.
+3. Inspect nearby code and tests before choosing a pattern.
+4. Keep changes small and consistent with the existing feature.
 
-- **React Vite**: Modern Vite-based React application
-- **Next.js App Router**: Next.js 13+ with App Router
-- **Next.js Pages**: Traditional Next.js with Pages Router
-
-### Application Domain
-
-The demo application is a insurance company internal application where users can:
-
-- Create clients, policy holders, policies, hospitals
-- Open and track damage reports
-- Comment on discussions
-- Manage user roles (ADMIN/USER permissions)
-
-## Setup Commands
+## Commands
 
 ```bash
-# Use the project Node version
 nvm use
-
-# Install dependencies
-npm install
-
-# Start development server
+npm ci
 npm run dev
-
-# Run tests
-npm test
-
-# Run e2e tests
-npm run e2e
-
-# Lint code
+npm run test
+npm run tsc
 npm run lint
-
-# Build for production
-npm run build
+npm run format
 ```
+
+Use `npm run lint:with-cycle-check` before pushing. It is slower than normal lint because it checks the full dependency graph.
+
+Do not run `npm run e2e` while `npm run dev` is running. Playwright starts its own app and mock API servers.
 
 ## Project Structure
 
-The codebase follows a feature-based architecture organized as follows:
-
-```
+```text
 src/
-├── app/              # Application layer (routes, providers, router)
-├── api/              # Shared API fetchers and hooks used outside one feature
-├── components/       # Shared UI components
-├── config/          # Global configurations, env variables, query keys
-├── features/        # Feature-based modules (auth, discussions, comments, etc.)
-├── hooks/           # Shared React hooks
-├── lib/             # Preconfigured libraries (react-query, auth, etc.)
-├── testing/         # Test utilities and mocks
-├── types/           # Shared TypeScript types
-└── utils/           # Shared utility functions
+├── api/         # API code shared across features or app-level code
+├── app/         # Routes, providers, and application composition
+├── components/  # Shared UI, form, layout, and data components
+├── config/      # Environment, paths, pagination, and shared query keys
+├── features/    # Feature-owned API, UI, types, and utilities
+├── hooks/       # Shared React hooks
+├── lib/         # Configured third-party libraries
+├── testing/     # Test setup, helpers, MSW handlers, and mock data
+├── types/       # Shared domain types
+└── utils/       # Shared utilities
 ```
 
-### Feature Structure
+Implemented domain areas are users, policy holders, and policies. User roles are `admin`, `employee`, and `customer`.
 
-Each feature should be self-contained:
+## Architecture Rules
 
-```
-src/features/awesome-feature/
-├── api/         # API calls and hooks for this feature
-├── components/  # Feature-specific components
-├── hooks/       # Feature-specific hooks
-├── types/       # Feature-specific types
-└── utils/       # Feature-specific utilities
-```
+- Data flows from shared modules to features to the app: `shared -> features -> app`.
+- Features must not import from other features.
+- Keep feature-only code inside its feature.
+- Move API code to `src/api` when app-level code, shared UI, or more than one feature needs it.
+- Keep app route files thin. They should read route params and render feature entry components.
+- Put shared domain objects in `src/types`; put form and feature-only types inside the feature.
+- Avoid barrel imports inside foundational modules when a direct file import prevents a dependency cycle.
 
-## Code Standards
+The policy-holder list API is the main ownership example. It lives in `src/api/policy-holders` because both policy holders and policies use it. Its shared query keys live in `src/config/query-keys.ts`.
 
-### TypeScript
+## TypeScript And Style
 
-- **Strict mode enabled** - All TypeScript strict checks are enforced
-- **Type-first approach** - Define types before implementation
-- **Absolute imports** - Use `@/` prefix for all src imports (e.g., `@/components/ui/button`)
+- TypeScript strict mode is enabled.
+- Files and folders use kebab-case.
+- Components use PascalCase; functions and variables use camelCase.
+- Use configured aliases such as `@/`, `@app/`, `@features/`, and `@testing/` for source imports.
+- Import React APIs directly, for example `import { useState, type ReactNode } from 'react'`.
+- Project-owned code should not use `React.useState`, `React.ReactNode`, or `import * as React`.
+- Files under `src/components/ui/shadcn` may keep upstream shadcn/Radix import patterns.
+- Let ESLint and Prettier enforce formatting.
 
-### Code Style
+## Server State
 
-- **ESLint + Prettier** configured for consistent formatting
-- **Kebab-case** for file and folder names
-- **PascalCase** for React components
-- **camelCase** for functions and variables
-- **Explicit React imports** - Import React APIs directly from `react` (for example, `import { useState, type ReactNode } from 'react'`) instead of using `React.useState`, `React.ReactNode`, `React.ComponentProps`, or `import * as React`. Files copied from shadcn/Radix primitives under `src/components/ui/shadcn` are exempt because they follow upstream patterns.
-- **Grouped component declarations** - Inside components, separate unrelated groups of declarations with blank lines: mode flags, hooks, mutations, form setup, and derived state should be visually grouped.
+- Use the shared Axios client from `src/lib/api.ts`.
+- Use TanStack Query for server state.
+- Keep fetchers separate from query and mutation hooks.
+- Keep feature-only query keys in the feature's `utils` folder.
+- Keep shared query keys in `src/config/query-keys.ts`.
+- Keep pagination defaults in `src/config/pagination.ts`.
+- Invalidate related query keys after successful mutations.
+- Non-GET API failures already show a toast through the shared Axios interceptor.
 
-### Architecture Rules
+## Components And Forms
 
-- **No cross-feature imports** - Features should not import from each other
-- **Unidirectional flow** - Code flows: shared → features → app
-- **Colocation** - Keep related code as close as possible to where it's used
-- **Shared APIs for reused endpoints** - API code used by shared UI or multiple features belongs in `src/api`; feature-only endpoints stay in the feature `api/` folder.
-- **Audit base type** - Domain objects should extend `BaseEntity` so `id`, `createdAt`, `lastEditedAt`, `createdBy`, and `lastEditedBy` are consistently available.
+- Put generic components in `src/components` only when they are reusable.
+- Shared components must not import feature code.
+- Forms use React Hook Form and Zod.
+- Use shared fields from `src/components/form` instead of rebuilding labels and errors.
+- Forms must not submit generated `BaseEntity` fields.
+- Pass stable imported hooks to `RemoteData`, `RemoteDataWithFilters`, and `RemoteSelect`. Do not pass inline hook functions.
+- Build table columns with `tableColumnBuilder()`.
 
-## Component Guidelines
+## Permissions
 
-### Best Practices
+- Define role permissions in `src/utils/permissions.ts`.
+- Use `allowPage()` and `canAccess()` for routes and navigation.
+- Use `allow()` and `can()` for resource actions, records, and fields.
+- Page names use singular resources, for example `user:master-page` and `policy-holder:detail-page`.
+- Frontend permissions improve the UI; API handlers must still enforce authorization.
 
-- **Composition over props** - Use children/slots instead of many props
-- **Single responsibility** - Each component should have one clear purpose
-- **Extract render functions** - Move complex JSX into separate components
-- **Limit prop count** - Consider composition if accepting too many props
+## Testing
 
-### Styling
+- Prefer integration tests for feature behavior.
+- Use unit tests for important utilities and shared logic.
+- Use E2E tests for a small number of critical journeys.
+- Test what the user sees and does, not internal hook calls.
+- Use `renderApp()` when providers, routing, auth, permissions, or React Query are needed.
+- Prefer MSW server overrides over mocking API hooks or shared form controls.
+- Use existing test helpers before adding new interaction helpers.
+- Global test setup resets the DOM, mocks, mock database, handlers, cookies, and query client.
 
-- **Tailwind CSS** is the primary styling solution
-- **Shadcn** using Radix UI primitives
+## Mock API
 
-## State Management Strategy
+Development and tests use MSW handlers. Persisted models include `BaseEntity` audit fields:
 
-### Component State
-
-- Use `useState` for simple independent state
-- Use `useReducer` for complex state with multiple related updates
-
-### Application State
-
-- **Context API** for global application state (modals, notifications, themes)
-- Keep state as close to usage as possible
-- Avoid premature globalization
-
-### Server State
-
-- **React Query (TanStack Query)** for all server state management
-- **MSW (Mock Service Worker)** for API mocking during development
-- Separate fetcher functions from hooks
-
-### Form State
-
-- **React Hook Form** for form management
-- **Zod** for form validation schemas
-- Create reusable Form and Input components
-
-## API Layer
-
-### Structure
-
-Each API endpoint should have:
-
-1. **Types & validation schemas** for request/response
-2. **Fetcher function** using configured API client
-3. **React Query hook** for data fetching/caching
-4. **Query keys** from `src/config/query-keys.ts` when reused from shared/common code, or from feature-local query-key files when feature-only
-
-### Example Pattern
-
-```typescript
-// src/features/discussions/api/get-discussions.ts
-export const getDiscussions = (
-  params: GetDiscussionsParams,
-): Promise<Discussion[]> => {
-  return api.get('/discussions', { params })
-}
-
-export const useDiscussions = (params: GetDiscussionsParams) => {
-  return useQuery({
-    queryKey: ['discussions', params],
-    queryFn: () => getDiscussions(params),
-  })
-}
-```
-
-Common endpoints used outside one feature live under `src/api`, for example `src/api/auth/` and `src/api/users/get-user.ts`. Export common API modules from local barrels and from `src/api/index.ts`.
-
-## Audit Fields
-
-All persisted domain objects include common audit fields through `BaseEntity`:
-
-```typescript
+```ts
 type BaseEntity = {
   id: string
   createdAt: number
@@ -185,166 +120,12 @@ type BaseEntity = {
 }
 ```
 
-Audit fields are generated by the backend/mock backend, are not editable in forms, and should be shown on detail pages with the shared `<Audit />` component.
+The mock backend generates these fields. Forms should not expose them, and detail pages should render them with `<Audit />`.
 
-## Testing Strategy
+## Git Hooks
 
-### Testing Pyramid
+- Pre-commit runs normal ESLint and a Prettier check.
+- Pre-push runs ESLint with dependency-cycle checks, TypeScript, and Vitest.
+- Do not bypass hooks unless explicitly requested. If a hook cannot run, report why and run the available checks directly.
 
-1. **Integration Tests** (primary focus) - Test feature workflows
-2. **Unit Tests** - Test shared utilities and complex logic
-3. **E2E Tests** - Test critical user journeys
-
-### Tools
-
-- **Vitest** - Test runner (Jest-compatible but faster)
-- **Testing Library** - Component testing utilities
-- **Playwright** - E2E testing framework
-- **MSW** - API mocking for tests
-
-### Testing Patterns
-
-- Test behavior, not implementation details
-- Use real HTTP requests with MSW instead of mocking fetch
-- Focus on user interactions and outcomes
-
-## Security Considerations
-
-### Authentication
-
-- **JWT tokens** stored in HttpOnly cookies (preferred) or localStorage
-- Automatic token refresh handling
-
-### Authorization
-
-- **RBAC** (Role-Based Access Control) for basic permissions
-- **PBAC** (Permission-Based Access Control) for granular control
-- Client-side authorization for UX (always validate server-side)
-
-### XSS Prevention
-
-- **Sanitize all user inputs** before rendering
-- Use DOMPurify for HTML content sanitization
-- Validate and escape data at boundaries
-
-## Performance Optimization
-
-### Code Splitting
-
-- **Route-level splitting** - Lazy load pages/routes
-- Avoid excessive splitting (balance requests vs. bundle size)
-
-### React Optimizations
-
-- **Children prop pattern** - Prevent unnecessary re-renders
-- **State colocation** - Keep state close to where it's used
-- **State initializer functions** - For expensive initial computations
-
-### Image Optimization
-
-- Lazy loading for images outside viewport
-- Modern formats (WebP) with fallbacks
-- Responsive images using srcset
-
-## Error Handling
-
-### API Errors
-
-- Global error interceptor in API client
-- Automatic error notifications via toast system
-- Automatic token refresh on 401 errors
-
-### Application Errors
-
-- **Error Boundaries** at feature level (not just app level)
-- **Sentry** integration for production error tracking
-- Graceful fallbacks for broken components
-
-## Build and Deployment
-
-### Development
-
-- Use the Node version from `.nvmrc` (`nvm use`) before running scripts.
-- **Vite** for fast development builds and HMR
-- **TypeScript** strict mode for compile-time safety
-- **ESLint + Prettier** for code quality
-
-### Production
-
-- Deploy to CDN platforms: **Vercel**, **Netlify**, or **AWS CloudFront**
-- Source maps uploaded to Sentry for error tracking
-- Environment-specific configuration via env files
-
-## File Naming Conventions
-
-- **Components**: `kebab-case.tsx` (e.g., `user-profile.tsx`)
-- **Hooks**: `use-kebab-case.ts` (e.g., `use-discussions.ts`)
-- **Utilities**: `kebab-case.ts` (e.g., `format-date.ts`)
-- **Types**: `kebab-case.ts` (e.g., `api-types.ts`)
-- **Folders**: `kebab-case` throughout
-
-## Development Workflow
-
-### Git Hooks (Husky)
-
-- **Pre-commit**: ESLint, Prettier, TypeScript check
-- **Pre-push**: Run test suite
-- Ensure all checks pass before allowing commits
-
-### Code Generation
-
-- **Plop.js** generators for consistent component creation
-- Templates include component, stories, and test files
-- Maintains consistent structure across team
-
-## Key Libraries
-
-### Core
-
-- **React 19+** with concurrent features
-- **TypeScript** in strict mode
-- **Vite** or **Next.js** for build tooling
-
-### UI & Styling
-
-- **Tailwind CSS** for styling
-- **Radix UI** for headless components
-- **Lucide React** for icons
-
-### Data & State
-
-- **TanStack Query** for server state
-- **Context API** for shared client state
-- **React Hook Form + Zod** for forms
-
-### Testing & Development
-
-- **Vitest** for unit/integration tests
-- **Playwright** for E2E tests
-- **MSW** for API mocking
-
-## Common Patterns
-
-### Feature Development
-
-1. Start with API types and validation schemas
-2. Create API fetcher functions and React Query hooks
-3. Build UI components with proper TypeScript integration
-4. Add integration tests covering the feature workflow
-5. Update routing and navigation as needed
-
-### Component Creation
-
-1. Use Plop generator: `npm run generate:component`
-2. Follow composition patterns over prop drilling
-3. Add Storybook stories for complex components
-4. Include unit tests for components with logic
-
-### State Management
-
-1. Start with local component state
-2. Lift to parent component if needed by siblings
-3. Move to global state only if needed across features
-4. Use React Query for all server state
-
-This architecture prioritizes developer experience, maintainability, and scalability while following React and JavaScript best practices.
+See `docs/` for focused explanations of auth, features, API ownership, lists, forms, permissions, testing, and Git workflow.

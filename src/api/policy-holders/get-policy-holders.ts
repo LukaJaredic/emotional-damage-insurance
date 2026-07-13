@@ -1,16 +1,19 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 
-import type { RemoteDataState } from '@/components/data/remote-data/remote-data.types'
-import { apiPaths } from '@/config'
+import type { RemoteDataState } from '@/components/data/remote-data'
+import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
-import type { PolicyHolder } from '@/types/policy-holder'
-import { commonQueryOptions } from '@/utils/query'
+import type { PolicyHolder, PolicyHolderType } from '@/types'
+import { commonQueryOptions } from '@/utils'
 
-import type {
-  GetPolicyHoldersQuery,
-  UsePolicyHoldersQuery,
-} from '../types/policy-holder-api.types'
-import { policyHolderQueryKeys } from '../utils/policy-holder-query-keys'
+export type GetPolicyHoldersQuery = {
+  page: number
+  perPage?: number
+  search?: string
+  type?: PolicyHolderType
+}
+
+export type UsePolicyHoldersQuery = Omit<GetPolicyHoldersQuery, 'page'>
 
 export async function getPolicyHolders(
   params: GetPolicyHoldersQuery,
@@ -26,7 +29,7 @@ export function usePolicyHolders(
 ): RemoteDataState<PolicyHolder> {
   const query = useInfiniteQuery({
     ...commonQueryOptions,
-    queryKey: policyHolderQueryKeys.list(params),
+    queryKey: queryKeys.policyHolders.list(params),
     queryFn: ({ pageParam }) =>
       getPolicyHolders({
         ...params,

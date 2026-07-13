@@ -26,7 +26,7 @@
 ## Session setup
 
 - The frontend does not store tokens manually.
-- The mock API sets an HTTPOnly cookie on `/login`.
+- The mock API sets a development-only cookie after `POST /auth/login`.
 - The current user is cached in React Query under `queryKeys.auth.me()`.
 - Shared auth query keys live in `src/config/query-keys.ts`.
 - Protected routes check if the user exists in context.
@@ -42,7 +42,7 @@ Auth and page access are related, but they are not the same thing.
 Use `AuthGuard page={...}` for protected pages that need page-level permission checks.
 
 ```tsx
-<AuthGuard page="users:master-page">
+<AuthGuard page="user:master-page">
   <AppLayout>{page}</AppLayout>
 </AuthGuard>
 ```
@@ -75,6 +75,6 @@ function UserMenu() {
 
 - The login form already fills in the default mock credentials.
 - Use `admin@example.com` and `admin123` when you need to log in manually.
-- The `redirectTo` query param is used to return the user to the page they originally requested, it can be used to intentionally redirect user on login, for eg. links received via email.
+- The `redirectTo` query param returns the user to the requested pathname after login. Query parameters are not preserved.
 
 [Shared Components →](./02_shared_components.md)

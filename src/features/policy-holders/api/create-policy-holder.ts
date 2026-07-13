@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { apiPaths } from '@/config'
+import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib/api'
 import type { PolicyHolder } from '@/types'
 
 import type { CreatePolicyHolderAction } from '../types/policy-holder-api.types'
-import { policyHolderQueryKeys } from '../utils/policy-holder-query-keys'
 
 export async function createPolicyHolder(
   data: CreatePolicyHolderAction,
@@ -25,7 +24,7 @@ export function useCreatePolicyHolder() {
     mutationFn: createPolicyHolder,
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: policyHolderQueryKeys.all(),
+        queryKey: queryKeys.policyHolders.all(),
       })
       void toast.success('Policy holder created successfully')
     },

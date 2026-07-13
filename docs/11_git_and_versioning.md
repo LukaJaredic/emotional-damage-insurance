@@ -2,55 +2,29 @@
 
 ## Branches
 
-All changes go through a non-`main` branch.
-
-`main` receives changes only through pull requests that are squash merged.
-
-Optional branch name examples:
-
-- `feat/add-policy-holder-flow`
-- `fix/user-detail-loading-state`
-- `chore/eslint-optimizations`
+Work on a non-`main` branch and merge through a pull request. Pull requests are squash or rebase merged into `main`.
 
 ## Commits
 
-On a non-`main` branch, commit however is useful while working.
-
-Branch commit history does not need to be perfect because the pull request is squash merged into `main`.
+Use clear commit messages while working. The branch history does not need to be perfect because it is squash merged.
 
 ## Pull Requests
 
-The PR title and description are important because they become the squash commit title and description.
-
-Keep PR titles and descriptions short, simple, and clear.
-
-Use proper Markdown in PR descriptions. Wrap technical names like `CYCLE_CHECK_ENABLED`, `eslint.config.js`, `package.json`, and `eslint-plugin-import` in backticks.
-
-## PR Title
-
-Use one of these prefixes:
+Use a short title with one of these prefixes:
 
 - `feat`
 - `fix`
 - `chore`
 
-Format:
-
 ```text
-prefix: Short title
-```
-
-Examples:
-
-```text
-chore: Eslint optimizations
-feat: Add policy holder detail page
+feat: Add policy detail page
 fix: Handle missing user details
+chore: Update ESLint checks
 ```
 
-## PR Description
+The description should briefly explain what changed and why. Add implementation details only when they help the reviewer.
 
-Always use this Markdown structure:
+A simple structure is enough:
 
 ```md
 ## What
@@ -96,12 +70,4 @@ When a PR has multiple points, use matching numbered lists across `What`, `Why`,
 3. Adds `docs/11_git_and_versioning.md` and links it from `README.md`.
 ```
 
-Avoid long explanations unless the change needs them.
-
-## Squash Merge
-
-Before merging, copy the PR title into the squash commit title.
-
-Copy the PR description into the squash commit description.
-
-The final commit on `main` should explain what changed, why it changed, and how it changed.
+Avoid long explanations unless the change needs them. The 3 points in previous example are just that - an example. Your PR can have more or less points.

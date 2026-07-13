@@ -53,9 +53,9 @@ That means the page decides what the trigger button looks like, while the dialog
 
 ## Async behavior
 
-- Both `PolicyHolderFormDialog` and `ConfirmDialog` track `idle`, `pending`, and `closed` state.
-- Forms "don't know" that they are in a `Dialog`, so they track `success` instead of `closed` - which is later converted by their `Dialogs`.
+- Dialogs track whether an action is idle, pending, or closed.
+- Forms report `pending`, `success`, or `idle` through `onStatusChange`.
+- The wrapper closes the dialog after a successful form submission.
 - Pending actions disable buttons and show a spinner.
-- Successful actions close the dialog via mentioned conversion `success` -> `closed`.
 
 [← Forms](./06_forms.md) | [Permissions →](./08_permissions.md)
