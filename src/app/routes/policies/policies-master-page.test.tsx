@@ -320,9 +320,17 @@ describe('PoliciesMaster', () => {
       }
     })
 
-    it.todo(
-      'should open a create form when the create button is clicked',
-      () => {},
-    )
+    it('should open a create form when the create button is clicked', async () => {
+      const { user } = await renderPoliciesMaster()
+
+      await user.click(screen.getByRole('button', { name: 'Create a policy' }))
+
+      expect(
+        screen.getByRole('dialog', { name: 'Create a policy' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText('Fill in the details below to create a new policy.'),
+      ).toBeInTheDocument()
+    })
   })
 })

@@ -22,7 +22,7 @@ vi.mock('./user-form', () => ({
 async function renderDialog(user?: User) {
   await renderApp(
     <UserFormDialog user={user}>
-      <button id="test-trigger">Trigger</button>
+      <button>Trigger</button>
     </UserFormDialog>,
     {
       user: testUsers.admin,

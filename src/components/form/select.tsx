@@ -1,6 +1,8 @@
 import {
+  components,
   type GroupBase,
   type InputActionMeta,
+  type MenuListProps,
   type MultiValue,
   type SingleValue,
   default as ReactSelect,
@@ -121,6 +123,7 @@ function Select({
   return (
     <ReactSelect<SelectOption, boolean, GroupBase<SelectOption>>
       {...optionalProps}
+      components={{ MenuList }}
       aria-label={ariaLabel}
       aria-invalid={ariaInvalid}
       options={options}
@@ -181,6 +184,25 @@ function Select({
           zIndex: 60,
           pointerEvents: 'auto',
         }),
+      }}
+    />
+  )
+}
+
+/**
+ * Radix dialog prevents scrolling on the body when the dialog is open, which also prevents scrolling on the select menu.
+ * This component stops the scroll event from propagating to the body, allowing the select menu to scroll when it is open inside a dialog.
+ */
+function MenuList(
+  props: MenuListProps<SelectOption, boolean, GroupBase<SelectOption>>,
+) {
+  return (
+    <components.MenuList
+      {...props}
+      innerProps={{
+        ...props.innerProps,
+        onWheel: (event) => event.stopPropagation(),
+        onTouchMove: (event) => event.stopPropagation(),
       }}
     />
   )

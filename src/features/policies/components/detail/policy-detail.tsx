@@ -14,7 +14,10 @@ import { usePolicyDetail } from '@features/policies/api/get-policy'
 import PolicyStatus from '../policy-status'
 
 import PolicyBaseInfo from './policy-base-info'
+import PolicyDeleteDialog from './policy-delete-dialog'
 import PolicyLimits from './policy-limits'
+import PolicyReactivateDialog from './policy-reactivate-dialog'
+import PolicyTerminateDialog from './policy-terminate-dialog'
 
 type PolicyDetailProps = {
   policyId: string
@@ -42,20 +45,29 @@ function PolicyDetail({ policyId }: PolicyDetailProps) {
       actions={() => (
         <>
           {can('policy:update', policy, '*') ? (
-            <Button type="button" variant="outline">
-              {policy.terminated ? (
-                <ArrowCounterClockwiseIcon data-icon="inline-start" />
-              ) : (
-                <ProhibitIcon data-icon="inline-start" />
-              )}
-              {policy.terminated ? 'Reactivate policy' : 'Terminate policy'}
-            </Button>
+            policy.terminated ? (
+              <PolicyReactivateDialog policy={policy}>
+                <Button type="button" variant="outline">
+                  <ArrowCounterClockwiseIcon data-icon="inline-start" />
+                  Reactivate policy
+                </Button>
+              </PolicyReactivateDialog>
+            ) : (
+              <PolicyTerminateDialog policy={policy}>
+                <Button type="button" variant="outline">
+                  <ProhibitIcon data-icon="inline-start" />
+                  Terminate policy
+                </Button>
+              </PolicyTerminateDialog>
+            )
           ) : null}
           {can('policy:delete', policy) ? (
-            <Button type="button" variant="destructive">
-              <TrashIcon data-icon="inline-start" />
-              Delete policy
-            </Button>
+            <PolicyDeleteDialog policy={policy}>
+              <Button type="button" variant="destructive">
+                <TrashIcon data-icon="inline-start" />
+                Delete policy
+              </Button>
+            </PolicyDeleteDialog>
           ) : null}
         </>
       )}

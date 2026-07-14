@@ -33,7 +33,7 @@ vi.mock('./policy-holder-form', () => ({
 async function renderDialog(policyHolder?: PolicyHolder) {
   await renderApp(
     <PolicyHolderFormDialog policyHolder={policyHolder}>
-      <button id="test-trigger">Trigger</button>
+      <button>Trigger</button>
     </PolicyHolderFormDialog>,
     {
       user: testUsers.admin,
