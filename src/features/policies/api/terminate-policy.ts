@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { apiPaths } from '@/config'
+import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
 
@@ -28,6 +28,9 @@ export function useTerminatePolicy() {
     mutationFn: terminatePolicy,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: policyQueryKeys.all() })
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.users.limits.all(),
+      })
       void toast.success('Policy terminated successfully')
     },
   })

@@ -29,4 +29,10 @@ export type PolicyUser = BaseEntity & {
   limits: PolicyLimits
 }
 
+export type PolicyWithUserLimits = Policy & {
+  userId: User['id']
+  userLimits: PolicyLimits
+  relationship: BaseEntity
+}
+
 export type PolicyStatus = 'active' | 'terminated' | 'expired' | 'future'

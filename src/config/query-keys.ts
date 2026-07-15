@@ -26,5 +26,9 @@ export const queryKeys = {
   },
   users: {
     detail: (userId: string) => ['users', userId] as const,
+    limits: {
+      all: () => ['users', 'limits'] as const,
+      detail: (userId: string) => ['users', 'limits', userId] as const,
+    },
   },
 }
