@@ -7,6 +7,7 @@ export const apiPaths = {
   users: {
     all: () => '/users',
     one: (userId: string) => `/users/${userId}`,
+    limits: (userId: string) => `/users/${userId}/limits`,
   },
   policyHolders: {
     all: () => '/policy-holders',

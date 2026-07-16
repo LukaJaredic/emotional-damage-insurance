@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { apiPaths } from '@/config'
+import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { PolicyUser } from '@/types'
 
@@ -24,8 +24,13 @@ export function useConnectPolicyUser() {
 
   return useMutation({
     mutationFn: connectPolicyUser,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: policyQueryKeys.all() })
+    onSuccess: (_, { policyId, userId }) => {
+      void queryClient.invalidateQueries({
+        queryKey: policyQueryKeys.detail(policyId),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.users.limits.detail(userId),
+      })
       void toast.success('User connected to policy successfully')
     },
   })

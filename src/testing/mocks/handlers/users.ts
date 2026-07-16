@@ -1,7 +1,12 @@
 import { HttpResponse, http } from 'msw'
 
 import { env } from '@/config/env'
-import type { BaseEntity } from '@/types'
+import type {
+  BaseEntity,
+  Policy,
+  PolicyLimits,
+  PolicyWithUserLimits,
+} from '@/types'
 import type { User } from '@/types/user'
 import { buildPermissionsFor } from '@/utils'
 import {
@@ -144,6 +149,74 @@ export const usersHandlers = [
       return mockInternalError()
     }
   }),
+
+  http.get(
+    `${env.API_URL}/users/:userId/limits`,
+    async ({ cookies, params }) => {
+      await networkDelay()
+
+      try {
+        const { user } = requireAuth(cookies)
+
+        if (!user) {
+          return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
+        }
+
+        const userId = String(params.userId)
+        const foundUser = findUserById(userId)
+
+        if (!foundUser) {
+          return mockApiError({ code: 'USER_NOT_FOUND', status: 404 })
+        }
+
+        const { can } = buildPermissionsFor(user as User)
+
+        if (!can('user:read', foundUser as User)) {
+          return mockApiError({ code: 'FORBIDDEN', status: 403 })
+        }
+
+        const policies = db.policyUser
+          .getAll()
+          .filter((relationship) => relationship.userId === userId)
+          .flatMap((relationship) => {
+            const policy = db.policy.findFirst({
+              where: {
+                id: {
+                  equals: relationship.policyId,
+                },
+              },
+            })
+
+            if (!policy) {
+              return []
+            }
+
+            const result: PolicyWithUserLimits = {
+              ...(policy as unknown as Policy),
+              startDate: new Date(policy.startDate),
+              endDate: new Date(policy.endDate),
+              limits: { ...(policy.limits as PolicyLimits) },
+              userId: relationship.userId,
+              userLimits: { ...(relationship.limits as PolicyLimits) },
+              relationship: {
+                id: relationship.id,
+                createdAt: relationship.createdAt,
+                lastEditedAt: relationship.lastEditedAt,
+                createdBy: relationship.createdBy,
+                lastEditedBy: relationship.lastEditedBy,
+              },
+            }
+
+            return [result]
+          })
+          .sort((a, b) => b.startDate.getTime() - a.startDate.getTime())
+
+        return HttpResponse.json(policies)
+      } catch {
+        return mockInternalError()
+      }
+    },
+  ),
 
   http.get(`${env.API_URL}/users/:userId`, async ({ cookies, params }) => {
     await networkDelay()

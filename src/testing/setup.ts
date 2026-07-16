@@ -30,6 +30,7 @@ afterEach(async () => {
   server.resetHandlers()
 
   document.cookie = `${AUTH_COOKIE}=; Path=/; Max-Age=0`
+  window.localStorage.clear()
   queryClient.clear()
 })
 
