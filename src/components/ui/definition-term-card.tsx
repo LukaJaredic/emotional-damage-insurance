@@ -12,7 +12,7 @@ type DefinitionTermCardProps = {
 
 function DefinitionTermCard({ header, items }: DefinitionTermCardProps) {
   return (
-    <section className="bg-card basis-1/3 rounded-xl border p-6 shadow-sm">
+    <section className="bg-card max-w-130 rounded-xl border p-6 shadow-sm">
       {header}
 
       <dl className="mt-6 flex flex-col gap-4 pt-6">

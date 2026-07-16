@@ -1,5 +1,7 @@
-import type { Policy, PolicyLimits } from '@/types'
+import type { Policy } from '@/types'
 import { toEur } from '@/utils'
+
+export { limitLabels } from '@/utils/policy-limit-labels'
 
 import { status } from './policy-status'
 
@@ -19,15 +21,4 @@ export function statusLabel(policy: Policy) {
 
 export function premium(policy: Policy) {
   return toEur(policy.premium)
-}
-
-export const limitLabels: Record<keyof PolicyLimits, string> = {
-  insult: 'Insult',
-  rejection: 'Rejection',
-  badJoke: 'Bad joke',
-  gaslighting: 'Gaslighting',
-  overthinking: 'Overthinking',
-  awkwardSilence: 'Awkward silence',
-  whyDontYouQuestion: "Why don't you question",
-  meetingThatCouldHaveBeenEmail: 'Meeting that could have been email',
 }

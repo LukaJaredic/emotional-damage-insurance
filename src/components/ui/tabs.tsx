@@ -21,7 +21,7 @@ type TabsProps = Omit<
 > & {
   items: readonly TabItem[]
   defaultValue: string
-  storageKey: string
+  storageKey?: string
   ariaLabel: string
   listVariant?: ComponentProps<typeof TabsList>['variant']
   tabsListClassName?: string
@@ -39,9 +39,13 @@ function getFallbackValue(items: readonly TabItem[], defaultValue: string) {
 function getStoredValue(
   items: readonly TabItem[],
   defaultValue: string,
-  storageKey: string,
+  storageKey?: string,
 ) {
   const fallbackValue = getFallbackValue(items, defaultValue)
+
+  if (!storageKey) {
+    return fallbackValue
+  }
 
   try {
     const storedValue = window.localStorage.getItem(storageKey)
@@ -55,6 +59,20 @@ function getStoredValue(
   }
 }
 
+/**
+ * Renders a Tabs component with the provided tab items and configuration.
+ *
+ * @param items - The list of tab items to display.
+ * @param defaultValue - The default value of the selected tab.
+ * @param storageKey - The key to use for storing the selected tab in localStorage - if no key is provided, the selected tab will not be stored.
+ * @param ariaLabel - The aria-label for the tabs list.
+ * @param listVariant - The variant of the tabs list.
+ * @param tabsListClassName - Additional class names for the tabs list.
+ * @param tabsContentClassName - Additional class names for the tabs content.
+ * @param className - Additional class names for the tabs component.
+ * @param onValueChange - Callback function when the selected tab value changes.
+ * @returns The rendered Tabs component.
+ */
 function Tabs({
   items,
   defaultValue,
@@ -80,10 +98,12 @@ function Tabs({
   function handleValueChange(nextValue: string) {
     setValue(nextValue)
 
-    try {
-      window.localStorage.setItem(storageKey, nextValue)
-    } catch {
-      // Storage may be blocked; tab selection should still work for this render.
+    if (storageKey) {
+      try {
+        window.localStorage.setItem(storageKey, nextValue)
+      } catch {
+        // Storage may be blocked; tab selection should still work for this render.
+      }
     }
 
     onValueChange?.(nextValue)
@@ -100,7 +120,7 @@ function Tabs({
         aria-label={ariaLabel}
         variant={listVariant}
         className={cn(
-          'max-w-full justify-start overflow-x-auto',
+          'max-w-full shrink-0 justify-start overflow-x-auto overflow-y-hidden',
           tabsListClassName,
         )}
       >

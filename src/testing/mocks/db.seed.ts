@@ -161,43 +161,41 @@ function seedPolicies(db: DB, count: number = 10) {
       return
     }
 
-    const createdPolicy = db.policy.create(policy as any)
-    seedPolicyUsers(db, createdPolicy.id, createdPolicy.limits, 20)
+    db.policy.create(policy as any)
   })
+
+  seedPolicyUsers(db)
 }
 
-function seedPolicyUsers(
-  db: DB,
-  policyId: string,
-  limits: Record<string, number>,
-  count: number,
-) {
-  db.user
-    .getAll()
-    .slice(0, count)
-    .forEach((user) => {
-      const existingPolicyUser = db.policyUser.findFirst({
-        where: {
-          policyId: {
-            equals: policyId,
-          },
-          userId: {
-            equals: user.id,
-          },
+function seedPolicyUsers(db: DB) {
+  const policies = db.policy.getAll()
+
+  if (policies.length === 0) {
+    return
+  }
+
+  db.user.getAll().forEach((user, index) => {
+    const existingPolicyUser = db.policyUser.findFirst({
+      where: {
+        userId: {
+          equals: user.id,
         },
-      })
-
-      if (existingPolicyUser) {
-        return
-      }
-
-      db.policyUser.create({
-        ...seedAuditFields,
-        policyId,
-        userId: user.id,
-        limits: { ...limits },
-      })
+      },
     })
+
+    if (existingPolicyUser) {
+      return
+    }
+
+    const policy = policies[index % policies.length]!
+
+    db.policyUser.create({
+      ...seedAuditFields,
+      policyId: policy.id,
+      userId: user.id,
+      limits: { ...policy.limits },
+    })
+  })
 }
 
 export { seed, type SeedProfile }

@@ -2,16 +2,18 @@ import { PencilIcon, TrashIcon } from '@phosphor-icons/react'
 
 import { useUserDetail } from '@/api'
 import { PageLayout } from '@/components/layout'
-import { QueryLoading } from '@/components/ui'
+import { QueryLoading, Tabs } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { usePermissions, useUser } from '@/hooks'
 import { stringifyRoles } from '@features/users/utils/user-labels'
 
 import UserFormDialog from '../form/user-form-dialog'
 
-import { UserActivity } from './user-activity'
 import { UserBaseInfo } from './user-base-info'
+import UserCoverageLimits from './user-coverage-limits'
 import UserDeleteDialog from './user-delete-dialog'
+
+const USER_DETAIL_TABS_STORAGE_KEY = 'user-detail-tabs'
 
 type UserDetailProps = {
   userId: string
@@ -57,10 +59,25 @@ function UserDetail({ userId }: UserDetailProps) {
         </>
       )}
     >
-      <div className="flex min-h-0 w-full flex-col gap-6 *:last:flex-1 xl:flex-row xl:items-start xl:*:first:basis-125">
-        <UserBaseInfo user={user} />
-        <UserActivity />
-      </div>
+      <Tabs
+        items={[
+          {
+            value: 'basic-info',
+            label: 'Basic info',
+            content: <UserBaseInfo user={user} />,
+          },
+          {
+            value: 'coverage-limits',
+            label: 'Coverage limits',
+            content: <UserCoverageLimits userId={user.id} />,
+          },
+        ]}
+        defaultValue="basic-info"
+        storageKey={USER_DETAIL_TABS_STORAGE_KEY}
+        ariaLabel="User details"
+        className="w-full"
+        tabsContentClassName="pt-4"
+      />
     </PageLayout>
   )
 }
