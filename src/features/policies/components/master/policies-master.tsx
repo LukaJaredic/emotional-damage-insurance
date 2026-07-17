@@ -5,6 +5,7 @@ import { PageLayout } from '@/components/layout'
 import { Button } from '@/components/ui/shadcn/button'
 import { usePermissions } from '@/hooks'
 import { usePolicies } from '@features/policies/api/get-policies'
+import PolicyFormDialog from '@features/policies/components/form/policy-form-dialog'
 import { policyFilters } from '@features/policies/utils/policy-filters'
 import { policyColumns } from '@features/policies/utils/policy-table-columns'
 
@@ -19,10 +20,12 @@ function PoliciesMaster() {
       description="Browse and filter policies that are registered in the system."
       actions={() =>
         can('policy:create') ? (
-          <Button>
-            <PlusIcon />
-            Create a policy
-          </Button>
+          <PolicyFormDialog>
+            <Button>
+              <PlusIcon />
+              Create a policy
+            </Button>
+          </PolicyFormDialog>
         ) : null
       }
     >

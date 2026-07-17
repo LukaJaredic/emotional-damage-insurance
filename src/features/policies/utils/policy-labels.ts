@@ -1,8 +1,6 @@
 import type { Policy } from '@/types'
 import { toEur } from '@/utils'
 
-export { limitLabels } from '@/utils/policy-limit-labels'
-
 import { status } from './policy-status'
 
 export const policyStatusLabels: Record<

@@ -201,7 +201,7 @@ The local API runs through an Express server wired to MSW handlers and mock data
 
 ## Current Status
 
-This personal portfolio project is still in development. User and policy-holder flows are connected in the UI. Policy list and detail pages, mock APIs, permissions, and the policy form are implemented. The form is temporarily shown on the home page; the policy create button, detail actions, and policy-user management UI are not connected yet.
+This personal portfolio project is still in development. User, policy-holder, and policy list/detail flows are connected in the UI, including policy creation and lifecycle actions. The policy form is temporarily shown on the home page; policy-user management UI is not connected yet.
 
 ## Tooling notes
 
