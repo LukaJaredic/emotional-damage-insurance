@@ -3,7 +3,7 @@ import { GaugeIcon } from '@phosphor-icons/react'
 import { DefinitionTermCard } from '@/components/ui'
 import type { Policy, PolicyLimits as PolicyLimitsType } from '@/types'
 import { toEur } from '@/utils/currency'
-import { limitLabels } from '@features/policies/utils/policy-labels'
+import { limitLabels } from '@/utils/policy-limit-labels'
 
 type PolicyLimitsProps = {
   policy: Policy

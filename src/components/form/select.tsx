@@ -1,6 +1,8 @@
 import {
+  components,
   type GroupBase,
   type InputActionMeta,
+  type MenuListProps,
   type MultiValue,
   type SingleValue,
   default as ReactSelect,
@@ -121,6 +123,7 @@ function Select({
   return (
     <ReactSelect<SelectOption, boolean, GroupBase<SelectOption>>
       {...optionalProps}
+      components={{ MenuList }}
       aria-label={ariaLabel}
       aria-invalid={ariaInvalid}
       options={options}
@@ -181,6 +184,22 @@ function Select({
           zIndex: 60,
           pointerEvents: 'auto',
         }),
+      }}
+    />
+  )
+}
+
+/** Keeps a portaled menu scrollable while Radix locks background scrolling. */
+function MenuList(
+  props: MenuListProps<SelectOption, boolean, GroupBase<SelectOption>>,
+) {
+  return (
+    <components.MenuList
+      {...props}
+      innerProps={{
+        ...props.innerProps,
+        onWheel: (event) => event.stopPropagation(),
+        onTouchMove: (event) => event.stopPropagation(),
       }}
     />
   )

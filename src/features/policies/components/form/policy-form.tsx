@@ -8,7 +8,7 @@ import { Spinner } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { FieldGroup, FieldLegend, FieldSet } from '@/components/ui/shadcn/field'
 import type { PolicyHolder } from '@/types'
-import { rowSm, setApiFieldErrors } from '@/utils'
+import { limitLabels, rowSm, setApiFieldErrors } from '@/utils'
 import { useCreatePolicy } from '@features/policies/api/create-policy'
 import type {
   PolicyFormStatus,
@@ -19,7 +19,6 @@ import {
   buildPolicyFormValues,
   createSchema,
 } from '@features/policies/utils/policy-form'
-import { limitLabels } from '@features/policies/utils/policy-labels'
 
 export type PolicyFormProps = Omit<ComponentProps<'form'>, 'onSubmit'> & {
   showSubmit?: boolean | undefined
