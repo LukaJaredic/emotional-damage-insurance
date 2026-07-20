@@ -2,10 +2,9 @@ import { tableColumnBuilder, type TableColumn } from '@/components/data/table'
 import { Time } from '@/components/ui'
 import { paths } from '@/config'
 import type { Policy } from '@/types'
+import { policyPremium } from '@/utils/policy-labels'
 
-import PolicyStatus from '../components/policy-status'
-
-import { premium } from './policy-labels'
+import PolicyStatus from './policy-status'
 
 const tcb = tableColumnBuilder<Policy>()
 
@@ -24,7 +23,7 @@ export const policyColumns: TableColumn<Policy>[] = [
   tcb.custom({
     title: 'Premium',
     dataIndex: 'premium',
-    render: premium,
+    render: policyPremium,
   }),
   tcb.custom({
     title: 'Start date',

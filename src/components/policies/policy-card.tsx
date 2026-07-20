@@ -3,9 +3,9 @@ import { Link } from 'react-router'
 import { Time } from '@/components/ui'
 import { paths } from '@/config'
 import type { Policy } from '@/types'
-import { premium } from '@features/policies/utils/policy-labels'
+import { policyPremium } from '@/utils/policy-labels'
 
-import PolicyStatus from '../policy-status'
+import PolicyStatus from './policy-status'
 
 type PolicyCardProps = {
   policy: Policy
@@ -21,7 +21,7 @@ function PolicyCard({ policy }: PolicyCardProps) {
         <div className="flex min-w-0 flex-col gap-1">
           <h2 className="truncate font-medium">{policy.name}</h2>
           <div className="text-muted-foreground truncate text-sm">
-            <span>{premium(policy)}</span>
+            <span>{policyPremium(policy)}</span>
             <div className="flex gap-2">
               <Time date={policy.startDate} format="date" />
               -

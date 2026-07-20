@@ -1,7 +1,7 @@
 import type { Policy } from '@/types'
-import { toEur } from '@/utils'
 
-import { status } from './policy-status'
+import { toEur } from './currency'
+import { policyStatus } from './policy-status'
 
 export const policyStatusLabels: Record<
   'active' | 'terminated' | 'expired' | 'future',
@@ -13,10 +13,10 @@ export const policyStatusLabels: Record<
   future: 'Not started yet',
 }
 
-export function statusLabel(policy: Policy) {
-  return policyStatusLabels[status(policy)]
+export function policyStatusLabel(policy: Policy) {
+  return policyStatusLabels[policyStatus(policy)]
 }
 
-export function premium(policy: Policy) {
+export function policyPremium(policy: Policy) {
   return toEur(policy.premium)
 }

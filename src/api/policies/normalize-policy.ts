@@ -1,6 +1,6 @@
 import type { Policy } from '@/types'
 
-import type { PolicyDto } from '../types/policy-api.types'
+import type { PolicyDto } from './policy-api.types'
 
 export function normalizePolicy(policy: PolicyDto): Policy {
   return {

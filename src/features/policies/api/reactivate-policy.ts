@@ -1,16 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { normalizePolicy, type PolicyDto } from '@/api/policies'
 import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
 
-import type {
-  PolicyDto,
-  ReactivatePolicyAction,
-} from '../types/policy-api.types'
-import { normalizePolicy } from '../utils/normalize-policy'
-import { policyQueryKeys } from '../utils/policy-query-keys'
+import type { ReactivatePolicyAction } from '../types/policy-api.types'
 
 export async function reactivatePolicy({
   policyId,
@@ -27,7 +23,7 @@ export function useReactivatePolicy() {
   return useMutation({
     mutationFn: reactivatePolicy,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: policyQueryKeys.all() })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.policies.all() })
       void queryClient.invalidateQueries({
         queryKey: queryKeys.users.limits.all(),
       })

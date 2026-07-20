@@ -2,13 +2,11 @@ import { FileTextIcon } from '@phosphor-icons/react'
 import { Link } from 'react-router'
 
 import { usePolicyHolderDetail } from '@/api'
+import { PolicyStatus } from '@/components/policies'
 import { Audit, DefinitionTermCard, Time } from '@/components/ui'
 import { paths } from '@/config'
 import type { Policy } from '@/types'
-import { policyHolderName } from '@/utils'
-import { premium } from '@features/policies/utils/policy-labels'
-
-import PolicyStatus from '../policy-status'
+import { policyHolderName, policyPremium } from '@/utils'
 
 type PolicyBaseInfoProps = {
   policy: Policy
@@ -27,7 +25,7 @@ function PolicyBaseInfo({ policy }: PolicyBaseInfoProps) {
       }
       items={[
         { term: 'Status', definition: <PolicyStatus policy={policy} /> },
-        { term: 'Premium', definition: premium(policy) },
+        { term: 'Premium', definition: policyPremium(policy) },
         {
           term: 'Start date',
           definition: <Time date={policy.startDate} format="date" />,

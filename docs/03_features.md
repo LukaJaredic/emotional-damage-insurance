@@ -18,11 +18,13 @@ The implemented features are `auth`, `users`, `policy-holders`, and `policies`.
 
 Keep code inside a feature when only that feature uses it. Move it to a shared folder when app-level code, shared UI, or multiple features need it.
 
-The policy-holder APIs show both cases:
+Policies show both cases:
 
-- Detail and mutation APIs stay in `src/features/policy-holders/api`.
-- The list API lives in `src/api/policy-holders` because policy holders and policies both use it.
-- Its shared query keys live in `src/config/query-keys.ts`.
+- Detail, mutation, and policy-user APIs stay in `src/features/policies/api`.
+- The policy list API lives in `src/api/policies` because policy master pages and policy-holder details both use it.
+- Policy `all` and `list` query keys live in `src/config/query-keys.ts`; policy detail and users query keys stay feature-owned.
+
+Reusable domain presentation can be promoted without promoting the whole feature. User cards, user table columns, policy cards, policy columns, and policy status display live in `src/components/users` or `src/components/policies` when they are shared by multiple consumers.
 
 Features must not import from other features. Promote shared code instead.
 

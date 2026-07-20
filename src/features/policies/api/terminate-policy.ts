@@ -1,16 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
+import { normalizePolicy, type PolicyDto } from '@/api/policies'
 import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
 
-import type {
-  PolicyDto,
-  TerminatePolicyAction,
-} from '../types/policy-api.types'
-import { normalizePolicy } from '../utils/normalize-policy'
-import { policyQueryKeys } from '../utils/policy-query-keys'
+import type { TerminatePolicyAction } from '../types/policy-api.types'
 
 export async function terminatePolicy({
   policyId,
@@ -27,7 +23,7 @@ export function useTerminatePolicy() {
   return useMutation({
     mutationFn: terminatePolicy,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: policyQueryKeys.all() })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.policies.all() })
       void queryClient.invalidateQueries({
         queryKey: queryKeys.users.limits.all(),
       })

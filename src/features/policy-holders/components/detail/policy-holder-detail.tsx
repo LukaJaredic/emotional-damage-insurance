@@ -2,7 +2,7 @@ import { PencilIcon, TrashIcon } from '@phosphor-icons/react'
 
 import { usePolicyHolderDetail } from '@/api/policy-holders'
 import { PageLayout } from '@/components/layout'
-import { QueryLoading } from '@/components/ui'
+import { QueryLoading, Tabs } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import usePermissions from '@/hooks/use-permissions'
 import { policyHolderName, policyHolderTypeLabels } from '@/utils'
@@ -11,6 +11,9 @@ import PolicyHolderFormDialog from '../form/policy-holder-form-dialog'
 
 import PolicyHolderBaseInfo from './policy-holder-base-info'
 import PolicyHolderDeleteDialog from './policy-holder-delete-dialog'
+import PolicyHolderPolicies from './policy-holder-policies'
+
+const POLICY_HOLDER_DETAIL_TABS_STORAGE_KEY = 'policy-holder-detail-tabs'
 
 type PolicyHolderDetailProps = {
   policyHolderId: string
@@ -54,9 +57,29 @@ function PolicyHolderDetail({ policyHolderId }: PolicyHolderDetailProps) {
         </>
       )}
     >
-      <div className="flex min-h-0 w-full flex-col gap-6 xl:flex-row xl:items-start xl:*:first:basis-125">
-        <PolicyHolderBaseInfo policyHolder={policyHolder} />
-      </div>
+      <Tabs
+        items={[
+          {
+            value: 'basic-info',
+            label: 'Basic info',
+            content: (
+              <div className="flex min-h-0 w-full flex-col gap-6 xl:flex-row xl:items-start xl:*:first:basis-125">
+                <PolicyHolderBaseInfo policyHolder={policyHolder} />
+              </div>
+            ),
+          },
+          {
+            value: 'policies',
+            label: 'Policies',
+            content: <PolicyHolderPolicies policyHolderId={policyHolder.id} />,
+          },
+        ]}
+        defaultValue="basic-info"
+        storageKey={POLICY_HOLDER_DETAIL_TABS_STORAGE_KEY}
+        ariaLabel="Policy holder details"
+        className="min-h-0 w-full flex-1"
+        tabsContentClassName="flex min-h-0 pt-4"
+      />
     </PageLayout>
   )
 }

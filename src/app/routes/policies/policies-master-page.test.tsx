@@ -4,10 +4,9 @@ import { HttpResponse, http } from 'msw'
 import { VirtuosoMockContext } from 'react-virtuoso'
 import { describe, expect, it, vi } from 'vitest'
 
+import type { PolicyDto } from '@/api/policies'
 import { paths } from '@/config'
 import { env } from '@/config/env'
-import type { PolicyDto } from '@/features/policies/types/policy-api.types'
-import { premium, statusLabel } from '@/features/policies/utils/policy-labels'
 import useMediaQuery from '@/hooks/use-media-query'
 import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
@@ -18,7 +17,7 @@ import {
   testUsers,
 } from '@/testing/test-utils'
 import type { Policy, UserRole } from '@/types'
-import { toAppDate } from '@/utils'
+import { policyPremium, policyStatusLabel, toAppDate } from '@/utils'
 import AuthGuard from '@app/auth-guard'
 
 import PoliciesMasterPage from './policies-master-page'
@@ -165,7 +164,7 @@ function normalizeText(value: string | null | undefined) {
 
 function expectPremiumText(element: HTMLElement, policy: Policy) {
   expect(normalizeText(element.textContent)).toContain(
-    normalizeText(premium(policy)),
+    normalizeText(policyPremium(policy)),
   )
 }
 
@@ -233,7 +232,7 @@ describe('PoliciesMaster', () => {
           'href',
           paths.policies.detail.getHref(policy.id),
         )
-        expect(row).toHaveTextContent(statusLabel(policy))
+        expect(row).toHaveTextContent(policyStatusLabel(policy))
         expectPremiumText(row!, policy)
       }
     })
@@ -254,7 +253,9 @@ describe('PoliciesMaster', () => {
           paths.policies.detail.getHref(policy.id),
         )
 
-        expect(within(card).getByText(statusLabel(policy))).toBeInTheDocument()
+        expect(
+          within(card).getByText(policyStatusLabel(policy)),
+        ).toBeInTheDocument()
         expect(within(card).getByText(/cover/i)).toBeInTheDocument()
 
         expect(

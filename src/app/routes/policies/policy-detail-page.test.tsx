@@ -4,11 +4,10 @@ import { HttpResponse, http } from 'msw'
 import { VirtuosoMockContext } from 'react-virtuoso'
 import { vi } from 'vitest'
 
+import type { PolicyDto } from '@/api/policies'
 import AuthGuard from '@/app/auth-guard'
 import { paths } from '@/config'
 import { env } from '@/config/env'
-import type { PolicyDto } from '@/features/policies/types/policy-api.types'
-import { premium, statusLabel } from '@/features/policies/utils/policy-labels'
 import useMediaQuery from '@/hooks/use-media-query'
 import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
@@ -19,7 +18,14 @@ import {
   testUsers,
 } from '@/testing/test-utils'
 import type { Policy, PolicyHolder, User } from '@/types'
-import { policyHolderName, toAppDate, toEur, userRoles } from '@/utils'
+import {
+  policyHolderName,
+  policyPremium,
+  policyStatusLabel,
+  toAppDate,
+  toEur,
+  userRoles,
+} from '@/utils'
 
 import PolicyDetailPage from './policy-detail-page'
 
@@ -257,8 +263,8 @@ describe('PolicyDetailPage', () => {
       })
 
       expect(screen.getByText('General')).toBeInTheDocument()
-      expectDefinition('Status', statusLabel(testPolicy))
-      expectDefinition('Premium', premium(testPolicy))
+      expectDefinition('Status', policyStatusLabel(testPolicy))
+      expectDefinition('Premium', policyPremium(testPolicy))
       expectDefinition('Start date', toAppDate(testPolicy.startDate))
       expectDefinition('End date', toAppDate(testPolicy.endDate))
       expect(screen.getByText('Created')).toBeInTheDocument()

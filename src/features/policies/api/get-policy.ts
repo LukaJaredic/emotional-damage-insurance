@@ -1,11 +1,11 @@
 import { useQuery, type QueryOptions } from '@tanstack/react-query'
 
+import { normalizePolicy, type PolicyDto } from '@/api/policies'
 import { apiPaths } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
 
-import type { GetPolicyQuery, PolicyDto } from '../types/policy-api.types'
-import { normalizePolicy } from '../utils/normalize-policy'
+import type { GetPolicyQuery } from '../types/policy-api.types'
 import { policyQueryKeys } from '../utils/policy-query-keys'
 
 export async function getPolicy({ policyId }: GetPolicyQuery): Promise<Policy> {
