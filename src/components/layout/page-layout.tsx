@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 
 type PageLayoutProps = {
   heading: string
-  description: string
+  description: ReactNode
   actions?: () => ReactNode
   children: ReactNode
 }

@@ -1,11 +1,10 @@
 import type { SelectOption } from '@/components/form'
 import type { UserRole } from '@/types'
-
-import { roleLabels } from './user-labels'
+import { userRoleLabels } from '@/utils'
 
 export const roleOptions: SelectOption[] = (
   ['admin', 'employee', 'customer'] satisfies UserRole[]
 ).map((role) => ({
-  label: roleLabels[role],
+  label: userRoleLabels[role],
   value: role,
 }))

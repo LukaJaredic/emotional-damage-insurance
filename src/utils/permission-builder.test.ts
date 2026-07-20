@@ -213,12 +213,12 @@ describe('PermissionBuilder', () => {
     it('should return true only for explicitly allowed access permissions', async () => {
       const { canAccess } = permissionBuilder
         .allowPage('home')
-        .allowPage('users:detail-page')
+        .allowPage('user:detail-page')
         .build()
 
       expect(canAccess('home')).toBe(true)
-      expect(canAccess('users:detail-page')).toBe(true)
-      expect(canAccess('users:master-page')).toBe(false)
+      expect(canAccess('user:detail-page')).toBe(true)
+      expect(canAccess('user:master-page')).toBe(false)
     })
   })
 })

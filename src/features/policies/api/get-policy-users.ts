@@ -3,32 +3,33 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import type { RemoteDataState } from '@/components/data/remote-data/remote-data.types'
 import { apiPaths } from '@/config'
 import { api } from '@/lib'
-import type { PolicyHolder } from '@/types/policy-holder'
-import { commonQueryOptions } from '@/utils/query'
+import type { User } from '@/types'
+import { commonQueryOptions } from '@/utils'
 
 import type {
-  GetPolicyHoldersQuery,
-  UsePolicyHoldersQuery,
-} from '../types/policy-holder-api.types'
-import { policyHolderQueryKeys } from '../utils/policy-holder-query-keys'
+  GetPolicyUsersQuery,
+  UsePolicyUsersQuery,
+} from '../types/policy-api.types'
+import { policyQueryKeys } from '../utils/policy-query-keys'
 
-export async function getPolicyHolders(
-  params: GetPolicyHoldersQuery,
-): Promise<PolicyHolder[]> {
-  const response = await api.get<PolicyHolder[]>(apiPaths.policyHolders.all(), {
+export async function getPolicyUsers({
+  policyId,
+  ...params
+}: GetPolicyUsersQuery): Promise<User[]> {
+  const response = await api.get<User[]>(apiPaths.policies.users(policyId), {
     params,
   })
   return response.data
 }
 
-export function usePolicyHolders(
-  params: UsePolicyHoldersQuery,
-): RemoteDataState<PolicyHolder> {
+export function usePolicyUsers(
+  params: UsePolicyUsersQuery,
+): RemoteDataState<User> {
   const query = useInfiniteQuery({
     ...commonQueryOptions,
-    queryKey: policyHolderQueryKeys.list(params),
+    queryKey: policyQueryKeys.users(params),
     queryFn: ({ pageParam }) =>
-      getPolicyHolders({
+      getPolicyUsers({
         ...params,
         page: pageParam,
       }),

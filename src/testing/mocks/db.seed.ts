@@ -3,11 +3,13 @@ import type { FactoryAPI } from '@mswjs/data/lib/glossary'
 
 import { buildAuditFields, DEFAULT_AUDIT_USER_ID } from './audit'
 import { models } from './db.models'
+import { generatePolicies } from './generators/policy'
 import { generatePolicyHolders } from './generators/policy-holder'
 import { generateUsers } from './generators/user'
 
 type SeedProfile = 'dev' | 'e2e'
 
+const DEV_POLICY_COUNT = 12
 const seedAuditFields = buildAuditFields(DEFAULT_AUDIT_USER_ID)
 
 const adminUser = {
@@ -51,6 +53,7 @@ function seed(db: DB, profile: SeedProfile) {
   if (profile === 'dev') {
     seedUsers(db, 100)
     seedPolicyHolders(db, 200)
+    seedPolicies(db, DEV_POLICY_COUNT)
   }
 }
 
@@ -129,6 +132,70 @@ function seedPolicyHolders(db: DB, count: number = 200) {
     }
 
     db.policyHolder.create(policyHolder)
+  })
+}
+
+function seedPolicies(db: DB, count: number) {
+  const policyHolderIds = db.policyHolder
+    .getAll()
+    .slice(0, count)
+    .map((policyHolder) => policyHolder.id)
+  const policies = generatePolicies(policyHolderIds)
+
+  policies.forEach((policy) => {
+    if (
+      db.policy.findFirst({
+        where: {
+          id: {
+            equals: policy.id,
+          },
+        },
+      }) ||
+      db.policy.findFirst({
+        where: {
+          name: {
+            equals: policy.name,
+          },
+        },
+      })
+    ) {
+      return
+    }
+
+    db.policy.create(policy as any)
+  })
+
+  seedPolicyUsers(db)
+}
+
+function seedPolicyUsers(db: DB) {
+  const policies = db.policy.getAll()
+
+  if (policies.length === 0) {
+    return
+  }
+
+  db.user.getAll().forEach((user, index) => {
+    const existingPolicyUser = db.policyUser.findFirst({
+      where: {
+        userId: {
+          equals: user.id,
+        },
+      },
+    })
+
+    if (existingPolicyUser) {
+      return
+    }
+
+    const policy = policies[index % policies.length]!
+
+    db.policyUser.create({
+      ...seedAuditFields,
+      policyId: policy.id,
+      userId: user.id,
+      limits: { ...policy.limits },
+    })
   })
 }
 

@@ -27,3 +27,20 @@ export function toAppDateTime(date: Date | string | number): string {
     return 'Invalid date'
   }
 }
+
+/**
+ * Formats a date-like value for native date inputs.
+ * @param date The date to format, which can be a Date object, a string, or a timestamp.
+ * @returns The input date string (eg. 2024-01-31), or an empty string for missing/invalid values.
+ */
+export function toInputDate(date?: Date | string | number): string {
+  if (!date) {
+    return ''
+  }
+
+  try {
+    return format(new Date(date), 'yyyy-MM-dd')
+  } catch {
+    return ''
+  }
+}

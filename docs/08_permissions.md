@@ -2,247 +2,94 @@
 
 ## Main Idea
 
-Permissions are built centrally from the current user, then read through `usePermissions()` in feature UI.
+Permissions are built from the current user in `src/utils/permissions.ts`.
 
-There are two kinds of permission checks:
+There are two kinds of checks:
 
-- page access checks with `allowPage()` and `canAccess()`
-- resource action checks with `allow()` and `can()`
+- `allowPage()` and `canAccess()` control routes and navigation.
+- `allow()` and `can()` control actions, records, and fields.
 
-Use page access for routes and navigation. Use resource actions for buttons, forms, fields, and record-level decisions.
-
-The main files are:
-
-- `src/utils/permissions.ts` defines role rules with `allowPage()` and `allow()`.
-- `src/utils/permission-builder.ts` implements `canAccess()` and `can()`.
-- `src/app/providers/permissions-provider.tsx` builds permissions for the current user.
-- `src/hooks/use-permissions.ts` exposes permissions to components.
-- `src/app/auth-guard.tsx` redirects users who cannot access a protected page.
-- `src/app/sidebar-items.tsx` declares which page access each sidebar item needs.
+Frontend permissions improve the user experience. Mock API handlers still enforce authorization.
 
 ## Page Access
 
-Page access answers: "Can this user open this page?"
-
-Page access values are typed by `PageAccess` in `src/utils/permission-builder.ts`.
-
-Current examples:
+Page names use a singular resource followed by the page type:
 
 - `home`
-- `users:master-page`
-- `users:detail-page`
+- `user:master-page`
+- `user:detail-page`
+- `policy-holder:master-page`
+- `policy-holder:detail-page`
+- `policy:master-page`
+- `policy:detail-page`
 
-Grant page access with `allowPage()` while building role permissions.
-
-```ts
-function addAdminPermissions(builder: PermissionsBuilder) {
-  builder
-    .allowPage('home')
-    .allowPage('users:master-page')
-    .allowPage('users:detail-page')
-}
-```
-
-Check page access with `canAccess()`.
-
-```tsx
-const { canAccess } = usePermissions()
-
-return sidebarItems
-  .filter((item) => canAccess(item.access))
-  .map((item) => <SidebarItem item={item} key={item.href} />)
-```
-
-Protected routes should pass a `PageAccess` value to `AuthGuard`.
-
-```tsx
-function protectedRoute(pageName: PageAccess, page: ReactNode) {
-  return (
-    <AuthGuard page={pageName}>
-      <AppLayout>{page}</AppLayout>
-    </AuthGuard>
-  )
-}
-```
-
-If the user is logged in but does not have access to that page, `AuthGuard` redirects them to the not-found page.
-
-```tsx
-if (page && !canAccess(page)) {
-  return <Navigate to={paths.notFound.getHref()} replace />
-}
-```
-
-Sidebar items should declare the page access they need.
+Grant page access in the role rules:
 
 ```ts
-export const sidebarItems: SidebarItem[] = [
-  {
-    title: 'Users',
-    href: paths.users.getHref(),
-    icon: UsersThreeIcon,
-    access: 'users:master-page',
-  },
-]
+builder
+  .allowPage('policy:master-page')
+  .allow('policy:read')
+  .allow('policy:create')
 ```
 
-Do not use `can('user:read')` to decide if a route is accessible. A user can have read permission for a specific record without being allowed to open the master page.
+Protect routes with the same page name:
 
-## `allow()`
+```tsx
+protectedRoute('policy:master-page', <PoliciesMasterPage />)
+```
 
-Use `allow()` while building resource action permissions.
+Sidebar items use `canAccess()` to hide links the user cannot open. Do not replace page access with a resource read check; these answer different questions.
+
+## Resource Actions
+
+`allow()` defines what a role can do:
 
 ```ts
 allow(resourceAction, conditions?, allowedFields?)
 ```
 
-- `resourceAction` is an action like `user:read`, `user:update`, or `user:delete`.
-- `conditions` limit the rule to matching resource instances.
-- `allowedFields` limit the rule to specific fields.
-- Omitting `conditions` means all instances.
-- Omitting `allowedFields` means all fields.
+- Conditions restrict the rule to matching records.
+- Allowed fields restrict which fields may change.
+- Omitting either value means there is no restriction for that part.
 
-Admin permissions usually grant full access:
+Example: an employee may edit basic fields on their own user record.
 
 ```ts
-function addAdminPermissions(builder: PermissionsBuilder) {
-  builder
-    .allowPage('home')
-
-    .allowPage('users:master-page')
-    .allow('user:read')
-    .allow('user:create')
-
-    .allowPage('users:detail-page')
-    .allow('user:update')
-    .allow('user:delete')
-}
+builder.allow('user:update', { id: user.id }, [
+  'firstName',
+  'lastName',
+  'email',
+])
 ```
 
-Employee permissions can combine broad reads with constrained updates:
+## UI Checks
 
-```ts
-function addEmployeePermissions(builder: PermissionsBuilder, user: User) {
-  builder
-    .allowPage('home')
-
-    .allowPage('users:master-page')
-    .allow('user:read')
-
-    .allowPage('users:detail-page')
-    .allow('user:read', { id: user.id })
-    .allow('user:update', { id: user.id }, ['firstName', 'lastName', 'email'])
-    .allow('user:update', { roles: ['customer'] }, [
-      'firstName',
-      'lastName',
-      'email',
-    ])
-}
-```
-
-That means the employee can update their own basic profile fields and the same basic fields for customer users.
-
-Customer permissions are more limited:
-
-```ts
-function addCustomerPermissions(builder: PermissionsBuilder, user: User) {
-  builder
-    .allowPage('home')
-
-    .allowPage('users:detail-page')
-    .allow('user:read', { id: user.id, roles: ['customer'] })
-    .allow('user:update', { id: user.id }, ['firstName', 'lastName', 'email'])
-}
-```
-
-That means customers can open their own detail page and update their own basic profile fields, but they cannot open the users master page.
-
-## `can()`
-
-Use `can()` from `usePermissions()` when rendering UI.
+Use `can()` for the narrowest UI decision:
 
 ```tsx
-const { can } = usePermissions()
+can('user:delete', user)
+can('user:update', user, 'email')
+can('user:update', user, '*')
 ```
 
-Ask the narrowest question that matches the UI decision.
+- Pass a record when the action concerns one record.
+- Pass a field name for field-level access.
+- Use `'*'` only when asking whether any record or field is allowed.
 
-For a page-level action, pass the resource instance:
+## Current Roles
 
-```tsx
-return can('user:delete', user) ? (
-  <UserDeleteDialog user={user}>
-    <Button variant="destructive">Delete this user</Button>
-  </UserDeleteDialog>
-) : null
-```
+- Admins manage users, policy holders, and policies.
+- Employees can read these resources, create policy holders and policies, and perform allowed updates. They cannot delete them.
+- Customers can access home and their own user detail page.
 
-For an edit trigger that should show when at least one field can be updated, use `'*'` for the field:
+The source of truth is `src/utils/permissions.ts`.
 
-```tsx
-return can('user:update', user, '*') ? (
-  <UserFormDialog user={user}>
-    <Button>Edit this user</Button>
-  </UserFormDialog>
-) : null
-```
+## Adding A Protected Page
 
-For field-level forms, check the specific field:
-
-```tsx
-function isFieldDisabled(fieldName: keyof UserFormValues) {
-  if (!isEdit) {
-    return false
-  }
-
-  return !can('user:update', user, fieldName)
-}
-```
-
-## How Arguments Behave
-
-`can()` accepts:
-
-```ts
-can(resourceAction, resourceInstance?, field?)
-```
-
-- `can('user:update')` checks whether the user can update all user instances and all fields.
-- `can('user:update', user)` checks whether the user can update that user instance and all fields.
-- `can('user:update', user, 'email')` checks whether the user can update `email` on that user instance.
-- `can('user:update', '*', 'email')` checks whether the user can update `email` on at least one user.
-- `can('user:update', user, '*')` checks whether the user can update at least one field on that user instance.
-- `can('user:update', '*', '*')` checks whether the user can update at least one field on at least one user.
-
-## Adding A New Page
-
-When adding a new protected page:
-
-- add or reuse a `PageAccess` value
-- grant that page with `allowPage()` in `src/utils/permissions.ts`
-- protect the route with `protectedRoute(pageAccess, page)` or `<AuthGuard page={pageAccess}>`
-- add `access: pageAccess` to sidebar items that point to the page
-- use `can()` separately for buttons and fields inside the page
-
-Example:
-
-```tsx
-{
-  path: paths.users.path,
-  element: protectedRoute('users:master-page', <UsersMasterPage />),
-}
-```
-
-## Simple Rules
-
-- Add permission rules in `src/utils/permissions.ts`, not inside components.
-- Use `allowPage()` for route and navigation access.
-- Use `allow()` to describe resource actions and ownership rules once.
-- Use `canAccess()` for routes and sidebar visibility.
-- Use `can()` in UI to hide actions, disable fields, and avoid showing flows the user cannot complete.
-- Prefer passing a real resource instance when the UI is about one specific record.
-- Use `'*'` only for "any instance" or "any field" UI checks.
-- Keep page access separate from resource action checks.
-- Treat frontend permissions as UX only. The API still needs to enforce authorization.
+1. Add or reuse a typed `PageAccess` value.
+2. Grant it with `allowPage()`.
+3. Protect the route with `AuthGuard` or `protectedRoute()`.
+4. Add the same access value to its sidebar item.
+5. Use `can()` separately for actions inside the page.
 
 [← Dialogs And Alerts](./07_dialogs_and_alerts.md) | [Testing →](./09_testing.md)

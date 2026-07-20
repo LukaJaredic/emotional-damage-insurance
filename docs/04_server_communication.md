@@ -1,141 +1,74 @@
 # Server Communication
 
-## Main rule
+## Main Pattern
 
-This project revolves around TanStack Query.
+Server state uses TanStack Query on top of the shared Axios client.
 
-The usual pattern is:
-
-1. Write a fetcher function.
+1. Write a fetcher.
 2. Wrap it in a query or mutation hook.
-3. Use the right query keys for the code's ownership boundary.
-4. Invalidate related queries and show success toasts after mutations.
+3. Use query keys from the correct ownership layer.
+4. Invalidate related keys after successful mutations.
 
-## Shared pieces
+## Main Files
 
-- `src/lib/api.ts` contains the shared Axios client.
-- `src/lib/react-query.ts` creates the shared `QueryClient`.
-- `src/api/` contains common API fetchers and hooks used by app-level/shared code.
-- `src/config/query-keys.ts` contains query keys used from shared/common code.
-- `src/app/providers/app-provider.tsx` mounts `QueryClientProvider`.
+- `src/lib/api.ts`: configured Axios client
+- `src/lib/react-query.ts`: shared `QueryClient`
+- `src/config/query-keys.ts`: query keys shared across features or app code
+- `src/config/pagination.ts`: shared pagination defaults
+- `src/api`: fetchers and hooks used outside one feature
+- `src/features/*/api`: feature-only fetchers and hooks
 
-## Query keys
+Foundational files should prefer direct imports, such as `@/config/env`, when importing a barrel could create a dependency cycle.
 
-Feature-only query keys stay in the feature.
+## API Ownership
 
-Put feature query keys in the feature `utils/` folder, using this shape:
+Use a feature API folder when only that feature needs the endpoint. Move the API to `src/api` when it is used by app-level code, shared components, or another feature.
 
-- file: `feature-name-query-keys.ts`
-- export: `featureNameQueryKeys`
+Examples:
 
-The policy holders feature is the current reference:
+- `src/api/auth/get-me.ts` is used by app providers.
+- `src/api/users/get-user.ts` is also used by `<Audit />`.
+- `src/api/policy-holders/get-policy-holders.ts` is used by policy-holder lists and policy forms.
+- `src/api/policies/get-policies.ts` is used by policy master pages and policy-holder details.
+- `src/features/policies/api/get-policy.ts` stays feature-owned because only policy detail needs it.
+
+Export shared APIs from their local barrel and `src/api/index.ts`.
+
+## Query Keys
+
+Feature-only query keys stay in the feature's `utils` folder. Policy detail and policy-user keys use `src/features/policies/utils/policy-query-keys.ts`.
+
+Shared query keys live in `src/config/query-keys.ts`. This includes auth, shared user details, policy-holder keys, and policy `all`/`list` keys.
 
 ```ts
-// src/features/policy-holders/utils/policy-holder-query-keys.ts
-export const policyHolderQueryKeys = {
-  all: () => ['policy-holders'] as const,
-  list: ({ perPage, search, type }: UsePolicyHoldersQuery) =>
-    [
-      'policy-holders',
-      perPage ?? DEFAULT_PAGE_LOAD_SIZE,
-      search ?? '',
-      type ?? '',
-    ] as const,
-  detail: (policyHolderId: string) =>
-    ['policy-holders', policyHolderId] as const,
-}
+queryKey: queryKeys.policies.list(params)
 ```
 
-Put keys in `src/config/query-keys.ts` when they are used by shared/common code or app-level code. Current examples are auth session keys and shared user lookup keys:
+Query keys include values that change the response, such as page size, search text, or filters. Use `DEFAULT_PAGE_LOAD_SIZE` from `src/config/pagination.ts` when a list does not provide a page size.
+
+## Queries And Mutations
+
+Keep fetchers separate from hooks:
 
 ```ts
-export const queryKeys = {
-  auth: {
-    me: () => ['auth', 'me'] as const,
-  },
-  users: {
-    detail: (userId: string) => ['users', userId] as const,
-  },
-}
-```
-
-## Common API modules
-
-Use `src/api` for API code that crosses feature boundaries.
-
-Current examples:
-
-- `src/api/auth/get-me.ts` and `src/api/auth/logout.ts` are used by app providers/context.
-- `src/api/users/get-user.ts` is used by the users detail page and shared `<Audit />` component.
-
-Export common APIs from local barrels and `src/api/index.ts`, then import with `@/api`.
-
-## Query example
-
-`src/features/policy-holders/api/get-policy-holders.ts` is the main list example.
-
-```ts
-export async function getPolicyHolders(
-  params: GetPolicyHoldersQuery,
-): Promise<PolicyHolder[]> {
-  const response = await api.get<PolicyHolder[]>('/policy-holders', { params })
-  return response.data
-}
-```
-
-Then wrap it in a TanStack Query hook.
-
-```ts
-export function usePolicyHolders(
-  params: UsePolicyHoldersQuery,
-): RemoteDataState<PolicyHolder> {
-  const query = useInfiniteQuery({
-    queryKey: policyHolderQueryKeys.list(params),
-    queryFn: ({ pageParam }) =>
-      getPolicyHolders({
-        ...params,
-        page: pageParam,
-      }),
+export async function getPolicies(params: GetPoliciesQuery): Promise<Policy[]> {
+  const response = await api.get<PolicyDto[]>(apiPaths.policies.all(), {
+    params,
   })
 
-  return {
-    items: query.data?.pages.flat() ?? [],
-    isInitialLoading: query.isPending,
-    isFetchingMore: query.isFetchingNextPage,
-    hasNextPage: query.hasNextPage ?? false,
-    fetchNextPage: query.fetchNextPage,
-  }
+  return response.data.map(normalizePolicy)
 }
 ```
 
-This exact setup is recommended for infinite-scrolling lists, and especially useful in combination with: `RemoteData` and `RemoteDataWithFilters` components (see: [Lists And Tables](./05_lists_and_tables.md)).
+List hooks used by shared data components return `RemoteDataState`. Mutations should invalidate the relevant `all()` or `detail()` keys after success.
 
-## Mutation example
+Non-GET failures already show a toast through the Axios interceptor. Components may still handle field errors or local status changes.
 
-Mutations should invalidate the relevant queries.
+## Rules
 
-```ts
-export function useCreatePolicyHolder() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: createPolicyHolder,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({
-        queryKey: policyHolderQueryKeys.all(),
-      })
-    },
-  })
-}
-```
-
-## Simple rules
-
-- Keep feature-only fetchers inside feature `api/` files.
-- Move reused/common fetchers and hooks to `src/api`.
-- Keep feature query keys inside the feature, usually in `utils/feature-name-query-keys.ts`.
-- Keep shared/common query keys in `src/config/query-keys.ts`.
-- Use invalidation instead of manually syncing many views.
-- Non-GET API errors are already shown through the shared Axios interceptor.
+- Keep fetchers separate from hooks.
+- Keep APIs and query keys at the narrowest valid ownership level.
+- Use invalidation instead of manually syncing several cached views.
+- Do not import a feature API from another feature.
 
 [← Features](./03_features.md) | [Lists And Tables →](./05_lists_and_tables.md)

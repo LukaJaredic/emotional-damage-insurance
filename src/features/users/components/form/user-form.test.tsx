@@ -15,8 +15,8 @@ import {
   testUsers,
 } from '@/testing/test-utils'
 import type { User } from '@/types'
+import { userRoleLabels } from '@/utils'
 import type { UserFormStatus } from '@features/users/types/user-form.types'
-import { roleLabels } from '@features/users/utils/user-labels'
 
 import UserForm from './user-form'
 import type { UserFormProps } from './user-form'
@@ -98,7 +98,7 @@ async function fillFormFields(user: User, password?: string) {
   }
   await selectOptions(
     rolesSelect,
-    user.roles.map((role) => roleLabels[role]),
+    user.roles.map((role) => userRoleLabels[role]),
   )
 }
 

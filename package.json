@@ -10,7 +10,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --cache",
     "lint:with-cycle-check": "CYCLE_CHECK_ENABLED=true eslint . --no-cache",
-    "typecheck": "tsc -b --noEmit",
+    "tsc": "tsc -b --noEmit",
     "lint:fix": "eslint . --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",

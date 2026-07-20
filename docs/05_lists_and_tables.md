@@ -12,7 +12,7 @@
 
 For list pages, start with `RemoteDataWithFilters` if the page has filters.
 
-The policy holders page is the main example.
+The policy-holder and policy pages are the main examples.
 
 ```tsx
 <RemoteDataWithFilters
@@ -30,22 +30,24 @@ The policy holders page is the main example.
 
 `useRemoteData` is a hook prop. Pass a stable imported hook reference directly, such as `useRemoteData={usePolicyHolders}`.
 
-Do not pass inline functions or conditionally select between different hooks. `RemoteDataWithFilters` calls this hook during render, so the hook identity must stay stable to preserve React's fixed hook order. In development, the component throws if `useRemoteData` changes between renders.
+Do not pass an inline function or switch hooks conditionally. The hook reference must stay stable between renders.
+
+Filters can use text, select, or date inputs. Filter values are stored in URL search params so pages can be linked and refreshed without losing the current filters.
+
+Use `baseParams` when a list is scoped by a fixed relation that should not come from the URL. For example, policy-holder details pass `baseParams={{ policyHolderId }}` to reuse the shared policy list API while keeping the list scoped to that holder. `baseParams` are merged after URL-derived filters.
 
 If the page has no filters, use `RemoteData` directly.
 
 ## Build columns with `tableColumnBuilder()`
 
-Table columns should always be built with `tableColumnBuilder()` - this way we ensure consistency, DRYness and declarative column definitions.
-
-Do not hand-write raw table column objects in feature code, unless you are completely sure it will never be used in other tables.
+Build table columns with `tableColumnBuilder()` for consistent links, text, email, phone, and custom cells.
 
 ```tsx
 import { tableColumnBuilder } from '@/components/data/table'
 import { paths } from '@/config'
 import type { PolicyHolder } from '@/types'
 
-import { name, typeLabels } from './policy-holder-labels'
+import { policyHolderName, policyHolderTypeLabels } from '@/utils'
 
 const tcb = tableColumnBuilder<PolicyHolder>()
 
@@ -55,12 +57,12 @@ export const policyHolderColumns = [
     dataIndex: 'id',
     getHref: (policyHolder) =>
       paths.policyHolders.detail.getHref(policyHolder.id),
-    getLabel: name,
+    getLabel: policyHolderName,
   }),
   tcb.custom({
     title: 'Type',
     dataIndex: 'type',
-    render: (policyHolder) => typeLabels[policyHolder.type],
+    render: (policyHolder) => policyHolderTypeLabels[policyHolder.type],
   }),
   tcb.text('Government ID', 'governmentId'),
   tcb.email('Email', 'email'),
@@ -68,26 +70,14 @@ export const policyHolderColumns = [
 ]
 ```
 
-A special column:
-
-```ts
-tcb.primaryLink({
-    title: 'Name',
-    dataIndex: 'id',
-    getHref: (policyHolder) =>
-      paths.policyHolders.detail.getHref(policyHolder.id),
-    getLabel: name,
-  }),
-```
-
-will make the whole row clickable using absolute positioning, while keeping the table accessible.
+`primaryLink()` makes the row clickable while keeping a real accessible link in the table.
 
 ## When to use each piece
 
 - Use `RemoteDataWithFilters` for list pages with filters.
 - Use `RemoteData` for list pages without filters.
 - Use `DataView` directly only when you already have local items and do not need the remote-data wrapper.
-- Use `Table` or `List` directly only when you need lower-level control - you do not wish the app to choose `Table` vs `List` based on viewport width.
+- Use `Table` or `List` directly only when you need lower-level control.
 
 ## Query shape for `RemoteData`
 
@@ -99,6 +89,6 @@ Your query object should expose:
 - `hasNextPage`
 - `fetchNextPage`
 
-That is why the policy holders query returns a `RemoteDataState<PolicyHolder>` instead of returning the raw TanStack Query object.
+That is why list queries such as policies and policy holders return `RemoteDataState<T>` instead of returning the raw TanStack Query object.
 
 [← Server Communication](./04_server_communication.md) | [Forms →](./06_forms.md)

@@ -1,5 +1,8 @@
 import {
+  components,
   type GroupBase,
+  type InputActionMeta,
+  type MenuListProps,
   type MultiValue,
   type SingleValue,
   default as ReactSelect,
@@ -21,6 +24,9 @@ type BaseSelectProps = {
   name?: string
   noOptionsMessage?: string
   isClearable?: boolean
+  isLoading?: boolean
+  onInputChange?: (value: string, actionMeta: InputActionMeta) => void
+  onMenuScrollToBottom?: () => void
   'aria-invalid'?: boolean
   'aria-label'?: string
 }
@@ -92,6 +98,9 @@ function Select({
   name,
   noOptionsMessage = 'No options found',
   isClearable = true,
+  isLoading = false,
+  onInputChange,
+  onMenuScrollToBottom,
   'aria-invalid': ariaInvalid = false,
   'aria-label': ariaLabel,
 }: SelectProps) {
@@ -99,6 +108,8 @@ function Select({
     ...(inputId ? { inputId } : {}),
     ...(name ? { name } : {}),
     ...(placeholder ? { placeholder } : {}),
+    ...(onInputChange ? { onInputChange } : {}),
+    ...(onMenuScrollToBottom ? { onMenuScrollToBottom } : {}),
   }
 
   const selectedValue = buildValueObject(value, options)
@@ -112,6 +123,7 @@ function Select({
   return (
     <ReactSelect<SelectOption, boolean, GroupBase<SelectOption>>
       {...optionalProps}
+      components={{ MenuList }}
       aria-label={ariaLabel}
       aria-invalid={ariaInvalid}
       options={options}
@@ -120,6 +132,7 @@ function Select({
       isMulti={isMultiple}
       isDisabled={disabled}
       isClearable={isClearable}
+      isLoading={isLoading}
       menuPortalTarget={typeof document !== 'undefined' ? document.body : null}
       menuPosition="fixed"
       menuShouldScrollIntoView={false}
@@ -171,6 +184,22 @@ function Select({
           zIndex: 60,
           pointerEvents: 'auto',
         }),
+      }}
+    />
+  )
+}
+
+/** Keeps a portaled menu scrollable while Radix locks background scrolling. */
+function MenuList(
+  props: MenuListProps<SelectOption, boolean, GroupBase<SelectOption>>,
+) {
+  return (
+    <components.MenuList
+      {...props}
+      innerProps={{
+        ...props.innerProps,
+        onWheel: (event) => event.stopPropagation(),
+        onTouchMove: (event) => event.stopPropagation(),
       }}
     />
   )

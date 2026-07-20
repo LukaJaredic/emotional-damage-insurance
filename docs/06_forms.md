@@ -6,9 +6,9 @@ Feature forms own their schema, types, default values, and submit logic.
 
 Shared field components live in `src/components/form`.
 
-## Users form example
+## Feature Form Example
 
-The users form is split like this:
+The users form follows this structure:
 
 - `src/features/users/utils/user-form.ts`: schemas and builders
 - `src/features/users/types/user-form.types.ts`: inferred form types
@@ -18,8 +18,9 @@ The users form is split like this:
 
 Use the shared field components instead of wiring labels and errors by hand.
 
-- `InputField` for text, email, number, and password inputs
+- `InputField` for text, email, number, password, and date inputs
 - `SelectField` for single and multi select inputs
+- `RemoteSelectField` for options loaded from an API
 
 ## Simple example
 
@@ -50,6 +51,21 @@ Then render shared fields.
   isMultiple
 />
 ```
+
+The policy form uses `RemoteSelectField` with the shared `usePolicyHolders` hook:
+
+```tsx
+<RemoteSelectField
+  control={form.control}
+  name="policyHolderId"
+  id="policy-holder-id"
+  label="Policy holder"
+  useRemoteData={usePolicyHolders}
+  renderOption={renderPolicyHolderOption}
+/>
+```
+
+Pass a stable imported hook to `useRemoteData`. Do not pass an inline function. Remote selects handle loading, errors, debounced search, and loading more options when the menu reaches the bottom.
 
 ## Component layout
 

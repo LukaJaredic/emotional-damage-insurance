@@ -1,10 +1,10 @@
 import { PlusIcon } from '@phosphor-icons/react'
 
+import { usePolicyHolders } from '@/api/policy-holders'
 import { RemoteDataWithFilters } from '@/components/data/remote-data'
 import { PageLayout } from '@/components/layout'
 import { Button } from '@/components/ui/shadcn/button'
 import { usePermissions } from '@/hooks'
-import { usePolicyHolders } from '@features/policy-holders/api/get-policy-holders'
 import { policyHolderFilters } from '@features/policy-holders/utils/policy-holder-filters'
 import { policyHolderColumns } from '@features/policy-holders/utils/policy-holder-table-columns'
 

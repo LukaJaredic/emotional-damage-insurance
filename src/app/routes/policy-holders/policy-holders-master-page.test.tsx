@@ -6,7 +6,6 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { paths } from '@/config'
 import { env } from '@/config/env'
-import { name } from '@/features/policy-holders/utils/policy-holder-labels'
 import useMediaQuery from '@/hooks/use-media-query'
 import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
@@ -17,6 +16,7 @@ import {
   testUsers,
 } from '@/testing/test-utils'
 import type { PolicyHolder, UserRole } from '@/types'
+import { policyHolderName } from '@/utils'
 import AuthGuard from '@app/auth-guard'
 
 import PolicyHoldersMasterPage from './policy-holders-master-page'
@@ -95,7 +95,7 @@ async function renderPolicyHoldersMaster({
     <VirtuosoMockContext.Provider
       value={{ viewportHeight: 800, itemHeight: 50 }}
     >
-      <AuthGuard shouldHaveUser page="policy-holders:master-page">
+      <AuthGuard shouldHaveUser page="policy-holder:master-page">
         <PolicyHoldersMasterPage />
       </AuthGuard>
     </VirtuosoMockContext.Provider>,
@@ -176,7 +176,7 @@ describe('PolicyHoldersMaster', () => {
       for (const policyHolder of returnedPolicyHolders) {
         const link = (
           await screen.findAllByRole('link', {
-            name: name(policyHolder),
+            name: policyHolderName(policyHolder),
           })
         )[0]!
 
@@ -199,7 +199,7 @@ describe('PolicyHoldersMaster', () => {
 
       for (const policyHolder of returnedPolicyHolders) {
         const card = screen.getAllByRole('link', {
-          name: new RegExp(name(policyHolder), 'i'),
+          name: new RegExp(policyHolderName(policyHolder), 'i'),
         })[0]!
 
         expect(card).toHaveAttribute(
@@ -262,20 +262,20 @@ describe('PolicyHoldersMaster', () => {
       }
     })
 
-    it.todo(
-      'should open a create form when the create button is clicked',
-      async () => {
-        // const { user } = await renderPolicyHoldersMaster()
-        // expect(
-        //   screen.queryByRole('dialog', { name: 'Create a policy holder' }),
-        // ).not.toBeInTheDocument()
-        // await user.click(
-        //   screen.getByRole('button', { name: 'Create a policy holder' }),
-        // )
-        // expect(
-        //   screen.getByRole('dialog', { name: 'Create a policy holder' }),
-        // ).toBeInTheDocument()
-      },
-    )
+    it('should open a create form when the create button is clicked', async () => {
+      const { user } = await renderPolicyHoldersMaster()
+
+      expect(
+        screen.queryByRole('dialog', { name: 'Create a policy holder' }),
+      ).not.toBeInTheDocument()
+
+      await user.click(
+        screen.getByRole('button', { name: 'Create a policy holder' }),
+      )
+
+      expect(
+        screen.getByRole('dialog', { name: 'Create a policy holder' }),
+      ).toBeInTheDocument()
+    })
   })
 })
