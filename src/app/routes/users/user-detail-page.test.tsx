@@ -14,7 +14,7 @@ import {
   testUsers,
 } from '@/testing/test-utils'
 import type { PolicyLimits, PolicyWithUserLimits, User } from '@/types'
-import { userRoles } from '@/utils'
+import { policyStatusLabel, userRoles } from '@/utils'
 
 import UserDetailPage from './user-detail-page'
 
@@ -176,6 +176,9 @@ describe('UserDetailPage', () => {
       expect(
         within(policyTabs).getByRole('tab', { name: 'Active cover' }),
       ).toHaveAttribute('aria-selected', 'true')
+      expect(
+        screen.getByText(policyStatusLabel(activePolicy)),
+      ).toBeInTheDocument()
     })
 
     it('should select the newest policy when none are active', async () => {

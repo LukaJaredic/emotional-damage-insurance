@@ -154,6 +154,49 @@ const sanitizePolicy = (policy: MockPolicy): Policy => {
   }
 }
 
+const hasCurrentOrFuturePolicyOverlap = (
+  targetPolicy: Policy,
+  userId: User['id'],
+  now = Date.now(),
+) => {
+  if (targetPolicy.terminated) {
+    return false
+  }
+
+  return db.policyUser.getAll().some((policyUser) => {
+    if (
+      policyUser.userId !== userId ||
+      policyUser.policyId === targetPolicy.id
+    ) {
+      return false
+    }
+
+    const foundPolicy = findPolicyById(policyUser.policyId)
+
+    if (!foundPolicy) {
+      return false
+    }
+
+    const existingPolicy = sanitizePolicy(foundPolicy as unknown as MockPolicy)
+
+    if (existingPolicy.terminated) {
+      return false
+    }
+
+    const overlapStart = Math.max(
+      toTimestamp(targetPolicy.startDate),
+      toTimestamp(existingPolicy.startDate),
+      now,
+    )
+    const overlapEnd = Math.min(
+      toTimestamp(targetPolicy.endDate),
+      toTimestamp(existingPolicy.endDate),
+    )
+
+    return overlapStart <= overlapEnd
+  })
+}
+
 const isValidPolicyDuration = (startDate: Date, endDate: Date) => {
   return toTimestamp(endDate) >= addDays(startDate, 1).getTime()
 }
@@ -633,6 +676,13 @@ export const policiesHandlers = [
         if (findPolicyUser(policyId, targetUser.id)) {
           return mockApiError({
             code: 'POLICY_USER_ALREADY_CONNECTED',
+            status: 409,
+          })
+        }
+
+        if (hasCurrentOrFuturePolicyOverlap(policy, targetUser.id)) {
+          return mockApiError({
+            code: 'POLICY_USER_HAS_OVERLAPPING_POLICY',
             status: 409,
           })
         }

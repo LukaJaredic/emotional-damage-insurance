@@ -21,6 +21,8 @@ const defaultMessages = {
   POLICY_NOT_FOUND: 'We could not find that policy. It may have been removed.',
   POLICY_NOT_TERMINATED: 'This policy is not terminated.',
   POLICY_USER_ALREADY_CONNECTED: 'This user is already assigned to the policy.',
+  POLICY_USER_HAS_OVERLAPPING_POLICY:
+    'This user is already assigned to a policy with overlapping current or future coverage.',
   POLICY_USER_NOT_CONNECTED: 'This user is not assigned to the policy.',
   // User-related errors
   USER_ALREADY_EXISTS: 'A user with this information already exists.',
