@@ -45,7 +45,7 @@ import { tableColumnBuilder } from '@/components/data/table'
 import { paths } from '@/config'
 import type { PolicyHolder } from '@/types'
 
-import { name, typeLabels } from './policy-holder-labels'
+import { policyHolderName, policyHolderTypeLabels } from '@/utils'
 
 const tcb = tableColumnBuilder<PolicyHolder>()
 
@@ -55,12 +55,12 @@ export const policyHolderColumns = [
     dataIndex: 'id',
     getHref: (policyHolder) =>
       paths.policyHolders.detail.getHref(policyHolder.id),
-    getLabel: name,
+    getLabel: policyHolderName,
   }),
   tcb.custom({
     title: 'Type',
     dataIndex: 'type',
-    render: (policyHolder) => typeLabels[policyHolder.type],
+    render: (policyHolder) => policyHolderTypeLabels[policyHolder.type],
   }),
   tcb.text('Government ID', 'governmentId'),
   tcb.email('Email', 'email'),

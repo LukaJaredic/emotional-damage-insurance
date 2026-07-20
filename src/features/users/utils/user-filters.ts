@@ -1,19 +1,17 @@
 import type { Filter } from '@/components/form'
+import {
+  userSearchFilter,
+  type UserSearchFilterValues,
+} from '@/components/users'
 
 import { roleOptions } from './user-options'
 
-type UserFiltersValues = {
-  search: string
+type UserFiltersValues = UserSearchFilterValues & {
   roles: string[]
 }
 
 export const userFilters = [
-  {
-    name: 'search',
-    type: 'text',
-    label: 'Search',
-    placeholder: 'Search by name or email',
-  },
+  userSearchFilter,
   {
     name: 'roles',
     type: 'select',

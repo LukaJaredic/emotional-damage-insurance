@@ -7,5 +7,7 @@ export * from './forms'
 export * from './style'
 export * from './currency'
 export * from './policy-limit-labels'
+export * from './policy-holder-labels'
+export * from './user-labels'
 
 export { PermissionsBuilder, type PageAccess } from './permission-builder'

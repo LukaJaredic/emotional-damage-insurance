@@ -6,13 +6,10 @@ import { HttpResponse, http } from 'msw'
 import AuthGuard from '@/app/auth-guard'
 import { paths } from '@/config'
 import { env } from '@/config/env'
-import {
-  name,
-  typeLabels,
-} from '@/features/policy-holders/utils/policy-holder-labels'
 import { server } from '@/testing/mocks/server'
 import { renderApp, testAuditFields, testUsers } from '@/testing/test-utils'
 import type { PolicyHolder, PolicyHolderType, User } from '@/types'
+import { policyHolderName, policyHolderTypeLabels } from '@/utils'
 
 import PolicyHolderDetailPage from './policy-holder-detail-page'
 
@@ -69,7 +66,7 @@ async function renderPolicyHolderDetail(
 
   if (!skipLoadingWait) {
     await screen.findByRole('heading', {
-      name: name(viewedPolicyHolder),
+      name: policyHolderName(viewedPolicyHolder),
     })
   }
 
@@ -100,7 +97,7 @@ describe('PolicyHolderDetailPage', () => {
         throw new Error('Unexpected policy holder type, expected individual')
       }
 
-      expectDefinition('Type', typeLabels[ph.type])
+      expectDefinition('Type', policyHolderTypeLabels[ph.type])
       expectDefinition('First name', ph.firstName)
       expectDefinition('Last name', ph.lastName)
       expectDefinition('Government ID', ph.governmentId)
@@ -118,7 +115,7 @@ describe('PolicyHolderDetailPage', () => {
         throw new Error('Unexpected policy holder type, expected business')
       }
 
-      expectDefinition('Type', typeLabels[ph.type])
+      expectDefinition('Type', policyHolderTypeLabels[ph.type])
       expectDefinition('Business name', ph.businessName)
       expectDefinition('Tax ID', ph.governmentId)
       expectDefinitionLink('Email', ph.email)

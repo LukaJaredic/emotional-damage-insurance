@@ -5,7 +5,7 @@ import { PageLayout } from '@/components/layout'
 import { QueryLoading, Tabs } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { usePermissions, useUser } from '@/hooks'
-import { stringifyRoles } from '@features/users/utils/user-labels'
+import { userRoles } from '@/utils'
 
 import UserFormDialog from '../form/user-form-dialog'
 
@@ -38,7 +38,7 @@ function UserDetail({ userId }: UserDetailProps) {
   return (
     <PageLayout
       heading={`${user.firstName} ${user.lastName}`}
-      description={stringifyRoles(user.roles)}
+      description={userRoles(user.roles)}
       actions={() => (
         <>
           {can('user:update', user, '*') ? (

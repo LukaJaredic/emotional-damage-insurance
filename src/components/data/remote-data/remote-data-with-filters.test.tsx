@@ -26,6 +26,10 @@ type Query = {
   type: string
 }
 
+type QueryWithBaseParams = Query & {
+  policyId: string
+}
+
 const works: CreativeWork[] = [
   { title: 'Breaking Bad', type: 'show' },
   { title: 'Better Call Saul', type: 'show' },
@@ -174,6 +178,35 @@ describe('RemoteDataWithFilters', () => {
         search: 'batman',
         type: 'movie',
       })
+    })
+  })
+
+  it('should pass base params together with filter values', async () => {
+    const useRemoteDataWithBaseParams =
+      vi.fn<(params: QueryWithBaseParams) => RemoteDataState<CreativeWork>>(
+        buildQueryState,
+      )
+
+    await renderApp(
+      <div className="h-96">
+        <RemoteDataWithFilters
+          useRemoteData={useRemoteDataWithBaseParams}
+          baseParams={{ policyId: 'policy-1', type: 'show' }}
+          filters={filters}
+          tableColumns={tableColumns}
+          tableCaption="Creative works table"
+          loadingContent="Loading creative works..."
+          emptyContent="No creative works found"
+          listItemContent={(_, item) => <span>{item.title}</span>}
+        />
+      </div>,
+      { url: '/?search=batman&type=movie' },
+    )
+
+    expect(useRemoteDataWithBaseParams).toHaveBeenLastCalledWith({
+      search: 'batman',
+      type: 'show',
+      policyId: 'policy-1',
     })
   })
 

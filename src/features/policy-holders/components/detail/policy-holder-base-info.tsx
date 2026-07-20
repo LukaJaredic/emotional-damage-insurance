@@ -2,18 +2,13 @@ import { Audit, DefinitionTermCard, Email } from '@/components/ui'
 import Phone from '@/components/ui/phone'
 import { Avatar, AvatarFallback } from '@/components/ui/shadcn/avatar'
 import type { PolicyHolder } from '@/types'
-import {
-  name,
-  typeLabels,
-} from '@features/policy-holders/utils/policy-holder-labels'
+import { policyHolderName, policyHolderTypeLabels } from '@/utils'
 
 type PolicyHolderBaseInfoProps = {
   policyHolder: PolicyHolder
 }
 
 function PolicyHolderBaseInfo({ policyHolder }: PolicyHolderBaseInfoProps) {
-  const policyHolderName = name(policyHolder)
-
   return (
     <DefinitionTermCard
       header={
@@ -24,7 +19,7 @@ function PolicyHolderBaseInfo({ policyHolder }: PolicyHolderBaseInfoProps) {
 
           <div className="min-w-0">
             <p className="text-foreground truncate text-base font-semibold">
-              {policyHolderName}
+              {policyHolderName(policyHolder)}
             </p>
             <Email
               email={policyHolder.email}
@@ -34,7 +29,10 @@ function PolicyHolderBaseInfo({ policyHolder }: PolicyHolderBaseInfoProps) {
         </div>
       }
       items={[
-        { term: 'Type', definition: typeLabels[policyHolder.type] },
+        {
+          term: 'Type',
+          definition: policyHolderTypeLabels[policyHolder.type],
+        },
         ...(policyHolder.type === 'individual'
           ? [
               { term: 'First name', definition: policyHolder.firstName },

@@ -10,10 +10,6 @@ export type UpdatePolicyHolderAction = {
   data: UpdatePolicyHolderFormValues
 }
 
-export type GetPolicyHolderQuery = {
-  policyHolderId: string
-}
-
 export type DeletePolicyHolderAction = {
   policyHolderId: string
 }

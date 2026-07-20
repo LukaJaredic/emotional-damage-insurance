@@ -6,7 +6,6 @@ import { delay, HttpResponse, http } from 'msw'
 import AuthGuard from '@/app/auth-guard'
 import { paths } from '@/config'
 import { env } from '@/config/env'
-import { stringifyRoles } from '@/features/users/utils/user-labels'
 import { server } from '@/testing/mocks/server'
 import {
   buildUser,
@@ -15,6 +14,7 @@ import {
   testUsers,
 } from '@/testing/test-utils'
 import type { PolicyLimits, PolicyWithUserLimits, User } from '@/types'
+import { userRoles } from '@/utils'
 
 import UserDetailPage from './user-detail-page'
 
@@ -121,9 +121,9 @@ describe('UserDetailPage', () => {
       const user = testUsers.employee
       await renderUserDetail(user)
 
-      expect(
-        screen.getAllByText(stringifyRoles(user.roles)).length,
-      ).toBeGreaterThan(0)
+      expect(screen.getAllByText(userRoles(user.roles)).length).toBeGreaterThan(
+        0,
+      )
       expect(screen.getByText(user.firstName)).toBeInTheDocument()
       expect(screen.getByText(user.lastName)).toBeInTheDocument()
 

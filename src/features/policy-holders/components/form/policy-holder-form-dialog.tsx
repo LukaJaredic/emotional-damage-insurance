@@ -14,8 +14,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/shadcn/dialog'
 import type { PolicyHolder } from '@/types'
+import { policyHolderName } from '@/utils'
 import type { PolicyHolderFormStatus } from '@features/policy-holders/types/policy-holder-form.types'
-import { name } from '@features/policy-holders/utils/policy-holder-labels'
 
 import PolicyHolderForm from './policy-holder-form'
 
@@ -55,7 +55,7 @@ function PolicyHolderFormDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {isEdit ? name(policyHolder) : 'Create a policy holder'}
+            {isEdit ? policyHolderName(policyHolder) : 'Create a policy holder'}
           </DialogTitle>
           <DialogDescription>
             {isEdit
