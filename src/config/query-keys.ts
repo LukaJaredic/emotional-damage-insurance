@@ -1,10 +1,13 @@
-import type { GetPoliciesQuery, GetPolicyHoldersQuery } from '@/api'
+import type { GetPoliciesQuery } from '@/api/policies/policy-api.types'
+import type { GetPolicyHoldersQuery } from '@/api/policy-holders/policy-holder-api.types'
 
 import { DEFAULT_PAGE_LOAD_SIZE } from './pagination'
 
 type PolicyHolderListQuery = Omit<GetPolicyHoldersQuery, 'page'>
 
-type PolicyListQuery = Omit<GetPoliciesQuery, 'page'>
+type PolicyListQuery = Omit<GetPoliciesQuery, 'page' | 'terminated'> & {
+  terminated?: string
+}
 
 export const queryKeys = {
   auth: {

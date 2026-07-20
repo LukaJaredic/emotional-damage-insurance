@@ -3,15 +3,10 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import type { RemoteDataState } from '@/components/data/remote-data'
 import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
-import type { PolicyHolder, PolicyHolderType } from '@/types'
+import type { PolicyHolder } from '@/types'
 import { commonQueryOptions } from '@/utils'
 
-export type GetPolicyHoldersQuery = {
-  page: number
-  perPage?: number
-  search?: string
-  type?: PolicyHolderType
-}
+import type { GetPolicyHoldersQuery } from './policy-holder-api.types'
 
 export type UsePolicyHoldersQuery = Omit<GetPolicyHoldersQuery, 'page'>
 
