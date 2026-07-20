@@ -1,19 +1,33 @@
 import { cleanup, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { HttpResponse, http } from 'msw'
+import { VirtuosoMockContext } from 'react-virtuoso'
+import { vi } from 'vitest'
 
 import AuthGuard from '@/app/auth-guard'
 import { paths } from '@/config'
 import { env } from '@/config/env'
 import type { PolicyDto } from '@/features/policies/types/policy-api.types'
 import { premium, statusLabel } from '@/features/policies/utils/policy-labels'
+import useMediaQuery from '@/hooks/use-media-query'
 import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
-import { renderApp, testAuditFields, testUsers } from '@/testing/test-utils'
-import type { Policy, User } from '@/types'
-import { toAppDate, toEur } from '@/utils'
+import {
+  buildUser,
+  renderApp,
+  testAuditFields,
+  testUsers,
+} from '@/testing/test-utils'
+import type { Policy, PolicyHolder, User } from '@/types'
+import { policyHolderName, toAppDate, toEur, userRoles } from '@/utils'
 
 import PolicyDetailPage from './policy-detail-page'
+
+vi.mock('@/hooks/use-media-query', () => ({
+  default: vi.fn(),
+}))
+
+const mockedUseMediaQuery = vi.mocked(useMediaQuery)
 
 const testPolicy: Policy = {
   ...testAuditFields,
@@ -41,6 +55,17 @@ const terminatedPolicy: Policy = {
   id: 'terminated-policy-1',
   terminated: true,
   name: 'Terminated Cover',
+}
+
+const testPolicyHolder: PolicyHolder = {
+  ...testAuditFields,
+  id: testPolicy.policyHolderId,
+  type: 'individual',
+  firstName: 'Jane',
+  lastName: 'Policyholder',
+  governmentId: 'PH-123',
+  email: 'jane.policyholder@example.com',
+  phone: '+381 64 123 456',
 }
 
 function mockPolicyDetailResponse(policy: Policy) {
@@ -97,20 +122,83 @@ function mockPolicyActionResponses({
   )
 }
 
+function mockPolicyHolderDetailResponse(policyHolder: PolicyHolder) {
+  server.use(
+    http.get(`${env.API_URL}/policy-holders/:policyHolderId`, ({ params }) => {
+      expect(params.policyHolderId).toBe(policyHolder.id)
+
+      return HttpResponse.json(policyHolder)
+    }),
+  )
+}
+
+function mockPolicyHolderDetailErrorResponse(policyHolderId: string) {
+  server.use(
+    http.get(`${env.API_URL}/policy-holders/:policyHolderId`, ({ params }) => {
+      expect(params.policyHolderId).toBe(policyHolderId)
+
+      return HttpResponse.json(
+        { message: 'Policy holder lookup failed' },
+        { status: 500 },
+      )
+    }),
+  )
+}
+
+function mockPolicyUsersResponse({
+  policyId = testPolicy.id,
+  users = [],
+  onRequest,
+}: {
+  policyId?: string
+  users?: User[]
+  onRequest?: ((searchParams: URLSearchParams) => void) | undefined
+} = {}) {
+  server.use(
+    http.get(
+      `${env.API_URL}/policies/:policyId/users`,
+      ({ request, params }) => {
+        expect(params.policyId).toBe(policyId)
+        const searchParams = new URL(request.url).searchParams
+        onRequest?.(searchParams)
+
+        if (searchParams.get('page') !== '1') {
+          return HttpResponse.json([])
+        }
+
+        return HttpResponse.json(users)
+      },
+    ),
+  )
+}
+
 async function renderPolicyDetail(
   currentUser: User,
   policy: Policy,
   skipLoadingWait = false,
   skipPolicyDetailMock = false,
+  shouldFailPolicyHolderLookup = false,
 ) {
+  mockedUseMediaQuery.mockReturnValue(true)
+
   if (!skipPolicyDetailMock) {
     mockPolicyDetailResponse(policy)
   }
 
+  if (shouldFailPolicyHolderLookup) {
+    mockPolicyHolderDetailErrorResponse(policy.policyHolderId)
+  } else {
+    mockPolicyHolderDetailResponse(testPolicyHolder)
+  }
+
   await renderApp(
-    <AuthGuard shouldHaveUser page="policy:detail-page">
-      <PolicyDetailPage />
-    </AuthGuard>,
+    <VirtuosoMockContext.Provider
+      value={{ viewportHeight: 800, itemHeight: 50 }}
+    >
+      <AuthGuard shouldHaveUser page="policy:detail-page">
+        <PolicyDetailPage />
+      </AuthGuard>
+    </VirtuosoMockContext.Provider>,
     {
       user: currentUser,
       path: paths.policies.detail.path,
@@ -149,7 +237,20 @@ function toPolicyDto(policy: Policy): PolicyDto {
 }
 
 describe('PolicyDetailPage', () => {
-  describe('renders', () => {
+  describe('basic info tab', () => {
+    it('should render the basic info tab by default', async () => {
+      await renderPolicyDetail(testUsers.employee, testPolicy)
+
+      expect(
+        screen.getByRole('tablist', { name: 'Policy details' }),
+      ).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: 'Basic info' })).toHaveAttribute(
+        'aria-selected',
+        'true',
+      )
+      expect(screen.getByRole('tab', { name: 'Users' })).toBeInTheDocument()
+    })
+
     it('should render general policy details', async () => {
       await renderPolicyDetail(testUsers.employee, testPolicy)
 
@@ -158,9 +259,28 @@ describe('PolicyDetailPage', () => {
       expectDefinition('Premium', premium(testPolicy))
       expectDefinition('Start date', toAppDate(testPolicy.startDate))
       expectDefinition('End date', toAppDate(testPolicy.endDate))
-      expectDefinition('Policy holder ID', testPolicy.policyHolderId)
       expect(screen.getByText('Created')).toBeInTheDocument()
       expect(screen.getByText('Last edited')).toBeInTheDocument()
+      expect(
+        await screen.findByText(policyHolderName(testPolicyHolder)),
+      ).toBeInTheDocument()
+    })
+
+    it('should show the policy holder ID when its lookup fails', async () => {
+      await renderPolicyDetail(
+        testUsers.employee,
+        testPolicy,
+        false,
+        false,
+        true,
+      )
+
+      expect(
+        await screen.findByText(testPolicy.policyHolderId),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByRole('link', { name: testPolicy.policyHolderId }),
+      ).not.toBeInTheDocument()
     })
 
     it('should render policy limits', async () => {
@@ -184,6 +304,111 @@ describe('PolicyDetailPage', () => {
         'Meeting that could have been email',
         toEur(testPolicy.limits.meetingThatCouldHaveBeenEmail),
       )
+    })
+  })
+
+  describe('users tab', () => {
+    it('should render policy users in a table', async () => {
+      const policyUsers = [
+        buildUser(testUsers.customer, {
+          id: 'policy-user-1',
+          firstName: 'Mike',
+          lastName: 'Ross',
+          email: 'mike.ross@example.com',
+          roles: ['customer'],
+        }),
+        buildUser(testUsers.employee, {
+          id: 'policy-user-2',
+          firstName: 'Rachel',
+          lastName: 'Zane',
+          email: 'rachel.zane@example.com',
+          roles: ['employee', 'customer'],
+        }),
+      ]
+      mockPolicyUsersResponse({ users: policyUsers })
+      const { user } = await renderPolicyDetail(testUsers.employee, testPolicy)
+
+      await user.click(screen.getByRole('tab', { name: 'Users' }))
+
+      expect(
+        await screen.findByRole('table', { name: 'Policy users table' }),
+      ).toBeInTheDocument()
+
+      for (const policyUser of policyUsers) {
+        const link = await screen.findByRole('link', {
+          name: `${policyUser.firstName} ${policyUser.lastName}`,
+        })
+        const row = link.closest('tr')
+
+        expect(row).toBeInTheDocument()
+        expect(link).toHaveAttribute(
+          'href',
+          paths.users.detail.getHref(policyUser.id),
+        )
+        expect(within(row!).getByText(policyUser.email)).toBeInTheDocument()
+        expect(
+          within(row!).getByText(userRoles(policyUser.roles)),
+        ).toBeInTheDocument()
+      }
+    })
+
+    it('should request policy users with a search query', async () => {
+      const visibleUser = buildUser(testUsers.customer, {
+        id: 'filtered-policy-user',
+        firstName: 'Mike',
+        lastName: 'Ross',
+        email: 'mike.ross@example.com',
+      })
+      const hiddenUser = buildUser(testUsers.customer, {
+        id: 'unfiltered-policy-user',
+        firstName: 'Harvey',
+        lastName: 'Specter',
+        email: 'harvey.specter@example.com',
+      })
+      const requests: URLSearchParams[] = []
+
+      server.use(
+        http.get(
+          `${env.API_URL}/policies/:policyId/users`,
+          ({ request, params }) => {
+            expect(params.policyId).toBe(testPolicy.id)
+            const searchParams = new URL(request.url).searchParams
+            requests.push(new URLSearchParams(searchParams))
+
+            if (searchParams.get('page') !== '1') {
+              return HttpResponse.json([])
+            }
+
+            if (searchParams.get('search') === 'Mike') {
+              return HttpResponse.json([visibleUser])
+            }
+
+            return HttpResponse.json([hiddenUser, visibleUser])
+          },
+        ),
+      )
+      const { user } = await renderPolicyDetail(testUsers.employee, testPolicy)
+
+      await user.click(screen.getByRole('tab', { name: 'Users' }))
+      await screen.findByText('Harvey Specter')
+      await user.type(
+        screen.getByPlaceholderText('Search by name or email'),
+        'Mike',
+      )
+
+      await waitFor(() => {
+        expect(requests.at(-1)?.get('search')).toBe('Mike')
+      })
+
+      expect(
+        requests.some(
+          (request) => request.get('search') === 'Mike' && request.has('page'),
+        ),
+      ).toBe(true)
+      expect(await screen.findByText('Mike Ross')).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.queryByText('Harvey Specter')).not.toBeInTheDocument()
+      })
     })
   })
 

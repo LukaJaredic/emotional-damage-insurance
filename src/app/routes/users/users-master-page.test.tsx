@@ -6,12 +6,12 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { paths } from '@/config'
 import { env } from '@/config/env'
-import { stringifyRoles } from '@/features/users/utils/user-labels'
 import useMediaQuery from '@/hooks/use-media-query'
 import { mockApiError } from '@/testing/mocks/handlers/error-response'
 import { server } from '@/testing/mocks/server'
 import { renderApp, selectOptions, testUsers } from '@/testing/test-utils'
 import type { User, UserRole } from '@/types'
+import { userRoles } from '@/utils'
 import AuthGuard from '@app/auth-guard'
 
 import UsersMasterPage from './users-master-page'
@@ -157,7 +157,7 @@ describe('UsersMaster', () => {
         )
         expect(within(row!).getByText(user.email)).toBeInTheDocument()
         expect(
-          within(row!).getByText(stringifyRoles(user.roles)),
+          within(row!).getByText(userRoles(user.roles)),
         ).toBeInTheDocument()
       }
     })
@@ -180,7 +180,7 @@ describe('UsersMaster', () => {
 
         expect(within(card).getByText(user.email)).toBeInTheDocument()
         expect(
-          within(card).getByText(stringifyRoles(user.roles)),
+          within(card).getByText(userRoles(user.roles)),
         ).toBeInTheDocument()
       }
     })

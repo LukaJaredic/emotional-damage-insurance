@@ -27,7 +27,7 @@ export const policyQueryKeys = {
       endBeforeDate ?? '',
     ] as const,
   detail: (policyId: string) => ['policies', policyId] as const,
-  users: (policyId: string, { perPage, search }: UsePolicyUsersQuery) =>
+  users: ({ policyId, perPage, search }: UsePolicyUsersQuery) =>
     [
       'policies',
       policyId,

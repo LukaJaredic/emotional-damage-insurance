@@ -1,8 +1,7 @@
 import { tableColumnBuilder, type TableColumn } from '@/components/data/table'
 import { paths } from '@/config'
 import type { User } from '@/types'
-
-import { stringifyRoles } from './user-labels'
+import { userRoles } from '@/utils'
 
 const tcb = tableColumnBuilder<User>()
 
@@ -17,6 +16,6 @@ export const userColumns: TableColumn<User>[] = [
   tcb.custom({
     title: 'Roles',
     dataIndex: 'roles',
-    render: (user) => stringifyRoles(user.roles),
+    render: (user) => userRoles(user.roles),
   }),
 ]

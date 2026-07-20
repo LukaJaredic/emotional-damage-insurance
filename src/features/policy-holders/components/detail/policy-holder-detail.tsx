@@ -1,14 +1,11 @@
 import { PencilIcon, TrashIcon } from '@phosphor-icons/react'
 
+import { usePolicyHolderDetail } from '@/api/policy-holders'
 import { PageLayout } from '@/components/layout'
 import { QueryLoading } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import usePermissions from '@/hooks/use-permissions'
-import { usePolicyHolderDetail } from '@features/policy-holders/api/get-policy-holder'
-import {
-  name,
-  typeLabels,
-} from '@features/policy-holders/utils/policy-holder-labels'
+import { policyHolderName, policyHolderTypeLabels } from '@/utils'
 
 import PolicyHolderFormDialog from '../form/policy-holder-form-dialog'
 
@@ -35,8 +32,8 @@ function PolicyHolderDetail({ policyHolderId }: PolicyHolderDetailProps) {
 
   return (
     <PageLayout
-      heading={name(policyHolder)}
-      description={typeLabels[policyHolder.type]}
+      heading={policyHolderName(policyHolder)}
+      description={policyHolderTypeLabels[policyHolder.type]}
       actions={() => (
         <>
           {can('policy-holder:update', policyHolder, '*') ? (

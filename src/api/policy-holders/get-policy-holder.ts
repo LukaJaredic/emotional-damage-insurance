@@ -4,7 +4,9 @@ import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib/api'
 import type { PolicyHolder } from '@/types'
 
-import type { GetPolicyHolderQuery } from '../types/policy-holder-api.types'
+export type GetPolicyHolderQuery = {
+  policyHolderId: string
+}
 
 export async function getPolicyHolder({
   policyHolderId,

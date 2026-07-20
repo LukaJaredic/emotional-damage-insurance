@@ -3,14 +3,12 @@ import { PlusIcon } from '@phosphor-icons/react'
 import { RemoteDataWithFilters } from '@/components/data/remote-data'
 import { PageLayout } from '@/components/layout'
 import { Button } from '@/components/ui/shadcn/button'
+import { UserCard, userColumns } from '@/components/users'
 import { useUsers } from '@/features/users/api/get-users'
 import { usePermissions } from '@/hooks'
 import { userFilters } from '@features/users/utils/user-filters'
-import { userColumns } from '@features/users/utils/user-table-columns'
 
 import UserFormDialog from '../form/user-form-dialog'
-
-import UserCard from './user-card'
 
 function UsersMaster() {
   const { can } = usePermissions()

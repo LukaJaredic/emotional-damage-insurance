@@ -80,18 +80,21 @@ function buildNextSearchParams<T extends FieldValues>(
  *
  * @param useRemoteData TenStack Query Hook used to fetch filtered remote data.
  * @param filters Filter definitions rendered above the data view.
+ * @param baseParams Optional fixed params merged after URL-derived filters.
  * @param className Optional class name applied to the outer layout.
  * @param props Additional remote-data props passed to the underlying `<RemoteData>`.
  */
 function RemoteDataWithFilters<
   TItem extends Record<string, unknown>,
   TFilters extends FieldValues,
+  TBaseParams extends FieldValues = Record<never, never>,
 >({
   useRemoteData,
   filters,
+  baseParams = {} as TBaseParams,
   className,
   ...props
-}: RemoteDataWithFiltersProps<TItem, TFilters>) {
+}: RemoteDataWithFiltersProps<TItem, TFilters, TBaseParams>) {
   const [searchParams, setSearchParams] = useSearchParams()
   const filterValues = buildFilterValues(searchParams, filters)
 
@@ -102,7 +105,12 @@ function RemoteDataWithFilters<
     )
   }
 
-  const query = useRemoteData(filterValues)
+  const remoteDataParams = {
+    ...filterValues,
+    ...baseParams,
+  }
+
+  const query = useRemoteData(remoteDataParams)
 
   function handleFilterChange(values: TFilters) {
     setSearchParams(buildNextSearchParams(searchParams, values, filters), {

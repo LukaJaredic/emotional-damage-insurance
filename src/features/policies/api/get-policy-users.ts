@@ -27,7 +27,7 @@ export function usePolicyUsers(
 ): RemoteDataState<User> {
   const query = useInfiniteQuery({
     ...commonQueryOptions,
-    queryKey: policyQueryKeys.users(params.policyId, params),
+    queryKey: policyQueryKeys.users(params),
     queryFn: ({ pageParam }) =>
       getPolicyUsers({
         ...params,

@@ -1,6 +1,6 @@
 import { Audit, Avatar, DefinitionTermCard, Email } from '@/components/ui'
 import type { User } from '@/types'
-import { stringifyRoles } from '@features/users/utils/user-labels'
+import { userRoles } from '@/utils'
 
 type UserBaseInfoProps = {
   user: User
@@ -24,7 +24,7 @@ export function UserBaseInfo({ user }: UserBaseInfoProps) {
       items={[
         { term: 'First name', definition: user.firstName },
         { term: 'Last name', definition: user.lastName },
-        { term: 'Roles', definition: stringifyRoles(user.roles) },
+        { term: 'Roles', definition: userRoles(user.roles) },
         {
           term: 'Email',
           definition: (

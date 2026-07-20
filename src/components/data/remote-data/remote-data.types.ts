@@ -23,9 +23,13 @@ type RemoteDataProps<T extends Record<string, unknown>> = Omit<
 type RemoteDataWithFiltersProps<
   TItem extends Record<string, unknown>,
   TFilters extends FieldValues,
+  TBaseParams extends FieldValues,
 > = Omit<RemoteDataProps<TItem>, 'query'> & {
-  useRemoteData: (params: TFilters) => RemoteDataState<TItem>
+  useRemoteData: (
+    params: Omit<TFilters, keyof TBaseParams> & TBaseParams,
+  ) => RemoteDataState<TItem>
   filters: Filter<TFilters>[]
+  baseParams?: TBaseParams
 }
 
 export type { RemoteDataProps, RemoteDataState, RemoteDataWithFiltersProps }
