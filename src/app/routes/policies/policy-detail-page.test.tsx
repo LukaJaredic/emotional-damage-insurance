@@ -122,25 +122,19 @@ function mockPolicyActionResponses({
   )
 }
 
-function mockPolicyHolderDetailResponse(policyHolder: PolicyHolder) {
+function mockPolicyHolderDetailResponse(
+  policyHolder: PolicyHolder,
+  status = 200,
+) {
   server.use(
     http.get(`${env.API_URL}/policy-holders/:policyHolderId`, ({ params }) => {
       expect(params.policyHolderId).toBe(policyHolder.id)
 
-      return HttpResponse.json(policyHolder)
-    }),
-  )
-}
+      if (status >= 400) {
+        return mockApiError({ code: 'INTERNAL_ERROR', status })
+      }
 
-function mockPolicyHolderDetailErrorResponse(policyHolderId: string) {
-  server.use(
-    http.get(`${env.API_URL}/policy-holders/:policyHolderId`, ({ params }) => {
-      expect(params.policyHolderId).toBe(policyHolderId)
-
-      return HttpResponse.json(
-        { message: 'Policy holder lookup failed' },
-        { status: 500 },
-      )
+      return HttpResponse.json(policyHolder, { status })
     }),
   )
 }
@@ -172,24 +166,26 @@ function mockPolicyUsersResponse({
   )
 }
 
-async function renderPolicyDetail(
-  currentUser: User,
-  policy: Policy,
+async function renderPolicyDetail({
+  currentUser,
+  policy,
   skipLoadingWait = false,
   skipPolicyDetailMock = false,
-  shouldFailPolicyHolderLookup = false,
-) {
+  policyHolderStatus = 200,
+}: {
+  currentUser: User
+  policy: Policy
+  skipLoadingWait?: boolean
+  skipPolicyDetailMock?: boolean
+  policyHolderStatus?: number
+}) {
   mockedUseMediaQuery.mockReturnValue(true)
 
   if (!skipPolicyDetailMock) {
     mockPolicyDetailResponse(policy)
   }
 
-  if (shouldFailPolicyHolderLookup) {
-    mockPolicyHolderDetailErrorResponse(policy.policyHolderId)
-  } else {
-    mockPolicyHolderDetailResponse(testPolicyHolder)
-  }
+  mockPolicyHolderDetailResponse(testPolicyHolder, policyHolderStatus)
 
   await renderApp(
     <VirtuosoMockContext.Provider
@@ -239,7 +235,10 @@ function toPolicyDto(policy: Policy): PolicyDto {
 describe('PolicyDetailPage', () => {
   describe('basic info tab', () => {
     it('should render the basic info tab by default', async () => {
-      await renderPolicyDetail(testUsers.employee, testPolicy)
+      await renderPolicyDetail({
+        currentUser: testUsers.employee,
+        policy: testPolicy,
+      })
 
       expect(
         screen.getByRole('tablist', { name: 'Policy details' }),
@@ -252,7 +251,10 @@ describe('PolicyDetailPage', () => {
     })
 
     it('should render general policy details', async () => {
-      await renderPolicyDetail(testUsers.employee, testPolicy)
+      await renderPolicyDetail({
+        currentUser: testUsers.employee,
+        policy: testPolicy,
+      })
 
       expect(screen.getByText('General')).toBeInTheDocument()
       expectDefinition('Status', statusLabel(testPolicy))
@@ -267,13 +269,11 @@ describe('PolicyDetailPage', () => {
     })
 
     it('should show the policy holder ID when its lookup fails', async () => {
-      await renderPolicyDetail(
-        testUsers.employee,
-        testPolicy,
-        false,
-        false,
-        true,
-      )
+      await renderPolicyDetail({
+        currentUser: testUsers.employee,
+        policy: testPolicy,
+        policyHolderStatus: 500,
+      })
 
       expect(
         await screen.findByText(testPolicy.policyHolderId),
@@ -284,7 +284,10 @@ describe('PolicyDetailPage', () => {
     })
 
     it('should render policy limits', async () => {
-      await renderPolicyDetail(testUsers.employee, testPolicy)
+      await renderPolicyDetail({
+        currentUser: testUsers.employee,
+        policy: testPolicy,
+      })
 
       expect(screen.getByText('Limits')).toBeInTheDocument()
       expectDefinition('Insult', toEur(testPolicy.limits.insult))
@@ -326,7 +329,10 @@ describe('PolicyDetailPage', () => {
         }),
       ]
       mockPolicyUsersResponse({ users: policyUsers })
-      const { user } = await renderPolicyDetail(testUsers.employee, testPolicy)
+      const { user } = await renderPolicyDetail({
+        currentUser: testUsers.employee,
+        policy: testPolicy,
+      })
 
       await user.click(screen.getByRole('tab', { name: 'Users' }))
 
@@ -387,7 +393,10 @@ describe('PolicyDetailPage', () => {
           },
         ),
       )
-      const { user } = await renderPolicyDetail(testUsers.employee, testPolicy)
+      const { user } = await renderPolicyDetail({
+        currentUser: testUsers.employee,
+        policy: testPolicy,
+      })
 
       await user.click(screen.getByRole('tab', { name: 'Users' }))
       await screen.findByText('Harvey Specter')
@@ -414,7 +423,11 @@ describe('PolicyDetailPage', () => {
 
   describe('permissions', () => {
     it("should not let customer see policy's details", async () => {
-      await renderPolicyDetail(testUsers.customer, testPolicy, true)
+      await renderPolicyDetail({
+        currentUser: testUsers.customer,
+        policy: testPolicy,
+        skipLoadingWait: true,
+      })
 
       expect(await screen.findByText('404')).toBeInTheDocument()
     })
@@ -422,7 +435,7 @@ describe('PolicyDetailPage', () => {
     it('should let admin and employee terminate policies', async () => {
       for (const user of [testUsers.admin, testUsers.employee]) {
         cleanup()
-        await renderPolicyDetail(user, testPolicy)
+        await renderPolicyDetail({ currentUser: user, policy: testPolicy })
 
         expect(
           screen.getByRole('button', { name: /terminate policy/i }),
@@ -433,7 +446,10 @@ describe('PolicyDetailPage', () => {
     it('should let admin and employee reactivate policies', async () => {
       for (const user of [testUsers.admin, testUsers.employee]) {
         cleanup()
-        await renderPolicyDetail(user, terminatedPolicy)
+        await renderPolicyDetail({
+          currentUser: user,
+          policy: terminatedPolicy,
+        })
 
         expect(
           screen.getByRole('button', { name: /reactivate policy/i }),
@@ -442,7 +458,10 @@ describe('PolicyDetailPage', () => {
     })
 
     it('should let admin delete policies', async () => {
-      await renderPolicyDetail(testUsers.admin, testPolicy)
+      await renderPolicyDetail({
+        currentUser: testUsers.admin,
+        policy: testPolicy,
+      })
 
       expect(
         screen.getByRole('button', { name: /delete policy/i }),
@@ -450,7 +469,10 @@ describe('PolicyDetailPage', () => {
     })
 
     it('should not let employee delete policies', async () => {
-      await renderPolicyDetail(testUsers.employee, testPolicy)
+      await renderPolicyDetail({
+        currentUser: testUsers.employee,
+        policy: testPolicy,
+      })
 
       expect(
         screen.queryByRole('button', { name: /delete policy/i }),
@@ -465,12 +487,11 @@ describe('PolicyDetailPage', () => {
         policy: testPolicy,
         onTerminate: (request) => requests.push(request),
       })
-      const { user } = await renderPolicyDetail(
-        testUsers.admin,
-        testPolicy,
-        false,
-        true,
-      )
+      const { user } = await renderPolicyDetail({
+        currentUser: testUsers.admin,
+        policy: testPolicy,
+        skipPolicyDetailMock: true,
+      })
 
       await user.click(
         screen.getByRole('button', { name: /terminate policy/i }),
@@ -505,12 +526,11 @@ describe('PolicyDetailPage', () => {
         policy: terminatedPolicy,
         onReactivate: (request) => requests.push(request),
       })
-      const { user } = await renderPolicyDetail(
-        testUsers.admin,
-        terminatedPolicy,
-        false,
-        true,
-      )
+      const { user } = await renderPolicyDetail({
+        currentUser: testUsers.admin,
+        policy: terminatedPolicy,
+        skipPolicyDetailMock: true,
+      })
 
       await user.click(
         screen.getByRole('button', { name: /reactivate policy/i }),
@@ -546,12 +566,11 @@ describe('PolicyDetailPage', () => {
         policy: testPolicy,
         onDelete: (request) => requests.push(request),
       })
-      const { user } = await renderPolicyDetail(
-        testUsers.admin,
-        testPolicy,
-        false,
-        true,
-      )
+      const { user } = await renderPolicyDetail({
+        currentUser: testUsers.admin,
+        policy: testPolicy,
+        skipPolicyDetailMock: true,
+      })
 
       await user.click(screen.getByRole('button', { name: /delete policy/i }))
 
@@ -579,12 +598,11 @@ describe('PolicyDetailPage', () => {
         deleteStatus: 500,
         onDelete: (request) => requests.push(request),
       })
-      const { user } = await renderPolicyDetail(
-        testUsers.admin,
-        testPolicy,
-        false,
-        true,
-      )
+      const { user } = await renderPolicyDetail({
+        currentUser: testUsers.admin,
+        policy: testPolicy,
+        skipPolicyDetailMock: true,
+      })
 
       await user.click(screen.getByRole('button', { name: /delete policy/i }))
       const dialog = screen.getByRole('alertdialog', {
