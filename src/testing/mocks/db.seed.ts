@@ -9,6 +9,7 @@ import { generateUsers } from './generators/user'
 
 type SeedProfile = 'dev' | 'e2e'
 
+const DEV_POLICY_COUNT = 12
 const seedAuditFields = buildAuditFields(DEFAULT_AUDIT_USER_ID)
 
 const adminUser = {
@@ -52,7 +53,7 @@ function seed(db: DB, profile: SeedProfile) {
   if (profile === 'dev') {
     seedUsers(db, 100)
     seedPolicyHolders(db, 200)
-    seedPolicies(db, 10)
+    seedPolicies(db, DEV_POLICY_COUNT)
   }
 }
 
@@ -134,7 +135,7 @@ function seedPolicyHolders(db: DB, count: number = 200) {
   })
 }
 
-function seedPolicies(db: DB, count: number = 10) {
+function seedPolicies(db: DB, count: number) {
   const policyHolderIds = db.policyHolder
     .getAll()
     .slice(0, count)

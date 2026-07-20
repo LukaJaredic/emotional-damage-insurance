@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { PolicyStatus } from '@/components/policies'
 import { Spinner, Tabs, Time } from '@/components/ui'
 import {
   Alert,
@@ -101,7 +102,11 @@ function PolicyLimits({ policy }: { policy: PolicyWithUserLimits }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{policy.name}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <PolicyStatus policy={policy} />
+          <span>{policy.name}</span>
+        </CardTitle>
+
         <CardDescription className="flex flex-wrap items-center gap-2">
           <Time date={policy.startDate} format="date" />
           <span aria-hidden="true">-</span>
