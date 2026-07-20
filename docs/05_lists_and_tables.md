@@ -34,11 +34,13 @@ Do not pass an inline function or switch hooks conditionally. The hook reference
 
 Filters can use text, select, or date inputs. Filter values are stored in URL search params so pages can be linked and refreshed without losing the current filters.
 
+Use `baseParams` when a list is scoped by a fixed relation that should not come from the URL. For example, policy-holder details pass `baseParams={{ policyHolderId }}` to reuse the shared policy list API while keeping the list scoped to that holder. `baseParams` are merged after URL-derived filters.
+
 If the page has no filters, use `RemoteData` directly.
 
 ## Build columns with `tableColumnBuilder()`
 
-Build feature table columns with `tableColumnBuilder()` for consistent links, text, email, phone, and custom cells.
+Build table columns with `tableColumnBuilder()` for consistent links, text, email, phone, and custom cells.
 
 ```tsx
 import { tableColumnBuilder } from '@/components/data/table'
@@ -87,6 +89,6 @@ Your query object should expose:
 - `hasNextPage`
 - `fetchNextPage`
 
-That is why the policy holders query returns a `RemoteDataState<PolicyHolder>` instead of returning the raw TanStack Query object.
+That is why list queries such as policies and policy holders return `RemoteDataState<T>` instead of returning the raw TanStack Query object.
 
 [← Server Communication](./04_server_communication.md) | [Forms →](./06_forms.md)

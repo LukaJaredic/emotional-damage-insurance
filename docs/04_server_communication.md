@@ -26,21 +26,22 @@ Use a feature API folder when only that feature needs the endpoint. Move the API
 
 Examples:
 
-- `src/features/policies/api/get-policies.ts` is policy-only.
 - `src/api/auth/get-me.ts` is used by app providers.
 - `src/api/users/get-user.ts` is also used by `<Audit />`.
 - `src/api/policy-holders/get-policy-holders.ts` is used by policy-holder lists and policy forms.
+- `src/api/policies/get-policies.ts` is used by policy master pages and policy-holder details.
+- `src/features/policies/api/get-policy.ts` stays feature-owned because only policy detail needs it.
 
 Export shared APIs from their local barrel and `src/api/index.ts`.
 
 ## Query Keys
 
-Feature-only query keys stay in the feature's `utils` folder. Policies use `src/features/policies/utils/policy-query-keys.ts`.
+Feature-only query keys stay in the feature's `utils` folder. Policy detail and policy-user keys use `src/features/policies/utils/policy-query-keys.ts`.
 
-Shared query keys live in `src/config/query-keys.ts`. This includes auth, shared user details, and policy-holder lists and details.
+Shared query keys live in `src/config/query-keys.ts`. This includes auth, shared user details, policy-holder keys, and policy `all`/`list` keys.
 
 ```ts
-queryKey: queryKeys.policyHolders.list(params)
+queryKey: queryKeys.policies.list(params)
 ```
 
 Query keys include values that change the response, such as page size, search text, or filters. Use `DEFAULT_PAGE_LOAD_SIZE` from `src/config/pagination.ts` when a list does not provide a page size.
@@ -50,12 +51,12 @@ Query keys include values that change the response, such as page size, search te
 Keep fetchers separate from hooks:
 
 ```ts
-export async function getPolicyHolders(params: GetPolicyHoldersQuery) {
-  const response = await api.get<PolicyHolder[]>(apiPaths.policyHolders.all(), {
+export async function getPolicies(params: GetPoliciesQuery): Promise<Policy[]> {
+  const response = await api.get<PolicyDto[]>(apiPaths.policies.all(), {
     params,
   })
 
-  return response.data
+  return response.data.map(normalizePolicy)
 }
 ```
 

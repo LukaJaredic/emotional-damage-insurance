@@ -1,6 +1,6 @@
 import type { Policy, PolicyStatus } from '@/types'
 
-export function status(policy: Policy): PolicyStatus {
+export function policyStatus(policy: Policy): PolicyStatus {
   if (policy.terminated) {
     return 'terminated'
   }

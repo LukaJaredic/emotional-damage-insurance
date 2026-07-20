@@ -2,7 +2,7 @@ import { addDays } from 'date-fns'
 
 import type { Policy } from '@/types'
 
-import { status } from './policy-status'
+import { policyStatus } from './policy-status'
 
 describe('policy status labels', () => {
   const tomorrow = addDays(new Date(), 1)
@@ -15,7 +15,7 @@ describe('policy status labels', () => {
       endDate: tomorrow,
     } as Policy
 
-    expect(status(policy)).toBe('active')
+    expect(policyStatus(policy)).toBe('active')
   })
 
   it('should return "terminated" for terminated policies', () => {
@@ -25,7 +25,7 @@ describe('policy status labels', () => {
       endDate: tomorrow,
     } as Policy
 
-    expect(status(policy)).toBe('terminated')
+    expect(policyStatus(policy)).toBe('terminated')
   })
 
   it('should return "expired" for expired policies', () => {
@@ -35,7 +35,7 @@ describe('policy status labels', () => {
       endDate: yesterday,
     } as Policy
 
-    expect(status(policy)).toBe('expired')
+    expect(policyStatus(policy)).toBe('expired')
   })
 
   it('should return "future" for future policies', () => {
@@ -45,6 +45,6 @@ describe('policy status labels', () => {
       endDate: addDays(tomorrow, 10),
     } as Policy
 
-    expect(status(policy)).toBe('future')
+    expect(policyStatus(policy)).toBe('future')
   })
 })

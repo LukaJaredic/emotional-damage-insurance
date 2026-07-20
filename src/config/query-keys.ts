@@ -1,12 +1,10 @@
-import type { PolicyHolderType } from '@/types'
+import type { GetPoliciesQuery, GetPolicyHoldersQuery } from '@/api'
 
 import { DEFAULT_PAGE_LOAD_SIZE } from './pagination'
 
-type PolicyHolderListQuery = {
-  perPage?: number
-  search?: string
-  type?: PolicyHolderType
-}
+type PolicyHolderListQuery = Omit<GetPolicyHoldersQuery, 'page'>
+
+type PolicyListQuery = Omit<GetPoliciesQuery, 'page'>
 
 export const queryKeys = {
   auth: {
@@ -23,6 +21,28 @@ export const queryKeys = {
       ] as const,
     detail: (policyHolderId: string) =>
       ['policy-holders', policyHolderId] as const,
+  },
+  policies: {
+    all: () => ['policies'] as const,
+    list: ({
+      perPage,
+      search,
+      terminated,
+      policyHolderId,
+      userId,
+      startAfterDate,
+      endBeforeDate,
+    }: PolicyListQuery) =>
+      [
+        'policies',
+        perPage ?? DEFAULT_PAGE_LOAD_SIZE,
+        search ?? '',
+        terminated ?? '',
+        policyHolderId ?? '',
+        userId ?? '',
+        startAfterDate ?? '',
+        endBeforeDate ?? '',
+      ] as const,
   },
   users: {
     detail: (userId: string) => ['users', userId] as const,

@@ -5,13 +5,12 @@ import {
 } from '@phosphor-icons/react'
 
 import { PageLayout } from '@/components/layout'
+import { PolicyStatus } from '@/components/policies'
 import { QueryLoading, Tabs } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { usePermissions } from '@/hooks'
 import { toAppDate } from '@/utils/dates'
 import { usePolicyDetail } from '@features/policies/api/get-policy'
-
-import PolicyStatus from '../policy-status'
 
 import PolicyBaseInfo from './policy-base-info'
 import PolicyDeleteDialog from './policy-delete-dialog'

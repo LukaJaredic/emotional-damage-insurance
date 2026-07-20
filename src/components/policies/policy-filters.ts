@@ -1,6 +1,6 @@
 import type { Filter } from '@/components/form'
 
-type PolicyFiltersValues = {
+export type PolicyFiltersValues = {
   search: string
   terminated: string
   startAfterDate: string

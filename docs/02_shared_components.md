@@ -12,14 +12,18 @@ Good shared examples:
 - `RemoteSelectField`
 - `ConfirmDialog`
 - `Audit`
+- `UserCard`
+- `PolicyCard`
 
-Keep it inside a feature when it is specific to that feature.
+Reusable domain presentation can also be shared when more than one feature or page needs the same read-only display. Put those components in a domain folder such as `src/components/users` or `src/components/policies`.
+
+Keep it inside a feature when it is specific to that feature's workflow.
 
 Keep feature-local examples:
 
 - `UserFormDialog`
 - `UserDeleteDialog`
-- `UserCard`
+- `PolicyTerminateDialog`
 
 ## Where to put it
 
@@ -27,12 +31,14 @@ Keep feature-local examples:
 - `src/components/layout` for layout helpers
 - `src/components/form` for shared form inputs and filters
 - `src/components/data` for generic data display components
+- `src/components/users` for reusable user presentation
+- `src/components/policies` for reusable policy presentation
 
 ## Shared Data Dependencies
 
 Shared components must not import feature code. If a shared component needs server data, move that endpoint to `src/api` first and import it from there.
 
-For example, `<Audit />` loads users through `@/api`, not through `src/features/users`. The policy form also loads policy holders through `src/api/policy-holders` because that endpoint is used by more than one feature.
+For example, `<Audit />` loads users through `@/api`, not through `src/features/users`. Policy presentation components live in `src/components/policies`, and the policy list API lives in `src/api/policies` because policy master pages and policy-holder details both consume it.
 
 ## How to export it
 

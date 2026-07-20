@@ -262,20 +262,20 @@ describe('PolicyHoldersMaster', () => {
       }
     })
 
-    it.todo(
-      'should open a create form when the create button is clicked',
-      async () => {
-        // const { user } = await renderPolicyHoldersMaster()
-        // expect(
-        //   screen.queryByRole('dialog', { name: 'Create a policy holder' }),
-        // ).not.toBeInTheDocument()
-        // await user.click(
-        //   screen.getByRole('button', { name: 'Create a policy holder' }),
-        // )
-        // expect(
-        //   screen.getByRole('dialog', { name: 'Create a policy holder' }),
-        // ).toBeInTheDocument()
-      },
-    )
+    it('should open a create form when the create button is clicked', async () => {
+      const { user } = await renderPolicyHoldersMaster()
+
+      expect(
+        screen.queryByRole('dialog', { name: 'Create a policy holder' }),
+      ).not.toBeInTheDocument()
+
+      await user.click(
+        screen.getByRole('button', { name: 'Create a policy holder' }),
+      )
+
+      expect(
+        screen.getByRole('dialog', { name: 'Create a policy holder' }),
+      ).toBeInTheDocument()
+    })
   })
 })

@@ -8,6 +8,8 @@ export * from './style'
 export * from './currency'
 export * from './policy-limit-labels'
 export * from './policy-holder-labels'
+export * from './policy-labels'
+export * from './policy-status'
 export * from './user-labels'
 
 export { PermissionsBuilder, type PageAccess } from './permission-builder'

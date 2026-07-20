@@ -1,18 +1,17 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 import type { RemoteDataState } from '@/components/data/remote-data/remote-data.types'
-import { apiPaths } from '@/config'
+import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
 import { commonQueryOptions } from '@/utils'
 
+import { normalizePolicy } from './normalize-policy'
 import type {
   GetPoliciesQuery,
   PolicyDto,
   UsePoliciesQuery,
-} from '../types/policy-api.types'
-import { normalizePolicy } from '../utils/normalize-policy'
-import { policyQueryKeys } from '../utils/policy-query-keys'
+} from './policy-api.types'
 
 export async function getPolicies(params: GetPoliciesQuery): Promise<Policy[]> {
   const response = await api.get<PolicyDto[]>(apiPaths.policies.all(), {
@@ -41,7 +40,7 @@ function buildGetPoliciesQuery(
 export function usePolicies(params: UsePoliciesQuery): RemoteDataState<Policy> {
   const query = useInfiniteQuery({
     ...commonQueryOptions,
-    queryKey: policyQueryKeys.list(params),
+    queryKey: queryKeys.policies.list(params),
     queryFn: ({ pageParam }) =>
       getPolicies(buildGetPoliciesQuery(params, pageParam)),
   })
