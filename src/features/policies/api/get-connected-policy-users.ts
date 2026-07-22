@@ -7,29 +7,30 @@ import type { User } from '@/types'
 import { commonQueryOptions } from '@/utils'
 
 import type {
-  GetPolicyUsersQuery,
-  UsePolicyUsersQuery,
+  GetConnectedPolicyUsersQuery,
+  UseConnectedPolicyUsersQuery,
 } from '../types/policy-api.types'
 import { policyQueryKeys } from '../utils/policy-query-keys'
 
-export async function getPolicyUsers({
+export async function getConnectedPolicyUsers({
   policyId,
   ...params
-}: GetPolicyUsersQuery): Promise<User[]> {
-  const response = await api.get<User[]>(apiPaths.policies.users(policyId), {
-    params,
-  })
+}: GetConnectedPolicyUsersQuery): Promise<User[]> {
+  const response = await api.get<User[]>(
+    apiPaths.policies.connectedUsers(policyId),
+    { params },
+  )
   return response.data
 }
 
-export function usePolicyUsers(
-  params: UsePolicyUsersQuery,
+export function useConnectedPolicyUsers(
+  params: UseConnectedPolicyUsersQuery,
 ): RemoteDataState<User> {
   const query = useInfiniteQuery({
     ...commonQueryOptions,
-    queryKey: policyQueryKeys.users(params),
+    queryKey: policyQueryKeys.connectedUsers(params),
     queryFn: ({ pageParam }) =>
-      getPolicyUsers({
+      getConnectedPolicyUsers({
         ...params,
         page: pageParam,
       }),

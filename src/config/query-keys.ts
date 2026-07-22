@@ -1,6 +1,5 @@
 import type { GetPoliciesQuery } from '@/api/policies/policy-api.types'
 import type { GetPolicyHoldersQuery } from '@/api/policy-holders/policy-holder-api.types'
-import type { UseUsersQuery } from '@/api/users/user-api.types'
 
 import { DEFAULT_PAGE_LOAD_SIZE } from './pagination'
 
@@ -56,17 +55,6 @@ export const queryKeys = {
     detail: (policyId: string) => ['policies', policyId] as const,
   },
   users: {
-    all: () => ['users'] as const,
-    list: ({ perPage, search, roles, noPolicyId }: UseUsersQuery = {}) =>
-      [
-        'users',
-        perPage ?? DEFAULT_PAGE_LOAD_SIZE,
-        search ?? '',
-        'roles',
-        ...[...(roles ?? [])].sort(),
-        'noPolicyId',
-        noPolicyId ?? '',
-      ] as const,
     detail: (userId: string) => ['users', userId] as const,
     limits: {
       all: () => ['users', 'limits'] as const,

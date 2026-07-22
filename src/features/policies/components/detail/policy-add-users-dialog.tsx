@@ -2,7 +2,6 @@ import { PlusIcon } from '@phosphor-icons/react'
 import { useState, type ReactNode } from 'react'
 
 import { useConnectPolicyUser } from '@/api/policies'
-import { useUsers } from '@/api/users'
 import { RemoteData } from '@/components/data/remote-data'
 import { Filters } from '@/components/form'
 import { Button } from '@/components/ui/shadcn/button'
@@ -18,6 +17,7 @@ import {
 import { UserCard, userSearchFilter } from '@/components/users'
 import { usePermissions } from '@/hooks'
 import type { Policy, User } from '@/types'
+import { useNotConnectedPolicyUsers } from '@features/policies/api/get-not-connected-policy-users'
 
 import { buildPolicyUserColumns } from './policy-user-columns'
 
@@ -47,7 +47,7 @@ function PolicyAddUsersDialog({ policy, children }: PolicyAddUsersDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <AvailableUsers policy={policy} />
+        <NotConnectedUsers policy={policy} />
 
         <DialogFooter showCloseButton />
       </DialogContent>
@@ -55,11 +55,14 @@ function PolicyAddUsersDialog({ policy, children }: PolicyAddUsersDialogProps) {
   )
 }
 
-function AvailableUsers({ policy }: { policy: Policy }) {
+function NotConnectedUsers({ policy }: { policy: Policy }) {
   const { can } = usePermissions()
   const [filters, setFilters] =
     useState<AddUsersFilterValues>(defaultFilterValues)
-  const query = useUsers({ search: filters.search, noPolicyId: policy.id })
+  const query = useNotConnectedPolicyUsers({
+    policyId: policy.id,
+    search: filters.search,
+  })
   const mutation = useConnectPolicyUser()
 
   function renderAddAction(user: User) {

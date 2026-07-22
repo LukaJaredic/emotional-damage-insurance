@@ -19,6 +19,10 @@ export const apiPaths = {
     terminate: (policyId: string) => `/policies/${policyId}/terminate`,
     reactivate: (policyId: string) => `/policies/${policyId}/reactivate`,
     users: (policyId: string) => `/policies/${policyId}/users`,
+    connectedUsers: (policyId: string) =>
+      `/policies/${policyId}/users/connected`,
+    notConnectedUsers: (policyId: string) =>
+      `/policies/${policyId}/users/not-connected`,
     user: (policyId: string, userId: string) =>
       `/policies/${policyId}/users/${userId}`,
   },

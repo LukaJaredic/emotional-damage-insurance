@@ -145,7 +145,7 @@ function mockPolicyHolderDetailResponse(
   )
 }
 
-function mockPolicyUsersResponse({
+function mockConnectedPolicyUsersResponse({
   policyId = testPolicy.id,
   users = [],
   onRequest,
@@ -156,7 +156,7 @@ function mockPolicyUsersResponse({
 } = {}) {
   server.use(
     http.get(
-      `${env.API_URL}/policies/:policyId/users`,
+      `${env.API_URL}/policies/:policyId/users/connected`,
       ({ request, params }) => {
         expect(params.policyId).toBe(policyId)
         const searchParams = new URL(request.url).searchParams
@@ -334,7 +334,7 @@ describe('PolicyDetailPage', () => {
           roles: ['employee', 'customer'],
         }),
       ]
-      mockPolicyUsersResponse({ users: policyUsers })
+      mockConnectedPolicyUsersResponse({ users: policyUsers })
       const { user } = await renderPolicyDetail({
         currentUser: testUsers.employee,
         policy: testPolicy,
@@ -395,7 +395,7 @@ describe('PolicyDetailPage', () => {
 
       server.use(
         http.get(
-          `${env.API_URL}/policies/:policyId/users`,
+          `${env.API_URL}/policies/:policyId/users/connected`,
           ({ request, params }) => {
             expect(params.policyId).toBe(testPolicy.id)
             const searchParams = new URL(request.url).searchParams
@@ -462,7 +462,7 @@ describe('PolicyDetailPage', () => {
         email: 'harvey.specter@example.com',
         roles: ['employee'],
       })
-      mockPolicyUsersResponse({
+      mockConnectedPolicyUsersResponse({
         users: [manageableUser, mixedUser, employeeUser],
       })
       const { user } = await renderPolicyDetail({

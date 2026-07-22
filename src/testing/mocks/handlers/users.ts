@@ -108,22 +108,11 @@ export const usersHandlers = [
       const perPage = normalizePerPage(url.searchParams.get('perPage'))
       const search = url.searchParams.get('search')?.trim().toLowerCase()
       const requestedRoles = getRequestedRoles(url.searchParams)
-      const noPolicyId = url.searchParams.get('noPolicyId')?.trim()
-      const connectedUserIds = noPolicyId
-        ? db.policyUser
-            .getAll()
-            .filter((policyUser) => policyUser.policyId === noPolicyId)
-            .map((policyUser) => policyUser.userId)
-        : []
 
       const users = db.user
         .getAll()
         .filter((candidate) => {
           if (!can('user:read', candidate as User)) {
-            return false
-          }
-
-          if (connectedUserIds.includes(candidate.id)) {
             return false
           }
 

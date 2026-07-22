@@ -16,11 +16,21 @@ export type ReactivatePolicyAction = {
   policyId: Policy['id']
 }
 
-export type GetPolicyUsersQuery = {
+export type GetConnectedPolicyUsersQuery = {
   policyId: Policy['id']
   page: number
   perPage?: number
   search?: string
 }
 
-export type UsePolicyUsersQuery = Omit<GetPolicyUsersQuery, 'page'>
+export type UseConnectedPolicyUsersQuery = Omit<
+  GetConnectedPolicyUsersQuery,
+  'page'
+>
+
+export type GetNotConnectedPolicyUsersQuery = GetConnectedPolicyUsersQuery
+
+export type UseNotConnectedPolicyUsersQuery = Omit<
+  GetNotConnectedPolicyUsersQuery,
+  'page'
+>

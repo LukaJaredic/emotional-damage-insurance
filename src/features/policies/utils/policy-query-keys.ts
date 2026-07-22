@@ -1,13 +1,32 @@
 import { DEFAULT_PAGE_LOAD_SIZE } from '@/config'
 
-import type { UsePolicyUsersQuery } from '../types/policy-api.types'
+import type {
+  UseConnectedPolicyUsersQuery,
+  UseNotConnectedPolicyUsersQuery,
+} from '../types/policy-api.types'
 
 export const policyQueryKeys = {
-  users: ({ policyId, perPage, search }: UsePolicyUsersQuery) =>
+  connectedUsers: ({
+    policyId,
+    perPage,
+    search,
+  }: UseConnectedPolicyUsersQuery) =>
     [
       'policies',
       policyId,
-      'users',
+      'users/connected',
+      perPage ?? DEFAULT_PAGE_LOAD_SIZE,
+      search ?? '',
+    ] as const,
+  notConnectedUsers: ({
+    policyId,
+    perPage,
+    search,
+  }: UseNotConnectedPolicyUsersQuery) =>
+    [
+      'policies',
+      policyId,
+      'users/not-connected',
       perPage ?? DEFAULT_PAGE_LOAD_SIZE,
       search ?? '',
     ] as const,

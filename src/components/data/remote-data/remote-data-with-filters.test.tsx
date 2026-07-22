@@ -61,10 +61,12 @@ const tableColumns: TableColumn<CreativeWork>[] = [
   {
     dataIndex: 'title',
     title: 'Title',
+    expandable: true,
   },
   {
     dataIndex: 'type',
     title: 'Type',
+    expandable: true,
   },
 ]
 

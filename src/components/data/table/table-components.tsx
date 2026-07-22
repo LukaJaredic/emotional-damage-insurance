@@ -35,8 +35,7 @@ function TableHeaderRow<T>({
   return (
     <UITableRow>
       {columns.map((column, index) => {
-        const expandable = column.expandable !== false
-        const expanded = expandable && isColumnExpanded(index)
+        const expanded = column.expandable && isColumnExpanded(index)
         const width = getColumnWidth(expanded)
         const expandCollapseLabel = `Expand/Collapse ${column.title} column`
 
@@ -49,7 +48,7 @@ function TableHeaderRow<T>({
             )}
             style={{ width, minWidth: width, maxWidth: width }}
           >
-            {expandable ? (
+            {column.expandable ? (
               <button
                 type="button"
                 aria-expanded={expanded}
@@ -102,7 +101,7 @@ function TableRowCells<T>({
   isColumnExpanded,
 }: TableRowCellsProps<T>) {
   return columns.map((column, index) => {
-    const expanded = column.expandable !== false && isColumnExpanded(index)
+    const expanded = column.expandable && isColumnExpanded(index)
     const width = getColumnWidth(expanded)
     const content = column.render
       ? column.render(row)

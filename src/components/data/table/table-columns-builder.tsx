@@ -37,25 +37,33 @@ type TableColumnBuilder<T> = Readonly<{
  */
 export function tableColumnBuilder<T>(): TableColumnBuilder<T> {
   return {
-    text: (title: string, dataIndex: keyof T) => ({ title, dataIndex }),
+    text: (title: string, dataIndex: keyof T) => ({
+      title,
+      dataIndex,
+      expandable: true,
+    }),
     email: (title: string, dataIndex: keyof T) => ({
       title,
       dataIndex,
+      expandable: true,
       render: (row) => <Email className="relative" email={row[dataIndex]} />,
     }),
     phone: (title: string, dataIndex: keyof T) => ({
       title,
       dataIndex,
+      expandable: true,
       render: (row) => <Phone className="relative" phone={row[dataIndex]} />,
     }),
     array: (title: string, dataIndex: keyof T) => ({
       title,
       dataIndex,
+      expandable: true,
       render: (row) => renderArrayCell(row[dataIndex]),
     }),
     primaryLink: ({ title, dataIndex, getHref, getLabel }) => ({
       title,
       dataIndex,
+      expandable: true,
       render: (row) => renderPrimaryLinkCell(getHref(row), getLabel(row)),
     }),
     custom: ({
@@ -69,6 +77,7 @@ export function tableColumnBuilder<T>(): TableColumnBuilder<T> {
     }) => ({
       title,
       dataIndex,
+      expandable: true,
       render: (row) => render(row),
     }),
     action: ({ dataIndex, render, title = 'Actions' }) => ({

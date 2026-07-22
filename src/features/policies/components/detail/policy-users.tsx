@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/shadcn/button'
 import { UserCard, userColumns, userSearchFilter } from '@/components/users'
 import { usePermissions } from '@/hooks'
 import type { Policy, User } from '@/types'
-import { usePolicyUsers } from '@features/policies/api/get-policy-users'
+import { useConnectedPolicyUsers } from '@features/policies/api/get-connected-policy-users'
 
 import PolicyAddUsersDialog from './policy-add-users-dialog'
 import PolicyRemoveUserDialog from './policy-remove-user-dialog'
@@ -60,7 +60,7 @@ function PolicyUsers({ policy }: PolicyUsersProps) {
       <RemoteDataWithFilters
         virtualized
         className="min-h-0 w-full flex-1"
-        useRemoteData={usePolicyUsers}
+        useRemoteData={useConnectedPolicyUsers}
         baseParams={{ policyId: policy.id }}
         tableColumns={tableColumns}
         tableCaption="Policy users table"

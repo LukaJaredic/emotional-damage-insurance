@@ -201,7 +201,7 @@ const isValidPolicyDuration = (startDate: Date, endDate: Date) => {
   return toTimestamp(endDate) >= addDays(startDate, 1).getTime()
 }
 
-const getPolicyUsers = (policyId: string) => {
+const getPolicyUserRelationships = (policyId: string) => {
   return db.policyUser
     .getAll()
     .filter((policyUser) => policyUser.policyId === policyId)
@@ -581,7 +581,7 @@ export const policiesHandlers = [
   ),
 
   http.get(
-    `${env.API_URL}/policies/:policyId/users`,
+    `${env.API_URL}/policies/:policyId/users/connected`,
     async ({ cookies, params, request }) => {
       await networkDelay()
 
@@ -615,12 +615,77 @@ export const policiesHandlers = [
 
         const perPage = normalizePerPage(url.searchParams.get('perPage'))
         const search = url.searchParams.get('search')?.trim().toLowerCase()
-        const connectedUserIds = getPolicyUsers(policyId).map(
+        const connectedUserIds = getPolicyUserRelationships(policyId).map(
           (policyUser) => policyUser.userId,
         )
         const users = db.user
           .getAll()
           .filter((candidate) => connectedUserIds.includes(candidate.id))
+          .map((candidate) => sanitizeUser(candidate) as User)
+          .filter((candidate) => can('user:read', candidate))
+          .filter((candidate) => {
+            if (!search) {
+              return true
+            }
+
+            return userIncludesSearch(candidate, search)
+          })
+          .sort((a, b) => b.lastEditedAt - a.lastEditedAt)
+
+        const startIndex = (page - 1) * perPage
+
+        if (startIndex >= users.length) {
+          return HttpResponse.json([])
+        }
+
+        return HttpResponse.json(users.slice(startIndex, startIndex + perPage))
+      } catch {
+        return mockInternalError()
+      }
+    },
+  ),
+
+  http.get(
+    `${env.API_URL}/policies/:policyId/users/not-connected`,
+    async ({ cookies, params, request }) => {
+      await networkDelay()
+
+      try {
+        const { user } = requireAuth(cookies)
+
+        if (!user) {
+          return mockApiError({ code: 'AUTHENTICATION_REQUIRED', status: 401 })
+        }
+
+        const policyId = String(params.policyId)
+        const foundPolicy = findPolicyById(policyId)
+
+        if (!foundPolicy) {
+          return mockApiError({ code: 'POLICY_NOT_FOUND', status: 404 })
+        }
+
+        const policy = sanitizePolicy(foundPolicy as unknown as MockPolicy)
+        const { can } = buildPermissionsFor(user as User)
+
+        if (!can('policy:read', policy)) {
+          return mockApiError({ code: 'FORBIDDEN', status: 403 })
+        }
+
+        const url = new URL(request.url)
+        const page = normalizePage(url.searchParams.get('page'))
+
+        if (!page) {
+          return HttpResponse.json([])
+        }
+
+        const perPage = normalizePerPage(url.searchParams.get('perPage'))
+        const search = url.searchParams.get('search')?.trim().toLowerCase()
+        const connectedUserIds = getPolicyUserRelationships(policyId).map(
+          (policyUser) => policyUser.userId,
+        )
+        const users = db.user
+          .getAll()
+          .filter((candidate) => !connectedUserIds.includes(candidate.id))
           .map((candidate) => sanitizeUser(candidate) as User)
           .filter((candidate) => can('user:read', candidate))
           .filter((candidate) => {

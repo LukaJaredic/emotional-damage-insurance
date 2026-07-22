@@ -87,16 +87,20 @@ describe('PolicyAddUsersDialog', () => {
     const candidateRequests: URLSearchParams[] = []
 
     server.use(
-      http.get(`${env.API_URL}/users`, ({ request }) => {
-        const searchParams = new URL(request.url).searchParams
-        candidateRequests.push(new URLSearchParams(searchParams))
+      http.get(
+        `${env.API_URL}/policies/:policyId/users/not-connected`,
+        ({ params, request }) => {
+          expect(params.policyId).toBe(testPolicy.id)
+          const searchParams = new URL(request.url).searchParams
+          candidateRequests.push(new URLSearchParams(searchParams))
 
-        if (searchParams.get('page') !== '1') {
-          return HttpResponse.json([])
-        }
+          if (searchParams.get('page') !== '1') {
+            return HttpResponse.json([])
+          }
 
-        return HttpResponse.json([candidate])
-      }),
+          return HttpResponse.json([candidate])
+        },
+      ),
     )
 
     const { user } = await renderDialog()
@@ -112,7 +116,6 @@ describe('PolicyAddUsersDialog', () => {
     expect(
       await within(dialog).findAllByRole('link', { name: 'Mike Ross' }),
     ).not.toHaveLength(0)
-    expect(candidateRequests[0]?.get('noPolicyId')).toBe(testPolicy.id)
 
     const headers = within(dialog).getAllByRole('columnheader')
     expect(headers[0]).toHaveTextContent('Actions')
@@ -133,16 +136,19 @@ describe('PolicyAddUsersDialog', () => {
     let isConnected = false
 
     server.use(
-      http.get(`${env.API_URL}/users`, ({ request }) => {
-        const searchParams = new URL(request.url).searchParams
-        userRequests.push(new URLSearchParams(searchParams))
+      http.get(
+        `${env.API_URL}/policies/:policyId/users/not-connected`,
+        ({ request }) => {
+          const searchParams = new URL(request.url).searchParams
+          userRequests.push(new URLSearchParams(searchParams))
 
-        if (searchParams.get('page') !== '1') {
-          return HttpResponse.json([])
-        }
+          if (searchParams.get('page') !== '1') {
+            return HttpResponse.json([])
+          }
 
-        return HttpResponse.json(isConnected ? [] : [candidate])
-      }),
+          return HttpResponse.json(isConnected ? [] : [candidate])
+        },
+      ),
       http.post(
         `${env.API_URL}/policies/:policyId/users`,
         async ({ request, params }) => {
@@ -194,18 +200,21 @@ describe('PolicyAddUsersDialog', () => {
     const requests: URLSearchParams[] = []
 
     server.use(
-      http.get(`${env.API_URL}/users`, ({ request }) => {
-        const searchParams = new URL(request.url).searchParams
-        requests.push(new URLSearchParams(searchParams))
+      http.get(
+        `${env.API_URL}/policies/:policyId/users/not-connected`,
+        ({ request }) => {
+          const searchParams = new URL(request.url).searchParams
+          requests.push(new URLSearchParams(searchParams))
 
-        if (searchParams.get('page') !== '1') {
-          return HttpResponse.json([])
-        }
+          if (searchParams.get('page') !== '1') {
+            return HttpResponse.json([])
+          }
 
-        return HttpResponse.json(
-          searchParams.get('search') === 'Mike' ? [visibleUser] : [],
-        )
-      }),
+          return HttpResponse.json(
+            searchParams.get('search') === 'Mike' ? [visibleUser] : [],
+          )
+        },
+      ),
     )
 
     const { router, user } = await renderDialog()
@@ -242,15 +251,18 @@ describe('PolicyAddUsersDialog', () => {
     })
 
     server.use(
-      http.get(`${env.API_URL}/users`, ({ request }) => {
-        const searchParams = new URL(request.url).searchParams
+      http.get(
+        `${env.API_URL}/policies/:policyId/users/not-connected`,
+        ({ request }) => {
+          const searchParams = new URL(request.url).searchParams
 
-        if (searchParams.get('page') !== '1') {
-          return HttpResponse.json([])
-        }
+          if (searchParams.get('page') !== '1') {
+            return HttpResponse.json([])
+          }
 
-        return HttpResponse.json([manageableUser, unmanageableUser])
-      }),
+          return HttpResponse.json([manageableUser, unmanageableUser])
+        },
+      ),
     )
 
     const { user } = await renderDialog(testUsers.employee)

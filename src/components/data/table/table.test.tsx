@@ -27,10 +27,12 @@ const columns: TableColumn<DemoRow>[] = [
   {
     dataIndex: 'email',
     title: 'Email',
+    expandable: true,
   },
   {
     dataIndex: 'name',
     title: 'Name',
+    expandable: true,
     render: (row) => `User: ${row.name}`,
   },
 ]
@@ -252,6 +254,45 @@ function createTableSuite(virtualized: boolean) {
       expect(actionButton).toBeInTheDocument()
       expect(headerCell.querySelector('span')).toHaveClass('truncate')
       expect(bodyCell?.querySelector('div')).toHaveClass('truncate')
+    })
+
+    it('should set builder columns as expandable except action columns', () => {
+      const builderColumns = [
+        tcb.text('Name', 'name'),
+        tcb.email('Email', 'email'),
+        tcb.phone('Phone', 'name'),
+        tcb.primaryLink({
+          title: 'Profile',
+          dataIndex: 'id',
+          getHref: (row) => `/users/${row.id}`,
+          getLabel: (row) => row.name,
+        }),
+        tcb.array('Tags', 'name'),
+        tcb.custom({
+          title: 'Custom',
+          dataIndex: 'name',
+          render: (row) => row.name,
+        }),
+      ]
+
+      expect(builderColumns).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ title: 'Name', expandable: true }),
+          expect.objectContaining({ title: 'Email', expandable: true }),
+          expect.objectContaining({ title: 'Phone', expandable: true }),
+          expect.objectContaining({ title: 'Profile', expandable: true }),
+          expect.objectContaining({ title: 'Tags', expandable: true }),
+          expect.objectContaining({ title: 'Custom', expandable: true }),
+        ]),
+      )
+      expect(
+        tcb.action({
+          dataIndex: 'id',
+          render: () => <button type="button">Open actions</button>,
+        }),
+      ).toEqual(
+        expect.objectContaining({ title: 'Actions', expandable: false }),
+      )
     })
 
     it('should expose sr-only caption on the table', () => {
