@@ -1,4 +1,4 @@
-import type { Policy, User } from '@/types'
+import type { Policy } from '@/types'
 
 export type GetPolicyQuery = {
   policyId: Policy['id']
@@ -24,13 +24,3 @@ export type GetPolicyUsersQuery = {
 }
 
 export type UsePolicyUsersQuery = Omit<GetPolicyUsersQuery, 'page'>
-
-export type ConnectPolicyUserAction = {
-  policyId: Policy['id']
-  userId: User['id']
-}
-
-export type DisconnectPolicyUserAction = {
-  policyId: Policy['id']
-  userId: User['id']
-}

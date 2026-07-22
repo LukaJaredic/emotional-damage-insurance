@@ -1,4 +1,6 @@
+export * from './connect-policy-user'
 export * from './create-policy'
+export * from './disconnect-policy-user'
 export * from './get-policies'
 export * from './normalize-policy'
 export * from './policy-api.types'

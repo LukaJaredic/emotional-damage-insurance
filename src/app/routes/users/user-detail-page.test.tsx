@@ -99,6 +99,10 @@ async function renderUserDetail(currentUser: User, viewedUser?: User) {
   return { user: userEvent.setup() }
 }
 
+async function openPoliciesTab(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole('tab', { name: 'Policies' }))
+}
+
 describe('UserDetailPage', () => {
   describe('basic info tab', () => {
     it('should render the basic info tab by default', async () => {
@@ -112,9 +116,7 @@ describe('UserDetailPage', () => {
         'aria-selected',
         'true',
       )
-      expect(
-        screen.getByRole('tab', { name: 'Coverage limits' }),
-      ).toBeInTheDocument()
+      expect(screen.getByRole('tab', { name: 'Policies' })).toBeInTheDocument()
     })
 
     it("should render user's details", async () => {
@@ -135,7 +137,7 @@ describe('UserDetailPage', () => {
     })
   })
 
-  describe('user coverage tab', () => {
+  describe('policies tab', () => {
     it('should render policies newest first and select the newest active policy', async () => {
       const now = new Date()
       const activePolicy = buildPolicyWithUserLimits()
@@ -163,7 +165,7 @@ describe('UserDetailPage', () => {
       mockUserLimitsResponse([expiredPolicy, activePolicy, futurePolicy])
       const { user } = await renderUserDetail(testUsers.customer)
 
-      await user.click(screen.getByRole('tab', { name: 'Coverage limits' }))
+      await openPoliciesTab(user)
 
       const policyTabs = await screen.findByRole('tablist', {
         name: 'User policies',
@@ -198,7 +200,7 @@ describe('UserDetailPage', () => {
       mockUserLimitsResponse([olderPolicy, newerPolicy])
       const { user } = await renderUserDetail(testUsers.admin)
 
-      await user.click(screen.getByRole('tab', { name: 'Coverage limits' }))
+      await openPoliciesTab(user)
 
       expect(
         await screen.findByRole('tab', { name: 'Newer cover' }),
@@ -222,7 +224,11 @@ describe('UserDetailPage', () => {
       mockUserLimitsResponse([policy])
       const { user } = await renderUserDetail(testUsers.admin)
 
-      await user.click(screen.getByRole('tab', { name: 'Coverage limits' }))
+      await openPoliciesTab(user)
+
+      expect(
+        screen.getByRole('button', { name: 'Add policy' }),
+      ).toBeInTheDocument()
 
       expect(
         await screen.findByRole('progressbar', { name: 'Rejection remaining' }),
@@ -235,6 +241,48 @@ describe('UserDetailPage', () => {
       ).toHaveAttribute('aria-valuenow', '0')
     })
 
+    it('should render policy actions for a manageable user', async () => {
+      const viewedUser = testUsers.customer
+      const connectedPolicy = buildPolicyWithUserLimits({
+        id: 'policy-to-remove',
+        name: 'Removable cover',
+      })
+      mockUserLimitsResponse([connectedPolicy])
+
+      const { user } = await renderUserDetail(testUsers.admin, viewedUser)
+
+      await openPoliciesTab(user)
+
+      expect(
+        await screen.findByRole('tab', { name: connectedPolicy.name }),
+      ).toBeInTheDocument()
+      const removeButton = screen.getByRole('button', {
+        name: 'Remove policy from user',
+      })
+      expect(removeButton).toHaveAttribute('title', 'Remove policy from user')
+      expect(
+        screen.getByRole('button', { name: 'Add policy' }),
+      ).toBeInTheDocument()
+    })
+
+    it('should hide policy add and remove actions from customer view', async () => {
+      const policy = buildPolicyWithUserLimits()
+      mockUserLimitsResponse([policy])
+      const { user } = await renderUserDetail(testUsers.customer)
+
+      await openPoliciesTab(user)
+
+      expect(
+        await screen.findByRole('tab', { name: policy.name }),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Add policy' }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Remove policy from user' }),
+      ).not.toBeInTheDocument()
+    })
+
     it('should render a loading state', async () => {
       server.use(
         http.get(`${env.API_URL}/users/:userId/limits`, async () => {
@@ -244,8 +292,11 @@ describe('UserDetailPage', () => {
       )
       const { user } = await renderUserDetail(testUsers.admin)
 
-      await user.click(screen.getByRole('tab', { name: 'Coverage limits' }))
+      await openPoliciesTab(user)
 
+      expect(
+        screen.getByRole('button', { name: 'Add policy' }),
+      ).toBeInTheDocument()
       expect(screen.getByRole('status')).toHaveTextContent(
         'Loading coverage limits...',
       )
@@ -255,8 +306,11 @@ describe('UserDetailPage', () => {
       mockUserLimitsResponse([])
       const { user } = await renderUserDetail(testUsers.admin)
 
-      await user.click(screen.getByRole('tab', { name: 'Coverage limits' }))
+      await openPoliciesTab(user)
 
+      expect(
+        screen.getByRole('button', { name: 'Add policy' }),
+      ).toBeInTheDocument()
       expect(
         await screen.findByText('No coverage limits found'),
       ).toBeInTheDocument()
@@ -270,8 +324,11 @@ describe('UserDetailPage', () => {
       )
       const { user } = await renderUserDetail(testUsers.admin)
 
-      await user.click(screen.getByRole('tab', { name: 'Coverage limits' }))
+      await openPoliciesTab(user)
 
+      expect(
+        screen.getByRole('button', { name: 'Add policy' }),
+      ).toBeInTheDocument()
       expect(await screen.findByRole('alert')).toHaveTextContent(
         'Something went wrong while loading coverage limits.',
       )

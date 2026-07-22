@@ -27,4 +27,22 @@ const commonQueryOptions = {
   getNextPageParam,
 }
 
-export { commonQueryOptions }
+/**
+ * Used for parsing string checkbox query params into boolean values.
+ *
+ * @param value string (options: "true", "false")
+ * @returns "true" => true, "false" => false, anything else => undefined
+ */
+function parseBooleanQueryParam(value?: string): boolean | undefined {
+  if (value === 'true') {
+    return true
+  }
+
+  if (value === 'false') {
+    return false
+  }
+
+  return undefined
+}
+
+export { commonQueryOptions, parseBooleanQueryParam }

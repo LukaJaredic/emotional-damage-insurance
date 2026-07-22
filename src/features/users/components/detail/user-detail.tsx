@@ -10,8 +10,8 @@ import { userRoles } from '@/utils'
 import UserFormDialog from '../form/user-form-dialog'
 
 import { UserBaseInfo } from './user-base-info'
-import UserCoverageLimits from './user-coverage-limits'
 import UserDeleteDialog from './user-delete-dialog'
+import UserPolicies from './user-policies'
 
 const USER_DETAIL_TABS_STORAGE_KEY = 'user-detail-tabs'
 
@@ -68,8 +68,8 @@ function UserDetail({ userId }: UserDetailProps) {
           },
           {
             value: 'coverage-limits',
-            label: 'Coverage limits',
-            content: <UserCoverageLimits userId={user.id} />,
+            label: 'Policies',
+            content: <UserPolicies user={user} />,
           },
         ]}
         defaultValue="basic-info"

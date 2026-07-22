@@ -235,6 +235,7 @@ export const policiesHandlers = [
 
       const perPage = normalizePerPage(url.searchParams.get('perPage'))
       const terminated = normalizeBoolean(url.searchParams.get('terminated'))
+      const expired = normalizeBoolean(url.searchParams.get('expired'))
       const policyHolderId = url.searchParams.get('policyHolderId')
       const search = url.searchParams.get('search')?.trim().toLowerCase()
       const userId = url.searchParams.get('userId')
@@ -242,6 +243,7 @@ export const policiesHandlers = [
         url.searchParams.get('startAfterDate'),
       )
       const endBeforeDate = normalizeDate(url.searchParams.get('endBeforeDate'))
+      const currentTime = Date.now()
       const policyIdsForUser = userId
         ? db.policyUser
             .getAll()
@@ -258,6 +260,13 @@ export const policiesHandlers = [
           }
 
           if (terminated !== null && policy.terminated !== terminated) {
+            return false
+          }
+
+          if (
+            expired !== null &&
+            toTimestamp(policy.endDate) < currentTime !== expired
+          ) {
             return false
           }
 

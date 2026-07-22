@@ -5,8 +5,7 @@ import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { PolicyUser } from '@/types'
 
-import type { ConnectPolicyUserAction } from '../types/policy-api.types'
-import { policyQueryKeys } from '../utils/policy-query-keys'
+import type { ConnectPolicyUserAction } from './policy-api.types'
 
 export async function connectPolicyUser({
   policyId,
@@ -14,7 +13,9 @@ export async function connectPolicyUser({
 }: ConnectPolicyUserAction): Promise<PolicyUser> {
   const response = await api.post<PolicyUser>(
     apiPaths.policies.users(policyId),
-    { userId },
+    {
+      userId,
+    },
   )
   return response.data
 }
@@ -26,7 +27,7 @@ export function useConnectPolicyUser() {
     mutationFn: connectPolicyUser,
     onSuccess: (_, { policyId, userId }) => {
       void queryClient.invalidateQueries({
-        queryKey: policyQueryKeys.detail(policyId),
+        queryKey: queryKeys.policies.detail(policyId),
       })
       void queryClient.invalidateQueries({
         queryKey: queryKeys.users.limits.detail(userId),

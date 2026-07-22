@@ -5,8 +5,12 @@ import { DEFAULT_PAGE_LOAD_SIZE } from './pagination'
 
 type PolicyHolderListQuery = Omit<GetPolicyHoldersQuery, 'page'>
 
-type PolicyListQuery = Omit<GetPoliciesQuery, 'page' | 'terminated'> & {
+type PolicyListQuery = Omit<
+  GetPoliciesQuery,
+  'page' | 'terminated' | 'expired'
+> & {
   terminated?: string
+  expired?: string
 }
 
 export const queryKeys = {
@@ -31,6 +35,7 @@ export const queryKeys = {
       perPage,
       search,
       terminated,
+      expired,
       policyHolderId,
       userId,
       startAfterDate,
@@ -41,11 +46,13 @@ export const queryKeys = {
         perPage ?? DEFAULT_PAGE_LOAD_SIZE,
         search ?? '',
         terminated ?? '',
+        expired ?? '',
         policyHolderId ?? '',
         userId ?? '',
         startAfterDate ?? '',
         endBeforeDate ?? '',
       ] as const,
+    detail: (policyId: string) => ['policies', policyId] as const,
   },
   users: {
     detail: (userId: string) => ['users', userId] as const,

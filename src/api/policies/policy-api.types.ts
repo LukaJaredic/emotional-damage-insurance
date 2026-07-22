@@ -1,4 +1,4 @@
-import type { Policy, PolicyLimits } from '@/types'
+import type { Policy, PolicyLimits, User } from '@/types'
 
 export type PolicyDto = Omit<Policy, 'startDate' | 'endDate'> & {
   startDate: string
@@ -19,12 +19,27 @@ export type GetPoliciesQuery = {
   perPage?: number
   search?: string
   terminated?: boolean
+  expired?: boolean
   policyHolderId?: string
   userId?: string
   startAfterDate?: string
   endBeforeDate?: string
 }
 
-export type UsePoliciesQuery = Omit<GetPoliciesQuery, 'page' | 'terminated'> & {
+export type UsePoliciesQuery = Omit<
+  GetPoliciesQuery,
+  'page' | 'terminated' | 'expired'
+> & {
   terminated?: string
+  expired?: string
+}
+
+export type ConnectPolicyUserAction = {
+  policyId: Policy['id']
+  userId: User['id']
+}
+
+export type DisconnectPolicyUserAction = {
+  policyId: Policy['id']
+  userId: User['id']
 }
