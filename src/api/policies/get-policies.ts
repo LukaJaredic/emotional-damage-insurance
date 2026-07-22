@@ -4,7 +4,7 @@ import type { RemoteDataState } from '@/components/data/remote-data/remote-data.
 import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
-import { commonQueryOptions } from '@/utils'
+import { commonQueryOptions, parseBooleanQueryParam } from '@/utils'
 
 import { normalizePolicy } from './normalize-policy'
 import type {
@@ -24,9 +24,9 @@ function buildGetPoliciesQuery(
   params: UsePoliciesQuery,
   page: number,
 ): GetPoliciesQuery {
-  const { terminated, ...rest } = params
-  const normalizedTerminated =
-    terminated === 'true' ? true : terminated === 'false' ? false : undefined
+  const { terminated, expired, ...rest } = params
+  const normalizedTerminated = parseBooleanQueryParam(terminated)
+  const normalizedExpired = parseBooleanQueryParam(expired)
 
   return {
     ...rest,
@@ -34,6 +34,7 @@ function buildGetPoliciesQuery(
     ...(normalizedTerminated !== undefined
       ? { terminated: normalizedTerminated }
       : {}),
+    ...(normalizedExpired !== undefined ? { expired: normalizedExpired } : {}),
   }
 }
 

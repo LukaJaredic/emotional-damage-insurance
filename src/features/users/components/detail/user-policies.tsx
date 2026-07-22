@@ -1,3 +1,4 @@
+import { PlusIcon, TrashIcon } from '@phosphor-icons/react'
 import { useState } from 'react'
 
 import { PolicyStatus } from '@/components/policies'
@@ -7,6 +8,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from '@/components/ui/shadcn/alert'
+import { Button } from '@/components/ui/shadcn/button'
 import {
   Card,
   CardContent,
@@ -21,20 +23,29 @@ import {
   EmptyTitle,
 } from '@/components/ui/shadcn/empty'
 import { Progress } from '@/components/ui/shadcn/progress'
+import { usePermissions } from '@/hooks'
 import type { PolicyLimits, PolicyWithUserLimits, User } from '@/types'
 import { limitLabels, toEur } from '@/utils'
 import { useUserLimits } from '@features/users/api/get-user-limits'
 
-type UserCoverageLimitsProps = {
-  userId: User['id']
+import UserAddPolicyDialog from './user-add-policy-dialog'
+import UserRemovePolicyDialog from './user-remove-policy-dialog'
+
+type UserPoliciesProps = {
+  user: User
 }
 
-function UserCoverageLimits({ userId }: UserCoverageLimitsProps) {
-  const query = useUserLimits({ userId })
+function UserPolicies({ user }: UserPoliciesProps) {
+  const query = useUserLimits({ userId: user.id })
   const [now] = useState(Date.now)
+  const { can } = usePermissions()
+  const canManageUserPolicies =
+    can('user:update', user, '*') && can('policy:update', '*', '*')
+
+  let content
 
   if (query.isPending) {
-    return (
+    content = (
       <div
         role="status"
         className="flex min-h-48 items-center justify-center gap-3 rounded-xl border"
@@ -43,10 +54,8 @@ function UserCoverageLimits({ userId }: UserCoverageLimitsProps) {
         <span>Loading coverage limits...</span>
       </div>
     )
-  }
-
-  if (query.isError) {
-    return (
+  } else if (query.isError) {
+    content = (
       <Alert variant="destructive">
         <AlertTitle>Unable to load coverage limits</AlertTitle>
         <AlertDescription>
@@ -54,10 +63,8 @@ function UserCoverageLimits({ userId }: UserCoverageLimitsProps) {
         </AlertDescription>
       </Alert>
     )
-  }
-
-  if (query.data.length === 0) {
-    return (
+  } else if (query.data.length === 0) {
+    content = (
       <Empty className="border">
         <EmptyHeader>
           <EmptyTitle>No coverage limits found</EmptyTitle>
@@ -67,26 +74,39 @@ function UserCoverageLimits({ userId }: UserCoverageLimitsProps) {
         </EmptyHeader>
       </Empty>
     )
+  } else {
+    const policies = query.data.toSorted(
+      (a, b) => b.startDate.getTime() - a.startDate.getTime(),
+    )
+    const defaultPolicy =
+      policies.find((policy) => isActive(policy, now)) ?? policies[0]!
+
+    content = (
+      <Tabs
+        items={policies.map((policy) => ({
+          value: policy.id,
+          label: policy.name,
+          content: <PolicyLimits policy={policy} user={user} />,
+        }))}
+        defaultValue={defaultPolicy.id}
+        ariaLabel="User policies"
+        listVariant="line"
+        tabsContentClassName="pt-4"
+      />
+    )
   }
 
-  const policies = query.data.toSorted(
-    (a, b) => b.startDate.getTime() - a.startDate.getTime(),
-  )
-  const defaultPolicy =
-    policies.find((policy) => isActive(policy, now)) ?? policies[0]!
-
   return (
-    <Tabs
-      items={policies.map((policy) => ({
-        value: policy.id,
-        label: policy.name,
-        content: <PolicyLimits policy={policy} />,
-      }))}
-      defaultValue={defaultPolicy.id}
-      ariaLabel="User policies"
-      listVariant="line"
-      tabsContentClassName="pt-4"
-    />
+    <div className="flex flex-col gap-4">
+      {canManageUserPolicies ? (
+        <UserAddPolicyDialog user={user}>
+          <Button className="sm:ml-auto sm:w-fit">
+            <PlusIcon /> Add policy
+          </Button>
+        </UserAddPolicyDialog>
+      ) : null}
+      {content}
+    </div>
   )
 }
 
@@ -98,14 +118,39 @@ function isActive(policy: PolicyWithUserLimits, now: number) {
   )
 }
 
-function PolicyLimits({ policy }: { policy: PolicyWithUserLimits }) {
+function PolicyLimits({
+  policy,
+  user,
+}: {
+  policy: PolicyWithUserLimits
+  user: User
+}) {
+  const { can } = usePermissions()
+  const canRemove =
+    can('user:update', user, '*') && can('policy:update', policy)
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <PolicyStatus policy={policy} />
-          <span>{policy.name}</span>
-        </CardTitle>
+        <div className="flex items-start justify-between gap-3">
+          <CardTitle className="flex items-center gap-2">
+            <PolicyStatus policy={policy} />
+            <span>{policy.name}</span>
+          </CardTitle>
+          {canRemove ? (
+            <UserRemovePolicyDialog user={user} policy={policy}>
+              <Button
+                type="button"
+                variant="destructive"
+                size="icon-sm"
+                aria-label="Remove policy from user"
+                title="Remove policy from user"
+              >
+                <TrashIcon />
+              </Button>
+            </UserRemovePolicyDialog>
+          ) : null}
+        </div>
 
         <CardDescription className="flex flex-wrap items-center gap-2">
           <Time date={policy.startDate} format="date" />
@@ -156,4 +201,4 @@ function LimitProgress({
   )
 }
 
-export default UserCoverageLimits
+export default UserPolicies

@@ -31,10 +31,12 @@ const tableColumns: TableColumn<DemoItem>[] = [
   {
     dataIndex: 'email',
     title: 'Email',
+    expandable: true,
   },
   {
     dataIndex: 'name',
     title: 'Name',
+    expandable: true,
     render: (row) => `User: ${row.name}`,
   },
 ]

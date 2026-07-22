@@ -2,51 +2,55 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import type { ComponentProps } from 'react'
 import { useForm } from 'react-hook-form'
 
+import { useCreatePolicy } from '@/api/policies'
 import { usePolicyHolders } from '@/api/policy-holders'
 import { InputField, RemoteSelectField } from '@/components/form'
 import { Spinner } from '@/components/ui'
 import { Button } from '@/components/ui/shadcn/button'
 import { FieldGroup, FieldLegend, FieldSet } from '@/components/ui/shadcn/field'
 import type { PolicyHolder } from '@/types'
-import { limitLabels, rowSm, setApiFieldErrors } from '@/utils'
-import { useCreatePolicy } from '@features/policies/api/create-policy'
+import {
+  limitLabels,
+  policyHolderName,
+  rowSm,
+  setApiFieldErrors,
+} from '@/utils'
+
+import { createPolicySchema } from './policy-form.schema'
 import type {
+  PolicyFormDefaultValues,
   PolicyFormStatus,
   PolicyFormValues,
-} from '@features/policies/types/policy-form.types'
+} from './policy-form.types'
 import {
   buildCreatePolicyPayload,
   buildPolicyFormValues,
-  createSchema,
-} from '@features/policies/utils/policy-form'
+} from './policy-form.utils'
 
 export type PolicyFormProps = Omit<ComponentProps<'form'>, 'onSubmit'> & {
   showSubmit?: boolean | undefined
+  defaultValues?: PolicyFormDefaultValues | undefined
   onStatusChange?: ((status: PolicyFormStatus) => void) | undefined
 }
 
 function renderPolicyHolderOption(policyHolder: PolicyHolder) {
-  const displayName =
-    policyHolder.type === 'business'
-      ? policyHolder.businessName
-      : `${policyHolder.firstName} ${policyHolder.lastName}`
-
   return {
-    label: `[${policyHolder.governmentId}] ${displayName}`,
+    label: `[${policyHolder.governmentId}] ${policyHolderName(policyHolder)}`,
     value: policyHolder.id,
   }
 }
 
 function PolicyForm({
   showSubmit = true,
+  defaultValues,
   onStatusChange,
   ...props
 }: PolicyFormProps) {
   const createMutation = useCreatePolicy()
 
   const form = useForm({
-    resolver: zodResolver(createSchema),
-    defaultValues: buildPolicyFormValues(),
+    resolver: zodResolver(createPolicySchema),
+    defaultValues: buildPolicyFormValues(defaultValues),
   })
 
   const isPending = createMutation.isPending
@@ -71,15 +75,17 @@ function PolicyForm({
   return (
     <form {...props} onSubmit={form.handleSubmit(handleSubmit)} noValidate>
       <FieldGroup>
-        <RemoteSelectField
-          control={form.control}
-          id="policy-holder-id"
-          name="policyHolderId"
-          label="Policy holder"
-          placeholder="Search policy holders"
-          useRemoteData={usePolicyHolders}
-          renderOption={renderPolicyHolderOption}
-        />
+        {defaultValues?.policyHolderId ? null : (
+          <RemoteSelectField
+            control={form.control}
+            id="policy-holder-id"
+            name="policyHolderId"
+            label="Policy holder"
+            placeholder="Search policy holders"
+            useRemoteData={usePolicyHolders}
+            renderOption={renderPolicyHolderOption}
+          />
+        )}
         <InputField
           control={form.control}
           id="policy-name"

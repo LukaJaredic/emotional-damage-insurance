@@ -4,6 +4,7 @@ type TableColumn<T> = {
   dataIndex: keyof T
   title: string
   render?: (row: T) => ReactNode
+  expandable: boolean
 }
 
 // Virtualized and static table props

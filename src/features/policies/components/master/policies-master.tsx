@@ -3,10 +3,14 @@ import { PlusIcon } from '@phosphor-icons/react'
 import { usePolicies } from '@/api/policies'
 import { RemoteDataWithFilters } from '@/components/data/remote-data'
 import { PageLayout } from '@/components/layout'
-import { PolicyCard, policyColumns, policyFilters } from '@/components/policies'
+import {
+  PolicyCard,
+  PolicyFormDialog,
+  policyColumns,
+  policyFilters,
+} from '@/components/policies'
 import { Button } from '@/components/ui/shadcn/button'
 import { usePermissions } from '@/hooks'
-import PolicyFormDialog from '@features/policies/components/form/policy-form-dialog'
 
 function PoliciesMaster() {
   const { can } = usePermissions()

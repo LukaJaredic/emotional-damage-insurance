@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { normalizePolicy, type PolicyDto } from '@/api/policies'
 import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { Policy } from '@/types'
 
-import type { CreatePolicyAction } from '../types/policy-api.types'
+import { normalizePolicy } from './normalize-policy'
+import type { CreatePolicyAction, PolicyDto } from './policy-api.types'
 
 export async function createPolicy(data: CreatePolicyAction): Promise<Policy> {
   const response = await api.post<PolicyDto>(apiPaths.policies.all(), data)

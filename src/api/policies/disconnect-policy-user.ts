@@ -4,8 +4,7 @@ import { toast } from 'sonner'
 import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 
-import type { DisconnectPolicyUserAction } from '../types/policy-api.types'
-import { policyQueryKeys } from '../utils/policy-query-keys'
+import type { DisconnectPolicyUserAction } from './policy-api.types'
 
 export function disconnectPolicyUser({
   policyId,
@@ -21,7 +20,7 @@ export function useDisconnectPolicyUser() {
     mutationFn: disconnectPolicyUser,
     onSuccess: (_, { policyId, userId }) => {
       void queryClient.invalidateQueries({
-        queryKey: policyQueryKeys.detail(policyId),
+        queryKey: queryKeys.policies.detail(policyId),
       })
       void queryClient.invalidateQueries({
         queryKey: queryKeys.users.limits.detail(userId),

@@ -6,6 +6,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { mockIsIntersecting } from '@/testing/intersection-observer-stub'
 
 import Table from './table'
+import { tableColumnBuilder } from './table-columns-builder'
 import type { TableProps, TableColumn } from './table.types'
 
 type DemoRow = {
@@ -26,13 +27,17 @@ const columns: TableColumn<DemoRow>[] = [
   {
     dataIndex: 'email',
     title: 'Email',
+    expandable: true,
   },
   {
     dataIndex: 'name',
     title: 'Name',
+    expandable: true,
     render: (row) => `User: ${row.name}`,
   },
 ]
+
+const tcb = tableColumnBuilder<DemoRow>()
 
 function renderTable(props?: Partial<TableProps<DemoRow>>) {
   const sharedProps = {
@@ -223,6 +228,71 @@ function createTableSuite(virtualized: boolean) {
 
       expect(toggle).toHaveAttribute('aria-expanded', 'false')
       expect(toggle).toHaveAttribute('title', 'Expand/Collapse Email column')
+    })
+
+    it('should render action columns without expansion controls', () => {
+      const actionColumns = [
+        columns[0]!,
+        tcb.action({
+          dataIndex: 'id',
+          render: () => <button type="button">Open actions</button>,
+        }),
+      ]
+
+      renderTable({ virtualized, columns: actionColumns })
+
+      const headerCell = screen.getByRole('columnheader', { name: 'Actions' })
+      const actionButton = screen.getByRole('button', { name: 'Open actions' })
+      const bodyCell = actionButton.closest('td')
+
+      expect(headerCell).toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', {
+          name: 'Expand/Collapse Actions column',
+        }),
+      ).not.toBeInTheDocument()
+      expect(actionButton).toBeInTheDocument()
+      expect(headerCell.querySelector('span')).toHaveClass('truncate')
+      expect(bodyCell?.querySelector('div')).toHaveClass('truncate')
+    })
+
+    it('should set builder columns as expandable except action columns', () => {
+      const builderColumns = [
+        tcb.text('Name', 'name'),
+        tcb.email('Email', 'email'),
+        tcb.phone('Phone', 'name'),
+        tcb.primaryLink({
+          title: 'Profile',
+          dataIndex: 'id',
+          getHref: (row) => `/users/${row.id}`,
+          getLabel: (row) => row.name,
+        }),
+        tcb.array('Tags', 'name'),
+        tcb.custom({
+          title: 'Custom',
+          dataIndex: 'name',
+          render: (row) => row.name,
+        }),
+      ]
+
+      expect(builderColumns).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ title: 'Name', expandable: true }),
+          expect.objectContaining({ title: 'Email', expandable: true }),
+          expect.objectContaining({ title: 'Phone', expandable: true }),
+          expect.objectContaining({ title: 'Profile', expandable: true }),
+          expect.objectContaining({ title: 'Tags', expandable: true }),
+          expect.objectContaining({ title: 'Custom', expandable: true }),
+        ]),
+      )
+      expect(
+        tcb.action({
+          dataIndex: 'id',
+          render: () => <button type="button">Open actions</button>,
+        }),
+      ).toEqual(
+        expect.objectContaining({ title: 'Actions', expandable: false }),
+      )
     })
 
     it('should expose sr-only caption on the table', () => {

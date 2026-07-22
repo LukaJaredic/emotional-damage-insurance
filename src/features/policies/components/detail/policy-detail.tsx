@@ -89,7 +89,7 @@ function PolicyDetail({ policyId }: PolicyDetailProps) {
           {
             value: 'users',
             label: 'Users',
-            content: <PolicyUsers policyId={policy.id} />,
+            content: <PolicyUsers policy={policy} />,
           },
         ]}
         defaultValue="basic-info"

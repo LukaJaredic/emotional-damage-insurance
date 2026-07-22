@@ -1,4 +1,4 @@
-import PolicyForm from '@/features/policies/components/form/policy-form'
+import { PolicyForm } from '@/components/policies'
 
 function Scrap() {
   return (
