@@ -1,9 +1,5 @@
 import type { Policy, User } from '@/types'
 
-import type { CreatePolicyFormValues } from './policy-form.types'
-
-export type CreatePolicyAction = CreatePolicyFormValues
-
 export type GetPolicyQuery = {
   policyId: Policy['id']
 }

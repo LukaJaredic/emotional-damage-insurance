@@ -7,10 +7,10 @@ import { server } from '@/testing/mocks/server'
 import { renderApp, testAuditFields, testUsers } from '@/testing/test-utils'
 import type { PolicyHolder } from '@/types'
 import { limitLabels } from '@/utils/policy-limit-labels'
-import type { PolicyFormStatus } from '@features/policies/types/policy-form.types'
 
 import PolicyForm from './policy-form'
 import type { PolicyFormProps } from './policy-form'
+import type { PolicyFormStatus } from './policy-form.types'
 
 const policyHolder: PolicyHolder = {
   ...testAuditFields,

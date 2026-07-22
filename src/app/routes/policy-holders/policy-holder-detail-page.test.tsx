@@ -315,8 +315,49 @@ describe('PolicyHolderDetailPage', () => {
         await screen.findByRole('table', { name: 'Policies table' }),
       ).toBeInTheDocument()
       expect(
-        screen.queryByRole('button', { name: 'Create a policy' }),
+        screen.getByRole('button', { name: 'Add policy' }),
+      ).toBeInTheDocument()
+    })
+
+    it('should create a policy for the viewed policy holder by default', async () => {
+      const requests: Record<string, unknown>[] = []
+      const viewedPolicyHolder = testPolicyHolders.individual
+      server.use(
+        http.post(`${env.API_URL}/policies`, async ({ request }) => {
+          const body = (await request.json()) as Record<string, unknown>
+          requests.push(body)
+          return HttpResponse.json({ status: 201 })
+        }),
+      )
+      const { user } = await renderPolicyHolderDetail({
+        currentUser: testUsers.employee,
+        viewedPolicyHolder,
+      })
+
+      await openPoliciesTab(user)
+      await user.click(screen.getByRole('button', { name: 'Add policy' }))
+
+      const dialog = await screen.findByRole('dialog', {
+        name: 'Create a policy',
+      })
+
+      expect(
+        within(dialog).queryByLabelText('Policy holder'),
       ).not.toBeInTheDocument()
+
+      await user.type(within(dialog).getByLabelText('Name'), 'Defaulted cover')
+      await user.type(within(dialog).getByLabelText('Premium'), '450')
+      await user.click(
+        within(dialog).getByRole('button', { name: 'Create policy' }),
+      )
+
+      await waitFor(() => {
+        expect(requests).toEqual([
+          expect.objectContaining({
+            policyHolderId: viewedPolicyHolder.id,
+          }),
+        ])
+      })
     })
 
     it('should render the exact shared policy columns', async () => {

@@ -13,17 +13,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/shadcn/dialog'
-import type { PolicyFormStatus } from '@features/policies/types/policy-form.types'
 
 import PolicyForm from './policy-form'
+import type {
+  PolicyFormDefaultValues,
+  PolicyFormStatus,
+} from './policy-form.types'
 
 type PolicyFormDialogProps = {
   children: ReactNode
+  defaultValues?: PolicyFormDefaultValues | undefined
 }
 
 type PolicyFormDialogStatus = Exclude<PolicyFormStatus, 'success'> | 'closed'
 
-function PolicyFormDialog({ children }: PolicyFormDialogProps) {
+function PolicyFormDialog({ children, defaultValues }: PolicyFormDialogProps) {
   const [status, setStatus] = useState<PolicyFormDialogStatus>('closed')
   const formId = useId()
   const isPending = status === 'pending'
@@ -58,6 +62,7 @@ function PolicyFormDialog({ children }: PolicyFormDialogProps) {
           <PolicyForm
             id={formId}
             showSubmit={false}
+            defaultValues={defaultValues}
             onStatusChange={handleStatusChange}
           />
         </ScrollableDialogContent>

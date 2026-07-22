@@ -1,4 +1,6 @@
 export { default as PolicyCard } from './policy-card'
 export { policyColumns } from './policy-columns'
 export { policyFilters, type PolicyFiltersValues } from './policy-filters'
+export { default as PolicyForm } from './policy-form'
+export { default as PolicyFormDialog } from './policy-form-dialog'
 export { default as PolicyStatus } from './policy-status'
