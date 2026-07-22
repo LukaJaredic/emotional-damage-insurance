@@ -25,6 +25,9 @@ export function useDisconnectPolicyUser() {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.users.limits.detail(userId),
       })
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.users.all(),
+      })
       void toast.success('User disconnected from policy successfully')
     },
   })

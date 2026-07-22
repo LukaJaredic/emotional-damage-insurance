@@ -345,6 +345,20 @@ describe('PolicyDetailPage', () => {
       expect(
         await screen.findByRole('table', { name: 'Policy users table' }),
       ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Add users' }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Remove user from policy' }),
+      ).toHaveAttribute('title', 'Remove user from policy')
+
+      const headers = screen.getAllByRole('columnheader')
+      expect(headers.slice(0, 4).map((header) => header.textContent)).toEqual([
+        'Actions',
+        'Name',
+        'Email',
+        'Roles',
+      ])
 
       for (const policyUser of policyUsers) {
         const link = await screen.findByRole('link', {
@@ -424,6 +438,64 @@ describe('PolicyDetailPage', () => {
       await waitFor(() => {
         expect(screen.queryByText('Harvey Specter')).not.toBeInTheDocument()
       })
+    })
+
+    it('should show remove only for employee-manageable user rows', async () => {
+      const manageableUser = buildUser(testUsers.customer, {
+        id: 'policy-user-1',
+        firstName: 'Mike',
+        lastName: 'Ross',
+        email: 'mike.ross@example.com',
+        roles: ['customer'],
+      })
+      const mixedUser = buildUser(testUsers.customer, {
+        id: 'policy-user-2',
+        firstName: 'Rachel',
+        lastName: 'Zane',
+        email: 'rachel.zane@example.com',
+        roles: ['employee', 'customer'],
+      })
+      const employeeUser = buildUser(testUsers.employee, {
+        id: 'policy-user-3',
+        firstName: 'Harvey',
+        lastName: 'Specter',
+        email: 'harvey.specter@example.com',
+        roles: ['employee'],
+      })
+      mockPolicyUsersResponse({
+        users: [manageableUser, mixedUser, employeeUser],
+      })
+      const { user } = await renderPolicyDetail({
+        currentUser: testUsers.employee,
+        policy: testPolicy,
+      })
+
+      await user.click(screen.getByRole('tab', { name: 'Users' }))
+
+      const manageableRow = (await screen.findByText('Mike Ross')).closest('tr')
+      const mixedRow = (await screen.findByText('Rachel Zane')).closest('tr')
+      const employeeRow = (await screen.findByText('Harvey Specter')).closest(
+        'tr',
+      )
+
+      expect(manageableRow).toBeInTheDocument()
+      expect(mixedRow).toBeInTheDocument()
+      expect(employeeRow).toBeInTheDocument()
+      expect(
+        within(manageableRow!).getByRole('button', {
+          name: 'Remove user from policy',
+        }),
+      ).toHaveAttribute('title', 'Remove user from policy')
+      expect(
+        within(mixedRow!).queryByRole('button', {
+          name: 'Remove user from policy',
+        }),
+      ).not.toBeInTheDocument()
+      expect(
+        within(employeeRow!).queryByRole('button', {
+          name: 'Remove user from policy',
+        }),
+      ).not.toBeInTheDocument()
     })
   })
 

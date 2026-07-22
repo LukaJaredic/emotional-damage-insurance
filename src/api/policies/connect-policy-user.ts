@@ -32,6 +32,9 @@ export function useConnectPolicyUser() {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.users.limits.detail(userId),
       })
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.users.all(),
+      })
       void toast.success('User connected to policy successfully')
     },
   })

@@ -1,12 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import { apiPaths } from '@/config'
+import { apiPaths, queryKeys } from '@/config'
 import { api } from '@/lib'
 import type { User } from '@/types'
 
 import type { UpdateUserAction } from '../types/user-api.types'
-import { userQueryKeys } from '../utils/user-query-keys'
 
 export async function updateUser({
   userId,
@@ -22,7 +21,7 @@ export function useUpdateUser() {
   return useMutation({
     mutationFn: updateUser,
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: userQueryKeys.all() })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.users.all() })
       void toast.success('User updated successfully')
     },
   })

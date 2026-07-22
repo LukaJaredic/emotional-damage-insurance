@@ -1,10 +1,10 @@
 import { PlusIcon } from '@phosphor-icons/react'
 
+import { useUsers } from '@/api/users'
 import { RemoteDataWithFilters } from '@/components/data/remote-data'
 import { PageLayout } from '@/components/layout'
 import { Button } from '@/components/ui/shadcn/button'
 import { UserCard, userColumns } from '@/components/users'
-import { useUsers } from '@/features/users/api/get-users'
 import { usePermissions } from '@/hooks'
 import { userFilters } from '@features/users/utils/user-filters'
 

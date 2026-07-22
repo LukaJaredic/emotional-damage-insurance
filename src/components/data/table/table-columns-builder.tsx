@@ -23,6 +23,11 @@ type TableColumnBuilder<T> = Readonly<{
     dataIndex: keyof T
     render: (row: T) => ReactNode
   }) => TableColumn<T>
+  action: (options: {
+    dataIndex: keyof T
+    render: (row: T) => ReactNode
+    title?: 'Actions'
+  }) => TableColumn<T>
 }>
 
 /**
@@ -65,6 +70,12 @@ export function tableColumnBuilder<T>(): TableColumnBuilder<T> {
       title,
       dataIndex,
       render: (row) => render(row),
+    }),
+    action: ({ dataIndex, render, title = 'Actions' }) => ({
+      title,
+      dataIndex,
+      render: (row) => render(row),
+      expandable: false,
     }),
   }
 }

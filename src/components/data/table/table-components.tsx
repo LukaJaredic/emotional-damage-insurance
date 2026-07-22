@@ -35,7 +35,8 @@ function TableHeaderRow<T>({
   return (
     <UITableRow>
       {columns.map((column, index) => {
-        const expanded = isColumnExpanded(index)
+        const expandable = column.expandable !== false
+        const expanded = expandable && isColumnExpanded(index)
         const width = getColumnWidth(expanded)
         const expandCollapseLabel = `Expand/Collapse ${column.title} column`
 
@@ -48,29 +49,33 @@ function TableHeaderRow<T>({
             )}
             style={{ width, minWidth: width, maxWidth: width }}
           >
-            <button
-              type="button"
-              aria-expanded={expanded}
-              aria-label={expandCollapseLabel}
-              title={expandCollapseLabel}
-              onClick={() => toggleExpandedColumn(index)}
-              className="focus-visible:ring-ring flex h-full w-full cursor-pointer items-center gap-2 px-4 py-2 text-left outline-none focus-visible:ring-2"
-            >
-              <span
-                className={cn(
-                  'flex-1',
-                  expanded ? 'whitespace-normal' : 'truncate',
-                )}
+            {expandable ? (
+              <button
+                type="button"
+                aria-expanded={expanded}
+                aria-label={expandCollapseLabel}
+                title={expandCollapseLabel}
+                onClick={() => toggleExpandedColumn(index)}
+                className="focus-visible:ring-ring flex h-full w-full cursor-pointer items-center gap-2 px-4 py-2 text-left outline-none focus-visible:ring-2"
               >
-                {column.title}
-              </span>
+                <span
+                  className={cn(
+                    'flex-1',
+                    expanded ? 'whitespace-normal' : 'truncate',
+                  )}
+                >
+                  {column.title}
+                </span>
 
-              {expanded ? (
-                <ArrowsInLineHorizontalIcon aria-hidden="true" />
-              ) : (
-                <ArrowsOutLineHorizontalIcon aria-hidden="true" />
-              )}
-            </button>
+                {expanded ? (
+                  <ArrowsInLineHorizontalIcon aria-hidden="true" />
+                ) : (
+                  <ArrowsOutLineHorizontalIcon aria-hidden="true" />
+                )}
+              </button>
+            ) : (
+              <span className="block truncate px-4 py-2">{column.title}</span>
+            )}
           </UITableHead>
         )
       })}
@@ -97,7 +102,7 @@ function TableRowCells<T>({
   isColumnExpanded,
 }: TableRowCellsProps<T>) {
   return columns.map((column, index) => {
-    const expanded = isColumnExpanded(index)
+    const expanded = column.expandable !== false && isColumnExpanded(index)
     const width = getColumnWidth(expanded)
     const content = column.render
       ? column.render(row)

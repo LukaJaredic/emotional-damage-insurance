@@ -1,4 +1,5 @@
 export { default as UserCard } from './user-card'
+export type { UserCardProps } from './user-card'
 export { userColumns } from './user-table-columns'
 export {
   userSearchFilter,
